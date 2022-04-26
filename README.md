@@ -1,1 +1,1 @@
-# Beaty
+# BeatyProject
