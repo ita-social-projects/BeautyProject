@@ -1,1 +1,1 @@
-# BeatyProject
+# BeautyProject
