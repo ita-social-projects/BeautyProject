@@ -1,12 +1,11 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
+from django.core.validators import validate_email, RegexValidator
 from django.db import models, IntegrityError
 from django.db.models import F, Subquery
 from django.db.utils import DataError
 from django.urls import reverse
-# from book.models import Book
 
 
 ROLE_CHOICES = (
@@ -16,8 +15,9 @@ ROLE_CHOICES = (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, patronymic,
-                    password=None, is_active=True, bio=None):
+    """User manager"""
+    def create_user(self, email, first_name, password=None,
+                    is_active=True, bio=None, **additional_fields):
         """
         Creates and saves a User with the given email and password.
         """
@@ -27,23 +27,22 @@ class MyUserManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             first_name=first_name,
-            last_name=last_name,
-            patronymic=patronymic,
             is_active=is_active,
-            bio=bio
+            bio=bio,
+            **additional_fields
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, first_name, last_name, patronymic,
-                    password=None, bio=None):
+    def create_superuser(self, email, first_name,
+                    password=None, bio=None, **additional_fields):
         """
         Creates and saves a superuser with the given email and password.
         """
-        user = self.create_user(email, first_name, last_name, patronymic,
-                                password, bio=bio)
+        user = self.create_user(email, first_name,
+                                password, bio=bio, **additional_fields)
         user.is_admin = True
         user.is_superuser = True
         user.is_active = True
@@ -60,8 +59,8 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         type first_name: str max length=20
         param last_name: Describes last name of the user
         type last_name: str max length=20
-        param middle_name: Describes middle name of the user
-        type middle_name: str max length=20
+        param patronymic: Describes middle name of the user
+        type patronymic: str max length=20
         param email: Describes the email of the user
         type email: str, unique, max length=100
         param password: Describes the password of the user
@@ -77,15 +76,30 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     """
 
-    first_name = models.CharField(blank=True, max_length=20)
+    ROLE_CHOICES = [
+        (1, "Customer"),
+        (2, "Owner"),
+        (3, "Specialist")
+    ]
+
+    RE_PHONE_NUM = (r"^(?:\+38)?(?:\([0-9]{3}\)[ .-]?[0-9]{3}[ .-]?[0-9]{2}\
+                    [ .-]?[0-9]{2}|[0-9]{3}[ .-]?[0-9]{3}[ .-]?[0-9]{2}[ .-]?\
+                    [0-9]{2}|[0-9]{3}[0-9]{7})$")
+    first_name = models.CharField(max_length=20)
     last_name = models.CharField(blank=True, max_length=20)
     patronymic = models.CharField(blank=True, max_length=20)
-    email = models.EmailField(max_length=100, unique=True, validators=[validate_email])
+    email = models.EmailField(max_length=100, unique=True,
+                              validators=(validate_email,))
     password = models.CharField(max_length=128)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    bio = models.TextField(max_length=255, blank=True)
-    
+    bio = models.TextField(max_length=255, blank=True, null=True)
+    phone_number = models.CharField(max_length=15, unique=True,
+                                    validators=(
+                                        RegexValidator(regex=RE_PHONE_NUM),))
+    role = models.IntegerField(choices=ROLE_CHOICES, default=1)
+    rating = models.IntegerField(blank=True, default=0)
+
     avatar = models.ImageField(blank=True)
     is_active = models.BooleanField(default=True)
 
@@ -95,9 +109,9 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ('password', 'first_name')
 
-    # middle_name = models.CharField(blank=True, max_length=20)
+    # patronymic = models.CharField(blank=True, max_length=20)
     # role = models.IntegerField(default=0, choices=ROLE_CHOICES)
 
     class Meta:
@@ -122,7 +136,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     def __str__(self):
         """
         Magic method is redefined to show all information about CustomUser.
-        :return: user id, user first_name, user middle_name, user last_name,
+        :return: user id, user first_name, user patronymic, user last_name,
                  user email, user password, user updated_at, user created_at,
                  user role, user is_active
         """
@@ -188,12 +202,12 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return False
 
     @staticmethod
-    def create(email, password, first_name=None, middle_name=None, last_name=None):
+    def create(email, password, first_name=None, patronymic=None, last_name=None):
         """
         :param first_name: first name of a user
         :type first_name: str
-        :param middle_name: middle name of a user
-        :type middle_name: str
+        :param patronymic: middle name of a user
+        :type patronymic: str
         :param last_name: last name of a user
         :type last_name: str
         :param email: email of a user
@@ -206,7 +220,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         data = {}
         data['first_name'] = first_name if first_name else ''
         data['last_name'] = last_name if last_name else ''
-        data['middle_name'] = middle_name if middle_name else ''
+        data['patronymic'] = patronymic if patronymic else ''
         data['email'] = email
         user = CustomUser(**data)
         user.set_password(password)
@@ -220,13 +234,13 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     def to_dict(self):
         """
-        :return: user id, user first_name, user middle_name, user last_name,
+        :return: user id, user first_name, user patronymic, user last_name,
                  user email, user password, user updated_at, user created_at, user is_active
         :Example:
         | {
         |   'id': 8,
         |   'first_name': 'fn',
-        |   'middle_name': 'mn',
+        |   'patronymic': 'mn',
         |   'last_name': 'ln',
         |   'email': 'ln@mail.com',
         |   'created_at': 1509393504,
@@ -239,7 +253,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return {
             'id': self.id,
             'first_name': self.first_name,
-            'middle_name': self.middle_name,
+            'patronymic': self.patronymic,
             'last_name': self.last_name,
             'email': self.email,
             'created_at': int(self.created_at.timestamp()),
@@ -250,7 +264,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     def update(self,
                first_name=None,
                last_name=None,
-               middle_name=None,
+               patronymic=None,
                password=None,
                role=None,
                is_active=None):
@@ -258,8 +272,8 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         Updates user profile in the database with the specified parameters.\n
         :param first_name: first name of a user
         :type first_name: str
-        :param middle_name: middle name of a user
-        :type middle_name: str
+        :param patronymic: middle name of a user
+        :type patronymic: str
         :param last_name: last name of a user
         :type last_name: str
         :param password: password of a user
@@ -275,8 +289,8 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
             self.first_name = first_name
         if last_name:
             self.last_name = last_name
-        if middle_name:
-            self.middle_name = middle_name
+        if patronymic:
+            self.patronymic = patronymic
         if password:
             self.set_password(password)
         if role:
