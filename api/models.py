@@ -6,7 +6,7 @@ from django.db import models, IntegrityError
 from django.db.models import F, Subquery
 from django.db.utils import DataError
 from django.urls import reverse
-from book.models import Book
+# from book.models import Book
 
 
 ROLE_CHOICES = (
@@ -16,8 +16,8 @@ ROLE_CHOICES = (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, first_name, middle_name, last_name,
-                    password=None, role=0, is_admin=False, is_active=True):
+    def create_user(self, email, first_name, last_name, patronymic,
+                    password=None, is_active=True, bio=None):
         """
         Creates and saves a User with the given email and password.
         """
@@ -27,23 +27,23 @@ class MyUserManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             first_name=first_name,
-            middle_name=middle_name,
             last_name=last_name,
-            role=role,
-            is_admin=is_admin,
-            is_active=is_active
+            patronymic=patronymic,
+            is_active=is_active,
+            bio=bio
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, first_name, middle_name, last_name, password=None):
+    def create_superuser(self, email, first_name, last_name, patronymic,
+                    password=None, bio=None):
         """
         Creates and saves a superuser with the given email and password.
         """
-        user = self.create_user(email, first_name, middle_name,
-                                last_name, password)
+        user = self.create_user(email, first_name, last_name, patronymic,
+                                password, bio=bio)
         user.is_admin = True
         user.is_superuser = True
         user.is_active = True
@@ -78,13 +78,15 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     """
 
     first_name = models.CharField(blank=True, max_length=20)
-    middle_name = models.CharField(blank=True, max_length=20)
     last_name = models.CharField(blank=True, max_length=20)
+    patronymic = models.CharField(blank=True, max_length=20)
     email = models.EmailField(max_length=100, unique=True, validators=[validate_email])
     password = models.CharField(max_length=128)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    role = models.IntegerField(default=0, choices=ROLE_CHOICES)
+    bio = models.TextField(max_length=255, blank=True)
+    
+    avatar = models.ImageField(blank=True)
     is_active = models.BooleanField(default=True)
 
     is_admin = models.BooleanField(default=False)
@@ -93,7 +95,10 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
 
-    REQUIRED_FIELDS = ['first_name', 'middle_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name']
+
+    # middle_name = models.CharField(blank=True, max_length=20)
+    # role = models.IntegerField(default=0, choices=ROLE_CHOICES)
 
     class Meta:
         ordering = ['id']
@@ -136,17 +141,6 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     def get_absolute_url(self):
         return reverse('authentication:user-books', kwargs={'id': self.id})
 
-    def get_user_books(self):
-        # book_ids = self.orders.values_list('book', flat=True)
-
-        # book_ids = self.orders.values('book')
-        # books = Book.objects.filter(id__in=book_ids)
-
-        books = Book.objects.filter(id__in=Subquery(self.orders.values('book')))
-        return books
-
-    def get_user_violator_books(self):
-        return self.get_user_books().filter(orders__created_at__lt=F('orders__end_at'))
 
     @staticmethod
     def get_by_id(user_id):
