@@ -76,12 +76,6 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     """
 
-    ROLE_CHOICES = [
-        (1, "Customer"),
-        (2, "Owner"),
-        (3, "Specialist")
-    ]
-
     RE_PHONE_NUM = (r"^(?:\+38)?(?:\([0-9]{3}\)[ .-]?[0-9]{3}[ .-]?[0-9]{2}\
                     [ .-]?[0-9]{2}|[0-9]{3}[ .-]?[0-9]{3}[ .-]?[0-9]{2}[ .-]?\
                     [0-9]{2}|[0-9]{3}[0-9]{7})$")
@@ -90,14 +84,12 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     patronymic = models.CharField(blank=True, max_length=20)
     email = models.EmailField(max_length=100, unique=True,
                               validators=(validate_email,))
-    password = models.CharField(max_length=128)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     bio = models.TextField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=15, unique=True,
                                     validators=(
                                         RegexValidator(regex=RE_PHONE_NUM),))
-    role = models.IntegerField(choices=ROLE_CHOICES, default=1)
     rating = models.IntegerField(blank=True, default=0)
 
     avatar = models.ImageField(blank=True)
@@ -140,7 +132,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
                  user email, user password, user updated_at, user created_at,
                  user role, user is_active
         """
-        return str(self.to_dict())[1:-1]
+        return f"{self.first_name} {self.last_name}"
 
     def __repr__(self):
         """
@@ -232,41 +224,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
             # LOGGER.error("Wrong attributes or relational integrity error")
             pass
 
-    def to_dict(self):
-        """
-        :return: user id, user first_name, user patronymic, user last_name,
-                 user email, user password, user updated_at, user created_at, user is_active
-        :Example:
-        | {
-        |   'id': 8,
-        |   'first_name': 'fn',
-        |   'patronymic': 'mn',
-        |   'last_name': 'ln',
-        |   'email': 'ln@mail.com',
-        |   'created_at': 1509393504,
-        |   'updated_at': 1509402866,
-        |   'role': 0
-        |   'is_active:' True
-        | }
-        """
-
-        return {
-            'id': self.id,
-            'first_name': self.first_name,
-            'patronymic': self.patronymic,
-            'last_name': self.last_name,
-            'email': self.email,
-            'created_at': int(self.created_at.timestamp()),
-            'updated_at': int(self.updated_at.timestamp()),
-            'role': self.role,
-            'is_active': self.is_active}
-
     def update(self,
                first_name=None,
                last_name=None,
                patronymic=None,
                password=None,
-               role=None,
                is_active=None):
         """
         Updates user profile in the database with the specified parameters.\n
@@ -293,8 +255,6 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
             self.patronymic = patronymic
         if password:
             self.set_password(password)
-        if role:
-            self.role = role
         if is_active is not None:
             self.is_active = is_active
         self.save()
