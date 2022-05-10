@@ -29,6 +29,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+AUTH_USER_MODEL = "api.CustomUser"
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,12 +43,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     # project apps
+    'api'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # WhiteNoiseMiddleware
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,8 +80,23 @@ WSGI_APPLICATION = 'beauty.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
+# DATABASES = {
+#     'default': dj_database_url.config(conn_max_age=500, default='postgres://postgres:postgres@db:5432/beauty')}
+
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=500, default='postgres://postgres:postgres@localhost:5432/beauty')}
+  # 'default': {
+  #   'ENGINE': 'django.db.backends.postgresql_psycopg2',
+  #   'HOST': config("DB_HOST"),
+  #   'NAME': config("DB_NAME"),
+  #   'USER': config("DB_USER"),
+  #   'PASSWORD': config("DB_PASS"),
+  #   'PORT': config("DB_PORT")
+  # }
+'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
+    }
+}
 
 
 # Password validation
@@ -120,10 +135,6 @@ STATIC_URL = 'static/'
 
 # for collectstatic
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
