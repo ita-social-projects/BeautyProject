@@ -6,6 +6,7 @@ __pycache__/
 
 # C extensions
 *.so
+.DS_Store/
 
 # Distribution / packaging
 .Python
@@ -59,8 +60,8 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
+*.sqlite3
+*.sqlite3-journal
 
 # Flask stuff:
 instance/
@@ -128,3 +129,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/beauty/docs/
+migrations/
