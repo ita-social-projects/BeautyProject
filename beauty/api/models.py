@@ -1,7 +1,14 @@
+import os
+
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import validate_email, RegexValidator
+from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
+
+
+def upload_location(instance, filename):
+    return os.path.join('upload', f"{instance.id}{filename}")
 
 
 class MyUserManager(BaseUserManager):
@@ -43,9 +50,6 @@ class MyUserManager(BaseUserManager):
 class CustomUser(PermissionsMixin, AbstractBaseUser):
     """This class represents a basic user."""
 
-    RE_PHONE_NUM = (r"^(?:\+38)?(?:\([0-9]{3}\)[ .-]?[0-9]{3}[ .-]?[0-9]{2}\
-                    [ .-]?[0-9]{2}|[0-9]{3}[ .-]?[0-9]{3}[ .-]?[0-9]{2}[ .-]?\
-                    [0-9]{2}|[0-9]{3}[0-9]{7})$")
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(blank=True, max_length=20)
     patronymic = models.CharField(blank=True, max_length=20)
@@ -54,12 +58,10 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     bio = models.TextField(max_length=255, blank=True, null=True)
-    phone_number = models.CharField(max_length=15, unique=True,
-                                    validators=(
-                                        RegexValidator(regex=RE_PHONE_NUM),))
+    phone_number = PhoneNumberField(unique=True)
     rating = models.IntegerField(blank=True, default=0)
+    avatar = models.ImageField(blank=True, upload_to=upload_location)
 
-    avatar = models.ImageField(blank=True)
     is_active = models.BooleanField(default=True)
 
     is_admin = models.BooleanField(default=False)
