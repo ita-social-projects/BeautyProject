@@ -7,13 +7,9 @@ from api.forms import CustomUserChangeForm, CustomUserCreationForm
 
 
 class CustomUserAdmin(BaseUserAdmin):
-    # The forms to add and change user instances
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
 
-    # The fields to be used in displaying the User model.
-    # These override the definitions on the base UserAdmin
-    # that reference specific fields on auth.User.
     list_display = ('email', 'is_admin', 'first_name', 'last_name', 'phone_number', 'is_active', 'id')
     list_filter = ('is_admin', 'groups')
     fieldsets = (
@@ -21,8 +17,6 @@ class CustomUserAdmin(BaseUserAdmin):
         ('Personal info', {'fields': ('first_name', 'last_name', 'patronymic', 'phone_number', 'bio', 'avatar')}),
         ('Permissions', {'fields': ('is_admin', 'is_active')}),
     )
-    # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
-    # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
@@ -46,9 +40,7 @@ class CustomGroupAdmin(BaseGroupAdmin):
     ]
 
 
-
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.unregister(Group)
 admin.site.register(Group, CustomGroupAdmin)
-# ... and, since we're not using Django's built-in permissions,
-# unregister the Group model from admin.
+

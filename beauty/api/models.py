@@ -2,17 +2,23 @@ import os
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email, RegexValidator
+from django.core.validators import validate_email
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 
 
 def upload_location(instance, filename):
-    return os.path.join('upload', f"{instance.id}{filename}")
+    new_name = instance.id if instance.id else instance.__class__.objects.all().last().id + 1
+    new_path = os.path.join('upload', f"{new_name}.{filename.split('.')[-1]}")
+    path = os.path.join(os.path.split(instance.avatar.path)[0], new_path)
+    if os.path.exists(path):
+        os.remove(path)
+    return new_path
 
 
 class MyUserManager(BaseUserManager):
     """User manager"""
+
     def create_user(self, email, first_name, password=None,
                     is_active=True, bio=None, **additional_fields):
         """
@@ -34,7 +40,7 @@ class MyUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, first_name,
-                    password=None, bio=None, **additional_fields):
+                         password=None, bio=None, **additional_fields):
         """
         Creates and saves a superuser with the given email and password.
         """
@@ -99,4 +105,3 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         :return: class, id
         """
         return f'{self.__class__.__name__}(id={self.id})'
-
