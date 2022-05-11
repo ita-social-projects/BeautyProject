@@ -34,22 +34,21 @@ class CustomUserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-# class CustomUserInline(admin.TabularInline):
-#     model =
-#
-#
-# class CustomGroupAdmin(BaseGroupAdmin):
-#     class Meta:
-#
-#     inlines = [
-#         CustomUserInline,
-#     ]
-#
-#     # # exclude = ('members',)
+class CustomUserInline(admin.TabularInline):
+    model = CustomUser.groups.through
+    extra = 1
+
+
+class CustomGroupAdmin(BaseGroupAdmin):
+
+    inlines = [
+        CustomUserInline,
+    ]
+
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
-# admin.site.unregister(Group)
-# admin.site.register(Group, CustomGroupAdmin)
+admin.site.unregister(Group)
+admin.site.register(Group, CustomGroupAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
