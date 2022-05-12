@@ -105,3 +105,38 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         :return: class, id
         """
         return f'{self.__class__.__name__}(id={self.id})'
+
+
+class Service(models.Model):
+    """This class represents a Service that can be provided by Specialist"""
+
+    position = models.ForeignKey(
+        "Position",
+        on_delete=models.CASCADE,
+        verbose_name= "Position"
+    )
+    name = models.CharField(
+        max_length=50,
+        verbose_name="Service name"
+    )
+    price = models.DecimalField(
+        max_digits=5,
+        verbose_name="Service price"
+    )
+    description = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name="Service description"
+    )
+    duration = models.DurationField(
+        blank=False,
+        verbose_name="Service duration"
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Service"
+        verbose_name_plural = "Services"
+
