@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 
 files:
-  - source: /.
+  - source: /beauty/
     destination: /var/www/Beauty/
 hooks:
   BeforeInstall:
