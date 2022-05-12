@@ -9,6 +9,7 @@ from django.core.validators import validate_email, MinValueValidator,\
     MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
+from dbview.models import DbView
 
 
 def upload_location(instance, filename):
@@ -109,6 +110,40 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         :return: class, id
         """
         return f'{self.__class__.__name__}(id={self.id})'
+
+
+class WorkingTime(DbView):
+    """
+    This class represents Working time entity
+
+    Attributes:
+        block: is free or not
+        date: working day
+        specialist: specialist id
+        order: order id
+
+    """
+
+    block = models.BooleanField(default=False)
+    date = models.DateTimeField(verbose_name="Working day")
+
+    specialist = models.ForeignKey("CustomUser", on_delete=models.DO_NOTHING)
+    order = models.ForeignKey("Order", on_delete=models.DO_NOTHING)
+
+    @classmethod
+    def view(cls):
+        """Return string of our request"""
+        #TODO: add request when all class will be realized
+        req = ()
+        return str(req.query)
+
+    def __str__(self):
+        return self.block
+
+    class Meta:
+        managed = False
+        verbose_name = "WorkingTime"
+        verbose_name_plural = "WorkingTimes"
 
 
 class Review(models.Model):
