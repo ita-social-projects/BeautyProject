@@ -128,7 +128,7 @@ class Service(models.Model):
         blank=True,
         verbose_name="Service description"
     )
-    duration = models.DurationField(
+    duration = models.IntegerField(
         blank=False,
         verbose_name="Service duration"
     )
