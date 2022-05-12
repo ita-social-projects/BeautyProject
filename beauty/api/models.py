@@ -78,7 +78,9 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
                                               symmetrical=False,
                                               blank=True,
                                               through="Review",
-                                              null=False)
+                                              null=False,
+                                              verbose_name="Review authority"
+                                              )
 
     objects = MyUserManager()
 
@@ -117,11 +119,26 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
 class Review(models.Model):
     """This class represents Review entity"""
-    text_body = models.CharField(max_length=500)
-    rating = models.IntegerField(blank=False,
-                                 validators=(
-                                     MinValueValidator(0),
-                                     MaxValueValidator(5)
-                                 ))
-    date_of_publication = models.DateTimeField(auto_now_add=True)
+    text_body = models.CharField(
+        max_length=500,
+        verbose_name="Review text body"
+    )
+    rating = models.IntegerField(
+        blank=False,
+        validators=(MinValueValidator(0), MaxValueValidator(5)),
+        verbose_name="Review rating"
+    )
+    date_of_publication = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Review time of publication"
+    )
+
+    def __str__(self):
+        return self.text_body
+
+    class Meta:
+        verbose_name = "Review"
+        verbose_name_plural = "Reviews"
+
+
 
