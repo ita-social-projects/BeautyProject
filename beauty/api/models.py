@@ -105,3 +105,30 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         :return: class, id
         """
         return f'{self.__class__.__name__}(id={self.id})'
+
+
+class Position(models.Model):
+    """This class represents position in Business
+
+    Attributes:
+        name: position name
+        specialist: specialist id
+        business: business id
+        start_time: specialist work starts at
+        end_time: specialist work ends at
+
+    """
+
+    name = models.CharField(max_length=40)
+    specialist = models.ForeignKey("CustomUser", on_delete=models.CASCADE)
+    business = models.ForeignKey("Business", on_delete=models.CASCADE)
+
+    start_time = models.DateTimeField(editable=True)
+    end_time = models.DateTimeField(editable=True)
+
+    def __str__(self):
+        """Magic method is redefined to show name of Position"""
+        return self.name
+
+    class Meta:
+        ordering = ['name']
