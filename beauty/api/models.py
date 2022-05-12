@@ -74,14 +74,6 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     is_admin = models.BooleanField(default=False)
 
-    review_authority = models.ManyToManyField("self",
-                                              symmetrical=False,
-                                              blank=True,
-                                              through="Review",
-                                              null=False,
-                                              verbose_name="Review authority"
-                                              )
-
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
@@ -118,7 +110,18 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
 
 class Review(models.Model):
-    """This class represents Review entity"""
+    """This class represents basic Review (for Reviews system)
+    that stores all the required information.
+
+    Attributes:
+        text_body: body of the review
+        rating: Rating of review(natural number from 1 to 5)
+        date_of_publication: Date and time of review publication
+        from_user: Foreign key, that determines Customer, who sent a review
+        to_user: Foreign key, that determines Specialist, who must have
+                 received review
+
+    """
     text_body = models.CharField(
         max_length=500,
         verbose_name="Review text body"
@@ -132,13 +135,26 @@ class Review(models.Model):
         auto_now_add=True,
         verbose_name="Review time of publication"
     )
+    from_user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="FromRev"
+    )
+    to_user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="ToRev"
+    )
 
     def __str__(self):
+        """Returns a verbose title of the review"""
         return self.text_body
 
     class Meta:
+        """This meta class stores verbose names and permissions data"""
         verbose_name = "Review"
         verbose_name_plural = "Reviews"
-
 
 
