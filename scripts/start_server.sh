@@ -17,10 +17,14 @@ pwd
 
 ls
 
+python3 -m venv venv
+
+source venv/bin/activate
+
 sudo pip3 install -r requirements.txt
 
-python3 manage.py makemigrations
-python3 manage.py migrate
-python3 manage.py collectstatic --noinput
+# python3 manage.py makemigrations
+# python3 manage.py migrate
+# python3 manage.py collectstatic --noinput
 
-gunicorn beauty.wsgi:application --bind 0.0.0.0:8000
+# gunicorn beauty.wsgi:application --bind 0.0.0.0:8000
