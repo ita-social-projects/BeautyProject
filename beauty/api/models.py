@@ -111,7 +111,7 @@ class Service(models.Model):
     """This class represents a Service that can be provided by Specialist"""
 
     position = models.ForeignKey(
-        "Position",
+        "CustomUser",
         on_delete=models.CASCADE,
         verbose_name= "Position"
     )
