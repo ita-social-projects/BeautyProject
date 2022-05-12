@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: .
-    destination: /home/ec2-user/
+    destination: /home/ec2-user/Beauty/
 hooks:
   BeforeInstall:
     - location: scripts/install_dependencies.sh
