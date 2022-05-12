@@ -120,7 +120,7 @@ class Position(models.Model):
     """
 
     name = models.CharField(max_length=40)
-    specialist = models.ForeignKey("CustomUser", on_delete=models.CASCADE)
+    specialist = models.ManyToManyField("CustomUser", related_name="position")
     business = models.ForeignKey("Business", on_delete=models.CASCADE)
 
     start_time = models.DateTimeField(editable=True)
