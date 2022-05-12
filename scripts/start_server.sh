@@ -10,7 +10,7 @@ pwd
 
 ls
 
-cd var/www/Beauty/beauty
+cd var
 
 pwd
 
