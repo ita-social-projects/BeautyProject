@@ -5,7 +5,6 @@ from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import validate_email
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
-from django.contrib.auth.models import Group
 
 def upload_location(instance, filename):
     new_name = instance.id if instance.id else instance.__class__.objects.all().last().id + 1
@@ -108,7 +107,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 class Business(models.Model):
     name = models.CharField(max_length=20)
     type = models.CharField(max_length=100)
-    logo = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to=upload_location, blank=True)
     owner = models.ForeignKey('CustomUser', on_delete=models.PROTECT, related_name='businesses')
     # location = models.OneToOneField('Location', max_length=300)
     description = models.CharField(max_length=255)
@@ -121,34 +120,10 @@ class Business(models.Model):
     #     pos = Position(name=name)
     #     pos.save()
 
-
+    def __str__(self):
+        return str(self.name)
 
     def get_all_specialist(self):
+
         specialists = [position.specialists.all() for position in self.positions.all()]
         return specialists
-
-class Position(models.Model):
-    """This class represents position in Business
-
-    Attributes:
-        name: position name
-        specialist: specialist id
-        business: business id
-        start_time: specialist work starts at
-        end_time: specialist work ends at
-
-    """
-
-    name = models.CharField(max_length=40)
-    specialist = models.ForeignKey("CustomUser", on_delete=models.CASCADE)
-    business = models.ForeignKey("Business", on_delete=models.CASCADE)
-
-    start_time = models.DateTimeField(editable=True)
-    end_time = models.DateTimeField(editable=True)
-
-    def __str__(self):
-        """Magic method is redefined to show name of Position"""
-        return self.name
-
-    class Meta:
-        ordering = ['name']
