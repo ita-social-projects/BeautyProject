@@ -6,7 +6,15 @@ sudo touch /etc/nginx/nginx.conf
 
 sudo printf "" > /etc/nginx/nginx.conf
 
+pwd
+
+ls
+
 cd var/www/Beauty/beauty
+
+pwd
+
+ls
 
 python manage.py makemigrations
 python manage.py migrate
