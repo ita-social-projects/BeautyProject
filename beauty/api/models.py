@@ -112,7 +112,6 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 class Review(models.Model):
     """This class represents basic Review (for Reviews system)
     that stores all the required information.
-
     Attributes:
         text_body: body of the review
         rating: Rating of review(natural number from 1 to 5)
@@ -120,7 +119,6 @@ class Review(models.Model):
         from_user: Foreign key, that determines Customer, who sent a review
         to_user: Foreign key, that determines Specialist, who must have
                  received review
-
     """
     text_body = models.CharField(
         max_length=500,
@@ -156,5 +154,3 @@ class Review(models.Model):
         """This meta class stores verbose names and permissions data"""
         verbose_name = "Review"
         verbose_name_plural = "Reviews"
-
-

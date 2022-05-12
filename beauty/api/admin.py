@@ -4,7 +4,6 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import (UserAdmin as BaseUserAdmin,
                                        GroupAdmin as BaseGroupAdmin)
 from api.forms import CustomUserChangeForm, CustomUserCreationForm
-from api.models import Review
 
 
 class CustomUserAdmin(BaseUserAdmin):
@@ -40,14 +39,8 @@ class CustomGroupAdmin(BaseGroupAdmin):
         CustomUserInline,
     ]
 
-class ReviewAdmin(admin.ModelAdmin):
-
-    class Meta:
-        model = Review
-        fields = ("__all__")
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.unregister(Group)
 admin.site.register(Group, CustomGroupAdmin)
-admin.site.register(Review, ReviewAdmin)
 
