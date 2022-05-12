@@ -18,6 +18,7 @@ def upload_location(instance, filename):
 
 class MyUserManager(BaseUserManager):
     """User manager"""
+
     def create_user(self, email, first_name, password=None,
                     is_active=True, bio=None, **additional_fields):
         """
@@ -126,6 +127,7 @@ class Position(models.Model):
     end_time = models.DateTimeField(editable=True)
 
     def __str__(self):
+        """Magic method is redefined to show name of Position"""
         return self.name
 
     class Meta:
