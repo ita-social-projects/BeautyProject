@@ -2,8 +2,8 @@ version: 0.0
 os: linux
 
 files:
-  - source: /beauty/
-    destination: /var/www/Beauty/
+  - source: .
+    destination: /home/ec2-user/
 hooks:
   BeforeInstall:
     - location: scripts/install_dependencies.sh
