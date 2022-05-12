@@ -1,8 +1,10 @@
+import datetime
 import os
 
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email
+from django.core.validators import validate_email, MinValueValidator,\
+    MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 
@@ -72,6 +74,12 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     is_admin = models.BooleanField(default=False)
 
+    review_authority = models.ManyToManyField("self",
+                                              symmetrical=False,
+                                              blank=True,
+                                              through="Review",
+                                              null=False)
+
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
@@ -105,3 +113,15 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         :return: class, id
         """
         return f'{self.__class__.__name__}(id={self.id})'
+
+
+class Review(models.Model):
+    """This class represents Review entity"""
+    text_body = models.CharField(max_length=500)
+    rating = models.IntegerField(blank=False,
+                                 validators=(
+                                     MinValueValidator(0),
+                                     MaxValueValidator(5)
+                                 ))
+    date_of_publication = models.DateTimeField(auto_now_add=True)
+
