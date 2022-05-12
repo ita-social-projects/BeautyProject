@@ -2,7 +2,9 @@
 
 sudo yum update -y
 
-sudo yum install gcc libc-dev linux-headers postgresql-dev postgresql-client libpq-dev python3-dev
+sudo yum install gcc libc-dev linux-headers postgresql-dev \ 
+                 postgresql-client libpq-dev python3-dev \
+                 python-setuptools python-devel postgresql-devel
 
 sudo amazon-linux-extras list | grep nginx
 
