@@ -6,17 +6,9 @@ sudo touch /etc/nginx/nginx.conf
 
 sudo printf "" > /etc/nginx/nginx.conf
 
-pwd
-
-ls
-
 cd home
 cd ec2-user
 cd Beauty
-
-pwd
-
-ls
 
 python3.9 -m venv venv
 
