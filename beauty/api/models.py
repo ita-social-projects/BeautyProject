@@ -5,7 +5,7 @@ from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import validate_email
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
-
+from django.contrib.auth.models import Group
 
 def upload_location(instance, filename):
     new_name = instance.id if instance.id else instance.__class__.objects.all().last().id + 1
@@ -14,7 +14,6 @@ def upload_location(instance, filename):
     if os.path.exists(path):
         os.remove(path)
     return new_path
-
 
 class MyUserManager(BaseUserManager):
     """User manager"""
@@ -105,3 +104,25 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         :return: class, id
         """
         return f'{self.__class__.__name__}(id={self.id})'
+
+class Business(models.Model):
+    name = models.CharField(max_length=20)
+    type = models.CharField(max_length=100)
+    logo = models.CharField(max_length=255)
+    owner = models.ForeignKey('CustomUser', on_delete=models.PROTECT, related_name='businesses')
+    # location = models.OneToOneField('Location', max_length=300)
+    description = models.CharField(max_length=255)
+    date_of_creation = models.DateTimeField(auto_now_add=True, editable=False)
+    
+    class Meta:
+        pass
+    
+    # def create_position(self, name, type, logo, owner, description):
+    #     pos = Position(name=name)
+    #     pos.save()
+
+
+
+    def get_all_specialist(self):
+        specialists = [position.specialists.all() for position in self.positions.all()]
+        return specialists
