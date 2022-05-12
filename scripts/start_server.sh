@@ -11,6 +11,8 @@ pwd
 ls
 
 cd var
+cd www
+cd Beauty
 
 pwd
 
