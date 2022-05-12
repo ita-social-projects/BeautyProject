@@ -1,10 +1,11 @@
 import datetime
 import os
 
+from address.models import AddressField
+from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email, MinValueValidator,\
-    MaxValueValidator
+from django.core.validators import validate_email
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 
@@ -154,3 +155,9 @@ class Review(models.Model):
         """This meta class stores verbose names and permissions data"""
         verbose_name = "Review"
         verbose_name_plural = "Reviews"
+
+
+class Business(models.Model):
+
+    address = AddressField(verbose_name="Location", max_length=500)
+
