@@ -1,8 +1,12 @@
+import datetime
 import os
 
+from address.models import AddressField
+from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email
+from django.core.validators import validate_email, MinValueValidator,\
+    MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 
@@ -111,6 +115,7 @@ class Business(models.Model):
     owner = models.ForeignKey('CustomUser', on_delete=models.PROTECT, related_name='businesses')
     # location = models.OneToOneField('Location', max_length=300)
     description = models.CharField(max_length=255)
+    address = AddressField(verbose_name="Location", max_length=500)
     date_of_creation = models.DateTimeField(auto_now_add=True, editable=False)
     
     class Meta:
@@ -127,3 +132,50 @@ class Business(models.Model):
 
         specialists = [position.specialists.all() for position in self.positions.all()]
         return specialists
+
+class Review(models.Model):
+    """This class represents basic Review (for Reviews system)
+    that stores all the required information.
+    Attributes:
+        text_body: body of the review
+        rating: Rating of review(natural number from 1 to 5)
+        date_of_publication: Date and time of review publication
+        from_user: Foreign key, that determines Customer, who sent a review
+        to_user: Foreign key, that determines Specialist, who must have
+                 received review
+    """
+    text_body = models.CharField(
+        max_length=500,
+        verbose_name="Review text"
+    )
+    rating = models.IntegerField(
+        blank=False,
+        validators=(MinValueValidator(0), MaxValueValidator(5)),
+        verbose_name="Review rating"
+    )
+    date_of_publication = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Time of review publication"
+    )
+    from_user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="FromRev"
+    )
+    to_user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="ToRev"
+    )
+
+    def __str__(self):
+        """Returns a verbose title of the review"""
+        return self.text_body
+
+    class Meta:
+        """This meta class stores verbose names and permissions data"""
+        ordering = ["date_of_publication"]
+        verbose_name = "Review"
+        verbose_name_plural = "Reviews"
