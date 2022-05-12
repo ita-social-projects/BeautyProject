@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAdminUser
-from django.views.generic import ListView
+# from django.views.generic import CreateAPIView
 from .models import CustomUser
 from .serializers import CustomUserDetailSerializer
 
@@ -22,7 +22,8 @@ class CustomUserRegistration(ListCreateAPIView):
         serializer = CustomUserDetailSerializer(queryset, many=True)
         return Response(serializer.data)
 
-
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 
