@@ -5,7 +5,8 @@ from address.models import AddressField
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email
+from django.core.validators import validate_email, MinValueValidator,\
+    MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 
@@ -123,7 +124,7 @@ class Review(models.Model):
     """
     text_body = models.CharField(
         max_length=500,
-        verbose_name="Review text body"
+        verbose_name="Review text"
     )
     rating = models.IntegerField(
         blank=False,
@@ -132,7 +133,7 @@ class Review(models.Model):
     )
     date_of_publication = models.DateTimeField(
         auto_now_add=True,
-        verbose_name="Review time of publication"
+        verbose_name="Time of review publication"
     )
     from_user = models.ForeignKey(
         CustomUser,
@@ -153,6 +154,7 @@ class Review(models.Model):
 
     class Meta:
         """This meta class stores verbose names and permissions data"""
+        ordering = ["date_of_publication"]
         verbose_name = "Review"
         verbose_name_plural = "Reviews"
 
