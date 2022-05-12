@@ -22,7 +22,7 @@ python3.9 -m venv venv
 
 source venv/bin/activate
 
-sudo pip3.9 install -r requirements.txt
+pip3.9 install -r requirements.txt
 
 # python3 manage.py makemigrations
 # python3 manage.py migrate
