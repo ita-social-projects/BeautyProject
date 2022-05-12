@@ -12,7 +12,6 @@ ls
 
 cd home
 cd ec2-user
-cd beauty
 
 pwd
 
