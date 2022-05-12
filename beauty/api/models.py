@@ -1,5 +1,7 @@
 import os
 
+from address.models import AddressField
+from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import validate_email
@@ -107,6 +109,10 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         """
         return f'{self.__class__.__name__}(id={self.id})'
 
+
+class Business(models.Model):
+
+    address = AddressField(verbose_name="Location", max_length=500)
 
 class Order(models.Model):
     """This class represents a basic Order (for an appointment system)
