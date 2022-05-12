@@ -10,9 +10,9 @@ pwd
 
 ls
 
-cd var
-cd www
-cd Beauty
+cd home
+cd ec2-user
+cd beauty
 
 pwd
 
