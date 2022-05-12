@@ -1,14 +1,46 @@
+from api.models import CustomUser
 from django.contrib import admin
-from .models import CustomUser
-# Register your models here.
+from django.contrib.auth.models import Group
+from django.contrib.auth.admin import (UserAdmin as BaseUserAdmin,
+                                       GroupAdmin as BaseGroupAdmin)
+from api.forms import CustomUserChangeForm, CustomUserCreationForm
 
 
-class CustomerUserAdminSerializer(admin.ModelAdmin):
-    """User serializer"""
-    class Meta:
-        """Just an additional class"""
-        model = CustomUser
-        fields = "__all__"
+class CustomUserAdmin(BaseUserAdmin):
+    form = CustomUserChangeForm
+    add_form = CustomUserCreationForm
+
+    list_display = ('email', 'is_admin', 'first_name', 'last_name', 'phone_number', 'is_active', 'id')
+    list_filter = ('is_admin', 'groups')
+    fieldsets = (
+        (None, {'fields': ('email', 'password', 'groups')}),
+        ('Personal info', {'fields': ('first_name', 'last_name', 'patronymic', 'phone_number', 'bio', 'avatar')}),
+        ('Permissions', {'fields': ('is_admin', 'is_active')}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'phone_number', 'groups', 'password1', 'password2'),
+        }),
+    )
+    search_fields = ('email',)
+    ordering = ('email',)
+    filter_horizontal = ()
 
 
-admin.site.register(CustomUser, CustomerUserAdminSerializer)
+class CustomUserInline(admin.TabularInline):
+    model = CustomUser.groups.through
+    extra = 1
+
+
+class CustomGroupAdmin(BaseGroupAdmin):
+
+    inlines = [
+        CustomUserInline,
+    ]
+
+
+admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.unregister(Group)
+admin.site.register(Group, CustomGroupAdmin)
+
