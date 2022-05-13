@@ -8,4 +8,4 @@ yum install -y gcc-c++ flex epel-release nginx supervisor
 
 sudo amazon-linux-extras install nginx1
 
-sudo nginc -c /etc/nginx/nginx.conf
+sudo nginx -c /etc/nginx/nginx.conf
