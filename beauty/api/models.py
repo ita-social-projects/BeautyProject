@@ -201,8 +201,8 @@ class Business(models.Model):
     class Meta:
         """This meta class stores verbose names"""
         ordering = ['type']
-        verbose_name = 'Business'
-        verbose_name_plural = 'Businesses'
+        verbose_name = _('Business')
+        verbose_name_plural = _('Businesses')
 
     def __str__(self) -> str:
         """str: Returns a verbose title of the business"""
@@ -311,8 +311,6 @@ class Review(models.Model):
         """This meta class stores verbose names and permissions data"""
 
         ordering = ["date_of_publication"]
-        verbose_name = "Review"
-        verbose_name_plural = "Reviews"
         verbose_name = _("Review")
         verbose_name_plural = _("Reviews")
 
