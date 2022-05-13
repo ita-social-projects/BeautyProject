@@ -1,6 +1,3 @@
 #!/bin/bash
 
-isExistApp = `pgrep -n nginx`
-if [ $isExistApp ]; then
-    sudo nginx -s stop        
-fi
+if [ -e /var/run/nginx.pid ]; then sudo nginx -s stop; fi
