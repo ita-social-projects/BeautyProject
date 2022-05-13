@@ -1,6 +1,6 @@
 #!/bin/bash
 
 isExistApp = `pgrep nginx`
-if [ $isExistApp ]; then
-    sudo nginx -s stop     
+if [[ -n  $isExistApp ]]; then
+    sudo nginx -s stop        
 fi
