@@ -15,6 +15,7 @@ from django.utils.translation import gettext as _
 from dbview.models import DbView
 from beauty.utils import ModelsUtils
 
+
 class MyUserManager(BaseUserManager):
     """This class provides tools for
      creating and managing CustomUser model
@@ -61,6 +62,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         Rating field could be negative, works like a rating system
 
     Attributes:
+
         first_name: First name of the user
         last_name: (optiomal) Last name of the user
         patronymic: (optiomal) Patronymic of the user
@@ -75,6 +77,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         is_admin: Determines whether user is admin
 
     Properties:
+
         is_staff: Returns true if user is admin
 
     """
@@ -152,10 +155,12 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         """str: Returns CustomUser name and its id"""
         return f'{self.__class__.__name__}(id={self.id})'
 
+
 class Business(models.Model):
     """This class represents a Business model.
     
     Attributes:
+
         name: Name of business
         type: Type of business
         logo: Photo of business
@@ -175,7 +180,7 @@ class Business(models.Model):
         max_length=100
     )
     logo = models.ImageField(
-        upload_to=upload_location, 
+        upload_to=ModelsUtils.upload_location,
         blank=True
     )
     owner = models.ForeignKey(
@@ -225,6 +230,7 @@ class WorkingTime(DbView):
     This class represents Working time entity
 
     Attributes:
+
         block: is free or not
         date: working day
         specialist: specialist id
@@ -274,6 +280,7 @@ class Position(models.Model):
     """This class represents position in Business
 
     Attributes:
+
         name: position name
         specialist: specialist id
         business: business id
@@ -322,6 +329,7 @@ class Review(models.Model):
     that stores all the required information.
 
     Attributes:
+
         text_body: body of the review
         rating: Rating of review(natural number from 1 to 5)
         date_of_publication: Date and time of review publication
@@ -378,6 +386,7 @@ class Order(models.Model):
         end_time is autocalculated during creation, no need to put it
 
     Attributes:
+
         status: Status of the order
         start_time: Appointment time and date of the order
         end_time: Time that is calculated according to the duration of service
@@ -396,6 +405,7 @@ class Order(models.Model):
 
     class StatusChoices(models.TextChoices):
         """This class is used for status codes"""
+
         ACTIVE = 0, _('Active')
         COMPLETED = 1, _('Completed')
         CANCELLED = 2, _('Cancelled')
@@ -404,6 +414,7 @@ class Order(models.Model):
 
     class Meta:
         """This meta class stores ordering and permissions data"""
+
         ordering = ['id']
         unique_together = ['specialist', 'customer']
         get_latest_by = "created_at"
@@ -520,6 +531,7 @@ class Service(models.Model):
     """This class represents a Service that can be provided by Specialist.
 
     Attributes:
+
         position: Position that provides a service
         name: Name of the service
         price: Price of the service
@@ -556,6 +568,7 @@ class Service(models.Model):
         return self.name
 
     class Meta:
+
         """This meta class stores ordering and verbose name"""
         ordering = ['id']
         verbose_name = _("Service")
