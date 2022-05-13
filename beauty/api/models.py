@@ -166,19 +166,22 @@ class WorkingTime(DbView):
     """
 
     block = models.BooleanField(
-        default=False
+        default=False,
+        verbose_name=_("Is block")
     )
     date = models.DateTimeField(
-        verbose_name="Working day"
+        verbose_name=_("Working day")
     )
 
     specialist = models.ForeignKey(
         "CustomUser",
-        on_delete=models.DO_NOTHING
+        on_delete=models.DO_NOTHING,
+        verbose_name=_("Specialist")
     )
     order = models.ForeignKey(
         "Order",
-        on_delete=models.DO_NOTHING
+        on_delete=models.DO_NOTHING,
+        verbose_name=_("Order")
     )
 
     @classmethod
@@ -195,8 +198,8 @@ class WorkingTime(DbView):
     class Meta:
         """This meta class stores verbose names and permissions"""
         managed = False
-        verbose_name = "WorkingTime"
-        verbose_name_plural = "WorkingTimes"
+        verbose_name = _("WorkingTime")
+        verbose_name_plural = _("WorkingTimes")
 
 
 class Review(models.Model):
