@@ -173,7 +173,7 @@ class CustomUserDetailSerializer(PasswordsValidation,
         return super().update(instance, validated_data)
 
 
-class UserOrderDetailSerializer(serializers.HyperlinkedModelSerializer):
+class UserOrderDetailSerializer(serializers.HyperlinkedModelSqerializer):
     # book = serializers.SlugRelatedField(read_only=True, slug_field='name')
     # customer = serializers.CharField(source='user.get_full_name')
 
