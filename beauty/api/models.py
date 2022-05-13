@@ -18,12 +18,14 @@ from beauty.utils import ModelsUtils
 
 
 class MyUserManager(BaseUserManager):
-    """User manager"""
+    """This class provides tools for
+     creating and managing CustomUser model
+    """
 
-    def create_user(self, email, first_name, password=None,
+    def create_user(self, email: str, first_name: str, password=None,
                     is_active=True, bio=None, **additional_fields):
         """
-        Creates and saves a User with the given email and password.
+        Creates and saves CustomUser user instance with given fields values
         """
         if not email:
             raise ValueError('Users must have an email address')
@@ -40,10 +42,10 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, first_name,
+    def create_superuser(self, email: str, first_name: str,
                          password=None, bio=None, **additional_fields):
-        """
-        Creates and saves a superuser with the given email and password.
+        """Creates and saves CustomUser superuser
+         instance with given fields values
         """
         user = self.create_user(email, first_name,
                                 password, bio=bio, **additional_fields)
