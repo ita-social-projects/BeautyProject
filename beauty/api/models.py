@@ -9,10 +9,7 @@ from django.core.validators import validate_email, MinValueValidator,\
     MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
-<<<<<<< HEAD
 from django.utils.translation import gettext as _
-=======
->>>>>>> 3d9adaa4e8befc8fcdab092cabf056954bed08ef
 
 
 def upload_location(instance, filename):
