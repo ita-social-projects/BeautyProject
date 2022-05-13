@@ -120,21 +120,26 @@ class Position(models.Model):
     """
 
     name = models.CharField(
-        max_length=40
+        max_length=40,
+        verbose_name= _("Name")
     )
     specialist = models.ManyToManyField(
         "CustomUser", 
-        related_name="CustomUser.Position"
+        related_name="CustomUser.Position",
+        verbose_name= _("Specialist")
     )
     business = models.ForeignKey(
         "Business", 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name= _("Business")
     )
     start_time = models.DateTimeField(
-        editable=True
+        editable=True,
+        verbose_name= _("Start time")
     )
     end_time = models.DateTimeField(
-        editable=True
+        editable=True,
+        verbose_name= _("End time")
     )
 
     def __str__(self):
@@ -145,5 +150,5 @@ class Position(models.Model):
         """This meta class stores verbose names and ordering data"""
         
         ordering = ['name']
-        verbose = "Position"
-        verbose_name_plural = "Positions"
+        verbose = _("Position")
+        verbose_name_plural = _("Positions")
