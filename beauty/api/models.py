@@ -120,7 +120,7 @@ class Service(models.Model):
     """
 
     position = models.ForeignKey(
-        "Position",
+        "CustomUser",
         on_delete=models.CASCADE,
         verbose_name= "Position"
     )
