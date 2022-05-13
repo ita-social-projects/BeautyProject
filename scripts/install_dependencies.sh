@@ -7,5 +7,3 @@ yum install -y postgresql-libs postgresql-devel python-lxml python-devel gcc pat
 yum install -y gcc-c++ flex epel-release nginx supervisor
 
 sudo amazon-linux-extras install nginx1
-
-sudo nginx -c /etc/nginx/nginx.conf
