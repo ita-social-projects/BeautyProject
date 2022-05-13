@@ -136,7 +136,7 @@ All **feature** branches must be merged into [development](https://github.com/it
 Feature branches should be named as follows `Feature/#ID_short_feature_name` (e.g. `Feature/#13_Set_up_database`)
 
 
-Only the release should merge into the main branch!!!
+Only the release should be merged into the main branch!!!
 
 ![Github flow](<https://wac-cdn.atlassian.com/dam/jcr:b5259cce-6245-49f2-b89b-9871f9ee3fa4/03%20(2).svg?cdnVersion=1312>)
 
@@ -167,7 +167,7 @@ git clone https://github.com/ita-social-projects/BeautyProject.git
 
 #### Step 2
 
-- When creating [issue](https://github.com/ita-social-projects/BeautyProject/issues/new/choose) you should add name of the issue, description, choose assignee, label, project. If issue is a `User Story` you should link it with corresponding tasks, and corresponding tasks should be linked to issue.
+- When creating an [issue](https://github.com/ita-social-projects/BeautyProject/issues/new/choose) you should add name for the issue, description, choose assignee, label, project. If issue is a `User Story` you should link it with corresponding tasks, and corresponding tasks should be linked to issue.
 
 #### Step 3
 
