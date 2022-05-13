@@ -213,28 +213,28 @@ class Review(models.Model):
 
     text_body = models.CharField(
         max_length=500,
-        verbose_name="Review text"
+        verbose_name=_("Review text")
     )
     rating = models.IntegerField(
         blank=False,
         validators=(MinValueValidator(0), MaxValueValidator(5)),
-        verbose_name="Review rating"
+        verbose_name=_("Review rating")
     )
     date_of_publication = models.DateTimeField(
         auto_now_add=True,
-        verbose_name="Time of review publication"
+        verbose_name=_("Time of review publication")
     )
     from_user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         null=True,
-        related_name="FromRev"
+        related_name=_("Customer")
     )
     to_user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         null=True,
-        related_name="ToRev"
+        related_name=_("Specialist")
     )
 
     def __str__(self):
@@ -245,8 +245,8 @@ class Review(models.Model):
         """This meta class stores verbose names and permissions data"""
 
         ordering = ["date_of_publication"]
-        verbose_name = "Review"
-        verbose_name_plural = "Reviews"
+        verbose_name = _("Review")
+        verbose_name_plural = _("Reviews")
 
 
 class Business(models.Model):
