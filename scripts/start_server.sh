@@ -14,4 +14,4 @@ python3.9 manage.py collectstatic --noinput
 
 gunicorn beauty.wsgi:application --bind 0.0.0.0:8000
 
-sudo nginx -c /etc/nginx/nginx.conf
+# sudo nginx -c /etc/nginx/nginx.conf
