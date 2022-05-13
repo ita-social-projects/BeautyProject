@@ -4,7 +4,7 @@ cd home
 cd ec2-user
 cd Beauty
 
-sudo cp /home/ec2-user/www/project/nginx/default.conf /etc/nginx/nginx.conf
+sudo cp /home/ec2-user/Beauty/nginx/default.conf /etc/nginx/nginx.conf
 
 python3.9 -m venv venv
 
