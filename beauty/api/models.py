@@ -122,6 +122,7 @@ class Review(models.Model):
         to_user: Foreign key, that determines Specialist, who must have
                  received review
     """
+
     text_body = models.CharField(
         max_length=500,
         verbose_name="Review text"
@@ -149,11 +150,12 @@ class Review(models.Model):
     )
 
     def __str__(self):
-        """Returns a verbose title of the review"""
+        """str: Returns a verbose title of the review"""
         return self.text_body
 
     class Meta:
         """This meta class stores verbose names and permissions data"""
+
         ordering = ["date_of_publication"]
         verbose_name = "Review"
         verbose_name_plural = "Reviews"
