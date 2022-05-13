@@ -1,19 +1,20 @@
+"""This module provides all needed models"""
+
+import datetime
 import os
 
+from address.models import AddressField
+from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email
+from django.core.validators import validate_email, MinValueValidator,\
+    MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
+from django.utils.translation import gettext as _
+from dbview.models import DbView
 
-
-def upload_location(instance, filename):
-    new_name = instance.id if instance.id else instance.__class__.objects.all().last().id + 1
-    new_path = os.path.join('upload', f"{new_name}.{filename.split('.')[-1]}")
-    path = os.path.join(os.path.split(instance.avatar.path)[0], new_path)
-    if os.path.exists(path):
-        os.remove(path)
-    return new_path
+from beauty.utils import ModelsUtils
 
 
 class MyUserManager(BaseUserManager):
@@ -54,19 +55,69 @@ class MyUserManager(BaseUserManager):
 
 
 class CustomUser(PermissionsMixin, AbstractBaseUser):
-    """This class represents a basic user."""
+    """This class represents a custom User model
 
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(blank=True, max_length=20)
-    patronymic = models.CharField(blank=True, max_length=20)
-    email = models.EmailField(max_length=100, unique=True,
-                              validators=(validate_email,))
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    bio = models.TextField(max_length=255, blank=True, null=True)
-    phone_number = PhoneNumberField(unique=True)
-    rating = models.IntegerField(blank=True, default=0)
-    avatar = models.ImageField(blank=True, upload_to=upload_location)
+    Notes:
+        Rating field could be negative, works like a rating system
+
+    Attributes:
+        first_name: First name of the user
+        last_name: (optiomal) Last name of the user
+        patronymic: (optiomal) Patronymic of the user
+        email: Email of the user
+        updated_at: Time of the last update
+        created_at: Time when user was created
+        bio: (optiomal) Additional information about user
+        phone_number: Phone number of the user
+        rating: Rating of the user (specialist group only)
+        avatar: (optiomal) Avatar of the user
+        is_active: Determines whether user account is active
+        is_admin: Determines whether user is admin
+
+    Properties:
+        is_staff: Returns true if user is admin
+
+    """
+
+    first_name = models.CharField(
+        max_length=20
+    )
+    last_name = models.CharField(
+        blank=True,
+        max_length=20
+    )
+    patronymic = models.CharField(
+        blank=True,
+        max_length=20
+    )
+    email = models.EmailField(
+        max_length=100,
+        unique=True,
+        validators=(validate_email,)
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        editable=False
+    )
+    bio = models.TextField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+    phone_number = PhoneNumberField(
+        unique=True
+    )
+    rating = models.IntegerField(
+        blank=True,
+        default=0
+    )
+    avatar = models.ImageField(
+        blank=True,
+        upload_to=ModelsUtils.upload_location
+    )
 
     is_active = models.BooleanField(default=True)
 
@@ -79,32 +130,272 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     REQUIRED_FIELDS = ('password', 'first_name', 'phone_number')
 
     class Meta:
+        """This meta class stores verbose names ordering data"""
         ordering = ['id']
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
     @property
     def is_staff(self):
-        """Is the user a member of staff?"""
-        # Simplest possible answer: All admins are staff
+        """Determines whether user is admin"""
         return self.is_admin
 
     def get_full_name(self):
+        """Shows full name of the user"""
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
-        """
-        Magic method is redefined to show all information about CustomUser.
-        :return: user id, user first_name, user patronymic, user last_name,
-                 user email, user password, user updated_at, user created_at,
-                 user role, user is_active
-        """
+        """str: Returns full name of the user"""
         return self.get_full_name()
 
     def __repr__(self):
-        """
-        This magic method is redefined to show class and id of CustomUser object.
-        :return: class, id
-        """
+        """str: Returns CustomUser name and its id"""
         return f'{self.__class__.__name__}(id={self.id})'
+
+
+class WorkingTime(DbView):
+    """
+    This class represents Working time entity
+    Attributes:
+        block: is free or not
+        date: working day
+        specialist: specialist id
+        order: order id
+    """
+
+    block = models.BooleanField(
+        default=False
+    )
+    date = models.DateTimeField(
+        verbose_name="Working day"
+    )
+
+    specialist = models.ForeignKey(
+        "CustomUser",
+        on_delete=models.DO_NOTHING
+    )
+    order = models.ForeignKey(
+        "Order",
+        on_delete=models.DO_NOTHING
+    )
+
+    @classmethod
+    def view(cls):
+        """Return string of our request"""
+        #TODO: add request when all class will be realized
+        req = ()
+        return str(req.query)
+
+    def __str__(self):
+        """Magic method is redefined to show is this time blocked or no"""
+        return self.block
+
+    class Meta:
+        """This meta class stores verbose names and permissions"""
+        managed = False
+        verbose_name = "WorkingTime"
+        verbose_name_plural = "WorkingTimes"
+
+
+class Review(models.Model):
+    """This class represents basic Review (for Reviews system)
+    that stores all the required information.
+    Attributes:
+        text_body: body of the review
+        rating: Rating of review(natural number from 1 to 5)
+        date_of_publication: Date and time of review publication
+        from_user: Foreign key, that determines Customer, who sent a review
+        to_user: Foreign key, that determines Specialist, who must have
+                 received review
+    """
+
+    text_body = models.CharField(
+        max_length=500,
+        verbose_name="Review text"
+    )
+    rating = models.IntegerField(
+        blank=False,
+        validators=(MinValueValidator(0), MaxValueValidator(5)),
+        verbose_name="Review rating"
+    )
+    date_of_publication = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Time of review publication"
+    )
+    from_user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="FromRev"
+    )
+    to_user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="ToRev"
+    )
+
+    def __str__(self):
+        """str: Returns a verbose title of the review"""
+        return self.text_body
+
+    class Meta:
+        """This meta class stores verbose names and permissions data"""
+
+        ordering = ["date_of_publication"]
+        verbose_name = "Review"
+        verbose_name_plural = "Reviews"
+
+
+class Business(models.Model):
+
+    address = AddressField(verbose_name="Location", max_length=500)
+
+class Order(models.Model):
+    """This class represents a basic Order (for an appointment system)
+    that stores all the required information.
+
+    Note:
+        reason attribute is only neaded if order's status is cancelled
+        end_time is autocalculated during creation, no need to put it
+
+    Attributes:
+        status: Status of the order
+        start_time: Appointment time and date of the order
+        end_time: Time that is calculated according to the duration of service
+        created_at: Time of creation of the order
+        specialist: An appointed specialist for the order
+        customer: A customer who will recieve the order
+        service: Service that will be fulfield for the order
+        reason: (optional) Reason for cancellation
+
+    Properties:
+        is_active: Returns true if order's status is active
+        is_approved: Returns true if order's status is approved
+        is_declined: Returns true if order's status is declined
+
+    """
+
+    class StatusChoices(models.TextChoices):
+        """This class is used for status codes"""
+        ACTIVE = 0, _('Active')
+        COMPLETED = 1, _('Completed')
+        CANCELLED = 2, _('Cancelled')
+        APPROVED = 3, _('Approved')
+        DECLINED = 4, _('Declined')
+
+    class Meta:
+        """This meta class stores ordering and permissions data"""
+        ordering = ['id']
+        unique_together = ['specialist', 'customer']
+        get_latest_by = "created_at"
+        permissions = [
+        ('can_add_order', 'Can add an order'),
+        ('can_change_order', 'Can change an order'),
+        ('can_set_status', 'Can set a status of the order'),
+        ('can_view_order', 'Can view an order')
+        ]
+
+    status = models.CharField(
+        max_length=2,
+        choices=StatusChoices.choices,
+        default=StatusChoices.ACTIVE,
+        verbose_name=_('Current status')
+    )
+    start_time = models.DateTimeField(
+        editable=True,
+        verbose_name=_('Appointment time')
+    )
+    end_time = models.DateTimeField(
+        editable=False,
+        verbose_name=_('End time')
+    )
+    created_at = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+        verbose_name=_('Created at')
+    )
+    specialist = models.ForeignKey(
+        'CustomUser',
+        related_name = 'specialist_orders',
+        on_delete=models.CASCADE,
+        verbose_name=_('Specialist')
+    )
+    customer = models.ForeignKey(
+        'CustomUser',
+        related_name = 'customer_orders',
+        on_delete=models.CASCADE,
+        verbose_name=_('Customer')
+    )
+    service = models.ForeignKey(
+        'Service',
+        on_delete=models.CASCADE,
+        verbose_name=_('Service')
+    )
+    reason = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name=_('Reason for cancellation')
+    )
+
+    def save(self, *args, **kwargs):
+        """Reimplemented save method for end_time calculation"""
+        from datetime import timedelta
+        self.end_time = self.start_time + timedelta(minutes=self.service.duration)
+        super(Order, self).save(*args, **kwargs)
+        return self
+
+    @property
+    def is_active(self) -> bool:
+        """bool: Returns true if order's status is active"""
+        return self.status == self.StatusChoices.ACTIVE
+
+    @property
+    def is_approved(self) -> bool:
+        """bool: Returns true if order's status is approved"""
+        return self.status == self.StatusChoices.APPROVED
+
+    @property
+    def is_declined(self) -> bool:
+        """bool: Returns true if order's status is declined"""
+        return self.status == self.StatusChoices.DECLINED
+
+    def mark_as_approved(self):
+        """Marks order as approved"""
+        self.status = self.StatusChoices.APPROVED
+        self.save(update_fields=['status'])
+
+    def mark_as_cancelled(self):
+        """Marks order as cancelled"""
+        self.status = self.StatusChoices.CANCELLED
+        self.save(update_fields=['status'])
+
+    def mark_as_completed(self):
+        """Marks order as completed"""
+        self.status = self.StatusChoices.COMPLETED
+        self.save(update_fields=['status'])
+
+    def mark_as_declined(self):
+        """Marks order as declined"""
+        self.status = self.StatusChoices.DECLINED
+        self.save(update_fields=['status'])
+
+    def add_reason(self, reason: str):
+        """Add a reason for an order"""
+        self.reason = reason
+        self.save(update_fields=['reason'])
+
+    def get_reason(self) -> str:
+        """str: Returns a reason"""
+        return self.reason
+
+    def __str__(self) -> str:
+        """str: Returns a verbose title of the order"""
+        return f"Order #{self.id}"
+
+    def __repr__(self) -> str:
+        """str: Returns a string representation of the order"""
+        return f"Order #{self.id} ({self.status})"
 
 
 class Service(models.Model):
@@ -151,4 +442,3 @@ class Service(models.Model):
         ordering = ['id']
         verbose_name = "Service"
         verbose_name_plural = "Services"
-
