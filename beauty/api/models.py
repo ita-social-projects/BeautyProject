@@ -107,7 +107,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return f'{self.__class__.__name__}(id={self.id})'
 
 
-class Position(models.Model):
+'''class Position(models.Model):
     """This class represents position in Business
 
     Attributes:
@@ -119,16 +119,35 @@ class Position(models.Model):
 
     """
 
-    name = models.CharField(max_length=40)
-    specialist = models.ForeignKey("CustomUser", on_delete=models.CASCADE)
-    business = models.ForeignKey("Business", on_delete=models.CASCADE)
-
-    start_time = models.DateTimeField(editable=True)
-    end_time = models.DateTimeField(editable=True)
+    name = models.CharField(
+        max_length=40,
+        verbose_name=_("Name")
+    )
+    specialist = models.ManyToManyField(
+        "CustomUser",
+        related_name="CustomUser.Position",
+        verbose_name=_("Specialist")
+    )
+    business = models.ForeignKey(
+        "Business",
+        on_delete=models.CASCADE,
+        verbose_name=_("Business")
+    )
+    start_time = models.DateTimeField(
+        editable=True,
+        verbose_name=_("Start time")
+    )
+    end_time = models.DateTimeField(
+        editable=True
+    )
 
     def __str__(self):
-        """Magic method is redefined to show name of Position"""
+        """str: Returns name of Position"""
         return self.name
 
     class Meta:
+        """This meta class stores verbose names and ordering data"""
+
         ordering = ['name']
+        verbose = _("Position")
+        verbose_name_plural = _("Positions")'''
