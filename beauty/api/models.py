@@ -109,27 +109,68 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return f'{self.__class__.__name__}(id={self.id})'
 
 class Business(models.Model):
-    name = models.CharField(max_length=20)
-    type = models.CharField(max_length=100)
-    logo = models.ImageField(upload_to=upload_location, blank=True)
-    owner = models.ForeignKey('CustomUser', on_delete=models.PROTECT, related_name='businesses')
-    # location = models.OneToOneField('Location', max_length=300)
-    description = models.CharField(max_length=255)
-    address = AddressField(verbose_name="Location", max_length=500)
-    date_of_creation = models.DateTimeField(auto_now_add=True, editable=False)
+    """This class represents a Business model.
     
+    Attributes:
+        name: Name of business
+        type: Type of business
+        logo: Photo of business
+        owner: Owner of business
+        address: Location of business
+        description: Description of business
+        created_at: Time when business was created
+
+    """
+
+    name = models.CharField(
+        verbose_name=_('Name'),
+        max_length=20
+    )
+    type = models.CharField(
+        verbose_name=_('Type'),
+        max_length=100
+    )
+    logo = models.ImageField(
+        upload_to=upload_location, 
+        blank=True
+    )
+    owner = models.ForeignKey(
+        'CustomUser', 
+        verbose_name=_('Owner'),
+        on_delete=models.PROTECT, 
+        related_name='businesses'
+    )
+    address = AddressField(
+        verbose_name=_("Location"), 
+        max_length=500
+    )
+    description = models.CharField(
+        verbose_name=_('Created at'),
+        max_length=255
+    )
+    created_at = models.DateTimeField(
+        verbose_name=_('Created at'),
+        auto_now_add=True,
+        editable=False
+    )
+
     class Meta:
-        pass
-    
+        """This meta class stores verbose names"""
+        ordering = ['type']
+        verbose_name = 'Business'
+        verbose_name_plural = 'Businesses'
+
+    def __str__(self) -> str:
+        """str: Returns a verbose title of the business"""
+        return str(self.name)
+
+    #TODO: methods: get_all_specialist & create_position
     # def create_position(self, name, type, logo, owner, description):
     #     pos = Position(name=name)
     #     pos.save()
 
-    def __str__(self):
-        return str(self.name)
-
     def get_all_specialist(self):
-
+        """"""
         specialists = [position.specialists.all() for position in self.positions.all()]
         return specialists
 
