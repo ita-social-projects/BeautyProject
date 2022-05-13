@@ -200,6 +200,7 @@ class Business(models.Model):
 
     class Meta:
         """This meta class stores verbose names"""
+        
         ordering = ['type']
         verbose_name = _('Business')
         verbose_name_plural = _('Businesses')
@@ -218,14 +219,17 @@ class Business(models.Model):
         specialists = [position.specialists.all() for position in self.positions.all()]
         return specialists
 
+
 class WorkingTime(DbView):
     """
     This class represents Working time entity
+
     Attributes:
         block: is free or not
         date: working day
         specialist: specialist id
         order: order id
+
     """
 
     block = models.BooleanField(
@@ -260,14 +264,63 @@ class WorkingTime(DbView):
 
     class Meta:
         """This meta class stores verbose names and permissions"""
+
         managed = False
         verbose_name = _("WorkingTime")
         verbose_name_plural = _("WorkingTimes")
 
 
+class Position(models.Model):
+    """This class represents position in Business
+
+    Attributes:
+        name: position name
+        specialist: specialist id
+        business: business id
+        start_time: specialist work starts at
+        end_time: specialist work ends at
+
+    """
+
+    name = models.CharField(
+        max_length=40,
+        verbose_name= _("Name")
+    )
+    specialist = models.ManyToManyField(
+        "CustomUser", 
+        related_name="CustomUser.Position",
+        verbose_name= _("Specialist")
+    )
+    business = models.ForeignKey(
+        "Business", 
+        on_delete=models.CASCADE,
+        verbose_name= _("Business")
+    )
+    start_time = models.DateTimeField(
+        editable=True,
+        verbose_name= _("Start time")
+    )
+    end_time = models.DateTimeField(
+        editable=True,
+        verbose_name= _("End time")
+    )
+
+    def __str__(self):
+        """str: Returns name of Position"""
+        return self.name
+
+    class Meta:
+        """This meta class stores verbose names and ordering data"""
+        
+        ordering = ['name']
+        verbose = _("Position")
+        verbose_name_plural = _("Positions")
+
+
 class Review(models.Model):
     """This class represents basic Review (for Reviews system)
     that stores all the required information.
+
     Attributes:
         text_body: body of the review
         rating: Rating of review(natural number from 1 to 5)
@@ -275,6 +328,7 @@ class Review(models.Model):
         from_user: Foreign key, that determines Customer, who sent a review
         to_user: Foreign key, that determines Specialist, who must have
                  received review
+
     """
 
     text_body = models.CharField(
@@ -314,10 +368,6 @@ class Review(models.Model):
         verbose_name = _("Review")
         verbose_name_plural = _("Reviews")
 
-
-class Business(models.Model):
-
-    address = AddressField(verbose_name="Location", max_length=500)
 
 class Order(models.Model):
     """This class represents a basic Order (for an appointment system)
