@@ -15,15 +15,6 @@ from django.utils.translation import gettext as _
 from dbview.models import DbView
 from beauty.utils import ModelsUtils
 
-def upload_location(instance, filename):
-    new_name = instance.id if instance.id else instance.__class__.objects.all().last().id + 1
-    new_path = os.path.join('upload', f"{new_name}.{filename.split('.')[-1]}")
-    path = os.path.join(os.path.split(instance.avatar.path)[0], new_path)
-    if os.path.exists(path):
-        os.remove(path)
-    return new_path
-
-
 class MyUserManager(BaseUserManager):
     """This class provides tools for
      creating and managing CustomUser model
