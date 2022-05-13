@@ -119,16 +119,30 @@ class Position(models.Model):
 
     """
 
-    name = models.CharField(max_length=40)
-    specialist = models.ManyToManyField("CustomUser", related_name="position")
-    business = models.ForeignKey("Business", on_delete=models.CASCADE)
-
-    start_time = models.DateTimeField(editable=True)
-    end_time = models.DateTimeField(editable=True)
+    name = models.CharField(
+        max_length=40
+    )
+    specialist = models.ManyToManyField(
+        "CustomUser", 
+        related_name="CustomUser.Position"
+    )
+    business = models.ForeignKey(
+        "Business", 
+        on_delete=models.CASCADE
+    )
+    start_time = models.DateTimeField(
+        editable=True
+    )
+    end_time = models.DateTimeField(
+        editable=True
+    )
 
     def __str__(self):
-        """Magic method is redefined to show name of Position"""
+        """str: Returns name of Position"""
         return self.name
 
     class Meta:
+        """This meta class stores verbose names and ordering data"""
         ordering = ['name']
+        verbose = "Position"
+        verbose_name_plural = "Positions"
