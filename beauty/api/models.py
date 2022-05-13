@@ -108,7 +108,16 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
 
 class Service(models.Model):
-    """This class represents a Service that can be provided by Specialist"""
+    """This class represents a Service that can be provided by Specialist.
+
+    Attributes:
+        position: Position that provides a service
+        name: Name of the service
+        price: Price of the service
+        description: Description of the service
+        duration: The time during which service is provided
+
+    """
 
     position = models.ForeignKey(
         "Position",
@@ -134,9 +143,12 @@ class Service(models.Model):
     )
 
     def __str__(self):
+        """str: Returns a verbose name of the service"""
         return self.name
 
     class Meta:
+        """This meta class stores ordering and verbose name"""
+        ordering = ['id']
         verbose_name = "Service"
         verbose_name_plural = "Services"
 
