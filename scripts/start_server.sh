@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd home/ec2-user/Beauty
+cd /home/ec2-user/Beauty/beauty
 
 python3.9 -m venv venv
 
