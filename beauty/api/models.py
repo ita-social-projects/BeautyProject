@@ -294,8 +294,7 @@ class Position(models.Model):
         verbose_name= _("Name")
     )
     specialist = models.ManyToManyField(
-        "CustomUser", 
-        related_name="CustomUser.Position",
+        "CustomUser",
         verbose_name= _("Specialist")
     )
     business = models.ForeignKey(
@@ -320,7 +319,7 @@ class Position(models.Model):
         """This meta class stores verbose names and ordering data"""
         
         ordering = ['name']
-        verbose = _("Position")
+        verbose_name = _("Position")
         verbose_name_plural = _("Positions")
 
 
@@ -551,6 +550,7 @@ class Service(models.Model):
     )
     price = models.DecimalField(
         max_digits=5,
+        decimal_places=2,
         verbose_name=_("Service price")
     )
     description = models.CharField(
