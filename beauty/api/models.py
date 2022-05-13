@@ -143,6 +143,7 @@ class Position(models.Model):
 
     class Meta:
         """This meta class stores verbose names and ordering data"""
+        
         ordering = ['name']
         verbose = "Position"
         verbose_name_plural = "Positions"
