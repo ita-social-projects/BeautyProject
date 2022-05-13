@@ -180,16 +180,16 @@ class Order(models.Model):
     )
     specialist = models.ForeignKey(
         'CustomUser',
-        related_name = 'specialist_user', 
+        related_name = 'specialist_orders', 
         on_delete=models.CASCADE,
         verbose_name=_('Specialist')
     )
     customer = models.ForeignKey(
         'CustomUser', 
-        related_name = 'customer_user',
+        related_name = 'customer_orders',
         on_delete=models.CASCADE,
         verbose_name=_('Customer')
-        )
+    )
     service = models.ForeignKey(
         'Service', 
         on_delete=models.CASCADE,
