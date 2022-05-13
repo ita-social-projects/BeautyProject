@@ -115,13 +115,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 class WorkingTime(DbView):
     """
     This class represents Working time entity
-
     Attributes:
         block: is free or not
         date: working day
         specialist: specialist id
         order: order id
-
     """
 
     block = models.BooleanField(default=False)
@@ -138,9 +136,11 @@ class WorkingTime(DbView):
         return str(req.query)
 
     def __str__(self):
+        """Magic method is redefined to show is this time blocked or no"""
         return self.block
 
     class Meta:
+        """This meta class stores verbose names and permissions"""
         managed = False
         verbose_name = "WorkingTime"
         verbose_name_plural = "WorkingTimes"
