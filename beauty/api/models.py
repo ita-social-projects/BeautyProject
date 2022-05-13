@@ -122,11 +122,21 @@ class WorkingTime(DbView):
         order: order id
     """
 
-    block = models.BooleanField(default=False)
-    date = models.DateTimeField(verbose_name="Working day")
+    block = models.BooleanField(
+        default=False
+    )
+    date = models.DateTimeField(
+        verbose_name="Working day"
+    )
 
-    specialist = models.ForeignKey("CustomUser", on_delete=models.DO_NOTHING)
-    order = models.ForeignKey("Order", on_delete=models.DO_NOTHING)
+    specialist = models.ForeignKey(
+        "CustomUser",
+        on_delete=models.DO_NOTHING
+    )
+    order = models.ForeignKey(
+        "Order",
+        on_delete=models.DO_NOTHING
+    )
 
     @classmethod
     def view(cls):
