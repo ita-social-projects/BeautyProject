@@ -56,6 +56,9 @@ class MyUserManager(BaseUserManager):
 class CustomUser(PermissionsMixin, AbstractBaseUser):
     """This class represents a custom User model
 
+    Notes:
+        Rating field could be negative, works like a rating system
+
     Attributes:
         first_name: First name of the user
         last_name: (optiomal) Last name of the user
