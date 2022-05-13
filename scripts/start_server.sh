@@ -1,10 +1,6 @@
 #!/bin/bash
 
-cd home
-cd ec2-user
-cd Beauty
-
-sudo cp /home/ec2-user/Beauty/nginx/default.conf /etc/nginx/nginx.conf
+cd home/ec2-user/Beauty
 
 python3.9 -m venv venv
 
@@ -14,8 +10,8 @@ pip3.9 install -r requirements.txt
 
 python3.9 manage.py makemigrations
 python3.9 manage.py migrate
-python3.9 manage.py collectstatic --noinput && python3.9 manage.py runserver 0.0.0.0:8000
+python3.9 manage.py collectstatic --noinput
 
 gunicorn beauty.wsgi:application --bind 0.0.0.0:8000
 
-systemctl start nginx
+sudo nginx -c /etc/nginx/nginx.conf
