@@ -17,8 +17,6 @@ jobs:
 
           git remote add upstream https://github.com/ita-social-projects/BeautyProject/
           git fetch upstream
-
-          git checkout develop
-
-          git merge upstream/develop
+          
+          git merge upstream/develop --allow-unrelated-histories
           git push -f origin develop
