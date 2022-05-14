@@ -6,27 +6,40 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework.reverse import reverse
 
-from api.models import (CustomUser, Order)
+# from api.models import (CustomUser, Order)
+from api.models import CustomUser
 
 group_queryset = Group.objects.all()
 
 
-class CustomerHyperlink(serializers.HyperlinkedRelatedField):
-    view_name = 'authentication:user-order-detail'
-
-    def get_url(self, obj, view_name, request, format):
-        url_kwargs = {
-            'user_id': obj.user.pk,
-            'id': obj.pk
-        }
-        return reverse(view_name, kwargs=url_kwargs, request=request, format=format)
-
-    def get_object(self, view_name, view_args, view_kwargs):
-        lookup_kwargs = {
-            'user_id': view_kwargs['user_id'],
-            'id': view_kwargs['id']
-        }
-        return self.get_queryset().get(**lookup_kwargs)
+# class CustomerHyperlink(serializers.HyperlinkedRelatedField):
+#     view_name = 'api:user-order-detail'
+#
+#     def get_url(self, obj, view_name, request, format):
+#
+#         # url_kwargs = {
+#         #     'user_id': obj.user.pk,
+#         #     'id': obj.pk
+#         # }
+#         try:
+#             obj_pk = obj.specialist.pk
+#         except:
+#             obj_pk = obj.customer.pk
+#
+#         url_kwargs = {
+#             'user_id': obj_pk,
+#             'id': obj.pk
+#         }
+#         return reverse(
+#             view_name, kwargs=url_kwargs, request=request, format=format
+#         )
+#
+#     def get_object(self, view_name, view_args, view_kwargs):
+#         lookup_kwargs = {
+#             'user_id': view_kwargs['user_id'],
+#             'id': view_kwargs['id']
+#         }
+#         return self.get_queryset().get(**lookup_kwargs)
 
 
 class PasswordsValidation(serializers.Serializer):
@@ -104,7 +117,7 @@ class CustomUserSerializer(PasswordsValidation,
     groups = GroupListingField(
         many=True, required=False, queryset=group_queryset
     )
-    orders = CustomerHyperlink(many=True, read_only=True)
+    # orders = CustomerHyperlink(many=True, read_only=True)
 
     class Meta:
         """Class with a model and model fields for serialization."""
@@ -112,7 +125,7 @@ class CustomUserSerializer(PasswordsValidation,
         model = CustomUser
         fields = ['url', 'id', 'email', 'first_name', 'patronymic',
                   'last_name', 'phone_number', 'bio', 'rating', 'avatar',
-                  'is_active', 'groups', 'orders', 'password',
+                  'is_active', 'groups', 'password',
                   'confirm_password']
 
     def create(self, validated_data: dict) -> object:
@@ -134,7 +147,7 @@ class CustomUserDetailSerializer(PasswordsValidation,
                                  serializers.ModelSerializer):
     """Serializer for getting and updating a concreted user."""
 
-    orders = CustomerHyperlink(many=True, read_only=True)
+    # orders = CustomerHyperlink(many=True, read_only=True)
     groups = GroupListingField(many=True, queryset=group_queryset)
     password = serializers.CharField(
         write_only=True, allow_blank=True, validators=[validate_password],
@@ -154,7 +167,7 @@ class CustomUserDetailSerializer(PasswordsValidation,
         model = CustomUser
         fields = ['id', 'email', 'first_name', 'patronymic', 'last_name',
                   'phone_number', 'bio', 'rating', 'avatar', 'is_active',
-                  'groups', 'orders', 'password', 'confirm_password']
+                  'groups', 'password', 'confirm_password']
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Update user information using dict with data.
@@ -173,10 +186,10 @@ class CustomUserDetailSerializer(PasswordsValidation,
         return super().update(instance, validated_data)
 
 
-class UserOrderDetailSerializer(serializers.HyperlinkedModelSqerializer):
-    # book = serializers.SlugRelatedField(read_only=True, slug_field='name')
-    # customer = serializers.CharField(source='user.get_full_name')
-
-    class Meta:
-        model = Order
-        fields = ['id', 'customer']
+# class UserOrderDetailSerializer(serializers.HyperlinkedModelSqerializer):
+#     # book = serializers.SlugRelatedField(read_only=True, slug_field='name')
+#     # customer = serializers.CharField(source='user.get_full_name')
+#
+#     class Meta:
+#         model = Order
+#         fields = ['id', 'customer']
