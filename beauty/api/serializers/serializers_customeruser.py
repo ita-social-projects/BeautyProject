@@ -6,40 +6,39 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework.reverse import reverse
 
-# from api.models import (CustomUser, Order)
-from api.models import CustomUser
+from api.models import (CustomUser, Order)
 
 group_queryset = Group.objects.all()
 
 
-# class CustomerHyperlink(serializers.HyperlinkedRelatedField):
-#     view_name = 'api:user-order-detail'
-#
-#     def get_url(self, obj, view_name, request, format):
-#
-#         # url_kwargs = {
-#         #     'user_id': obj.user.pk,
-#         #     'id': obj.pk
-#         # }
-#         try:
-#             obj_pk = obj.specialist.pk
-#         except:
-#             obj_pk = obj.customer.pk
-#
-#         url_kwargs = {
-#             'user_id': obj_pk,
-#             'id': obj.pk
-#         }
-#         return reverse(
-#             view_name, kwargs=url_kwargs, request=request, format=format
-#         )
-#
-#     def get_object(self, view_name, view_args, view_kwargs):
-#         lookup_kwargs = {
-#             'user_id': view_kwargs['user_id'],
-#             'id': view_kwargs['id']
-#         }
-#         return self.get_queryset().get(**lookup_kwargs)
+class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
+    """Custom HyperlinkedRelatedField for user orders."""
+
+    view_name = 'api:specialist-order-detail'
+    url_user_id = 'specialist_id'
+
+    def __init__(self, **kwargs):
+        self.view_name = kwargs.pop('view_name', self.view_name)
+        self.url_user_id = kwargs.pop('url_user_id', self.url_user_id)
+        super().__init__(**kwargs)
+
+    def get_url(self, obj: object, view_name: str, request: dict,
+                format: str) -> str:
+        """Given an object, return the URL that hyperlinks to the object.
+
+        May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
+        attributes are not configured to correctly match the URL conf.
+
+        Returns:
+            url (str):  hyperlinks to the object
+        """
+        url_kwargs = {
+            'user': getattr(obj, self.url_user_id),
+            'id': obj.pk
+        }
+        return reverse(
+            view_name, kwargs=url_kwargs, request=request, format=format
+        )
 
 
 class PasswordsValidation(serializers.Serializer):
@@ -103,7 +102,6 @@ class CustomUserSerializer(PasswordsValidation,
     url = serializers.HyperlinkedIdentityField(
         view_name='api:user-detail', lookup_field='pk'
     )
-
     password = serializers.CharField(
         write_only=True, required=True,
         style={'input_type': 'password', 'placeholder': 'Password'},
@@ -117,7 +115,10 @@ class CustomUserSerializer(PasswordsValidation,
     groups = GroupListingField(
         many=True, required=False, queryset=group_queryset
     )
-    # orders = CustomerHyperlink(many=True, read_only=True)
+    specialist_orders = OrderUserHyperlink(many=True, read_only=True)
+    customer_orders = OrderUserHyperlink(
+        many=True, read_only=True, url_user_id='customer_id'
+    )
 
     class Meta:
         """Class with a model and model fields for serialization."""
@@ -125,8 +126,8 @@ class CustomUserSerializer(PasswordsValidation,
         model = CustomUser
         fields = ['url', 'id', 'email', 'first_name', 'patronymic',
                   'last_name', 'phone_number', 'bio', 'rating', 'avatar',
-                  'is_active', 'groups', 'password',
-                  'confirm_password']
+                  'is_active', 'groups', 'specialist_orders',
+                  'customer_orders', 'password', 'confirm_password']
 
     def create(self, validated_data: dict) -> object:
         """Create a new user using dict with data.
@@ -139,26 +140,27 @@ class CustomUserSerializer(PasswordsValidation,
 
         """
         validated_data.pop('confirm_password')
-        user = CustomUser.objects.create_user(**validated_data)
-        return user
+        return super().create(validated_data)
 
 
 class CustomUserDetailSerializer(PasswordsValidation,
                                  serializers.ModelSerializer):
     """Serializer for getting and updating a concreted user."""
 
-    # orders = CustomerHyperlink(many=True, read_only=True)
     groups = GroupListingField(many=True, queryset=group_queryset)
     password = serializers.CharField(
         write_only=True, allow_blank=True, validators=[validate_password],
         style={'input_type': 'password', 'placeholder': 'New Password'}
     )
-
     confirm_password = serializers.CharField(
         write_only=True, allow_blank=True,
         help_text='Leave empty if no change needed',
         style={'input_type': 'password',
                'placeholder': 'Confirmation Password'}
+    )
+    specialist_orders = OrderUserHyperlink(many=True, read_only=True)
+    customer_orders = OrderUserHyperlink(
+        many=True, read_only=True, url_user_id='customer_id'
     )
 
     class Meta:
@@ -167,7 +169,8 @@ class CustomUserDetailSerializer(PasswordsValidation,
         model = CustomUser
         fields = ['id', 'email', 'first_name', 'patronymic', 'last_name',
                   'phone_number', 'bio', 'rating', 'avatar', 'is_active',
-                  'groups', 'password', 'confirm_password']
+                  'groups', 'specialist_orders',  'customer_orders',
+                  'password', 'confirm_password']
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Update user information using dict with data.
@@ -186,10 +189,8 @@ class CustomUserDetailSerializer(PasswordsValidation,
         return super().update(instance, validated_data)
 
 
-# class UserOrderDetailSerializer(serializers.HyperlinkedModelSqerializer):
-#     # book = serializers.SlugRelatedField(read_only=True, slug_field='name')
-#     # customer = serializers.CharField(source='user.get_full_name')
-#
-#     class Meta:
-#         model = Order
-#         fields = ['id', 'customer']
+class UserOrderDetailSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = ['id', 'customer_id', 'specialist_id']
