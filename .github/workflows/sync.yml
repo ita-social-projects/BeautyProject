@@ -16,7 +16,7 @@ jobs:
           git config --global user.email 'morento101@users.noreply.github.com'
 
           git checkout develop
-          git pull --unshallow
+          git pull origin develop --unshallow
 
           git remote add upstream https://github.com/ita-social-projects/BeautyProject/
           git pull upstream develop
