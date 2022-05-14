@@ -19,12 +19,5 @@ jobs:
           git pull --unshallow
 
           git remote add upstream https://github.com/ita-social-projects/BeautyProject/
-          git fetch upstream
-
-          git checkout -b feature/x origin/feature/x
-          git merge --no-edit upstream/feature/x
-          git push origin feature/x
-
-          git checkout develop
-          git merge --no-edit upstream/develop
+          git pull upstream develop
           git push origin develop
