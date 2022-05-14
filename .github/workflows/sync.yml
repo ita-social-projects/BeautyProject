@@ -1,0 +1,23 @@
+name: Merge upstream branches
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '*/15 * * * *'
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Merge upstream
+        run: |
+          git config --global user.name 'morento101'
+          git config --global user.email 'morento101@users.noreply.github.com'
+
+          git remote add upstream https://github.com/ita-social-projects/BeautyProject/
+          git fetch upstream
+          
+          git rebase upstream/develop
+          
+          git push origin develop
