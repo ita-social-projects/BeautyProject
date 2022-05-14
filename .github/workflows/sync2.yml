@@ -1,0 +1,29 @@
+name: Merge upstream branches
+
+on:
+  schedule:
+    - cron:  '*/15 * * * *'
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Merge upstream
+        run: |
+          git config --global user.name 'morento101'
+          git config --global user.email 'morento101@users.noreply.github.com'
+
+          git checkout develop
+          git pull --unshallow
+
+          git remote add upstream https://github.com/ita-social-projects/BeautyProject/
+          git fetch upstream
+
+          git checkout -b feature/x origin/feature/x
+          git merge --no-edit upstream/feature/x
+          git push origin feature/x
+
+          git checkout develop
+          git merge --no-edit upstream/develop
+          git push origin develop
