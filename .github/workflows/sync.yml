@@ -16,7 +16,7 @@ jobs:
           git config --global user.email 'morento101@users.noreply.github.com'
 
           git remote add upstream https://github.com/ita-social-projects/BeautyProject/
-          git fetch upstream
+          git fetch -unshallow  upstream
           
           git merge upstream/develop
           
