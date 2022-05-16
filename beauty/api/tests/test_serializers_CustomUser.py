@@ -30,8 +30,10 @@ class CustomUserSerializerTestCase(TestCase):
         with open('api/fixtures/customuser_serializer_test/'
                   'relative_hyperlinks_expected_data.json') as f:
             expected = json.load(f)
-            serializer = self.serializer(self.queryset, many=True,
-                                         context={'request': None})
+            serializer = self.serializer(
+                self.queryset, many=True,
+                context={'request': None}
+            )
             with self.assertNumQueries(13):
                 self.assertEqual(serializer.data, expected)
 
@@ -39,8 +41,10 @@ class CustomUserSerializerTestCase(TestCase):
         with open('api/fixtures/customuser_serializer_test/'
                   'retrieve_create_expected_data.json') as f:
             expected = json.load(f)
-            serializer = self.serializer(self.queryset, many=True,
-                                         context={'request': request})
+            serializer = self.serializer(
+                self.queryset, many=True,
+                context={'request': request}
+            )
             with self.assertNumQueries(13):
                 self.assertEqual(serializer.data, expected)
 
@@ -61,8 +65,10 @@ class CustomUserSerializerTestCase(TestCase):
                 'customer_orders': [],
                 "password": "0967478911m",
                 "confirm_password": "0967478911m"}
-        serializer = self.serializer(data=data,
-                                     context={'request': request})
+        serializer = self.serializer(
+            data=data,
+            context={'request': request}
+        )
         self.assertTrue(serializer.is_valid(raise_exception=True))
         obj = serializer.save()
         data.pop('password'),
@@ -75,17 +81,20 @@ class CustomUserSerializerTestCase(TestCase):
                   'retrieve_create_expected_data.json') as f:
             expected = json.load(f)
             expected.append(data)
-            serializer = self.serializer(self.queryset, many=True,
-                                         context={'request': request})
+            serializer = self.serializer(
+                self.queryset, many=True,
+                context={'request': request}
+            )
             self.assertEqual(serializer.data, expected)
 
     def test_reverse_many_to_many_update(self):
         data = {'first_name': 'Specialist_1_1', 'email': 'test@com.ua'}
         instance = self.queryset[0]
-        serializer = self.detail_serializer(instance=instance, data=data,
-                                            partial=True,
-                                            context={'request': request})
-
+        serializer = self.detail_serializer(
+            instance=instance, data=data,
+            partial=True,
+            context={'request': request}
+        )
         self.assertTrue(serializer.is_valid(raise_exception=True))
         serializer.save()
         self.assertEqual(serializer.data['first_name'], data['first_name'])
@@ -108,8 +117,10 @@ class PasswordsValidationTest(TestCase):
     def test_invalid_data(self):
         with self.assertRaises(ValidationError) as ex:
             self.validator.validate(self.invalid_data)
-        self.assertEqual({"password": "Password confirmation does not match."},
-                         ex.exception.args[0])
+        self.assertEqual(
+            {"password": "Password confirmation does not match."},
+            ex.exception.args[0]
+        )
 
     def test_password_null(self):
         with self.assertRaises(ValidationError) as ex:
@@ -117,4 +128,5 @@ class PasswordsValidationTest(TestCase):
             self.validator.validate(self.null_data_two)
         self.assertEqual(
             {'confirm_password': 'Didn`t enter the password confirmation.'},
-            ex.exception.args[0])
+            ex.exception.args[0]
+        )
