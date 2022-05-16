@@ -294,7 +294,6 @@ class Position(models.Model):
     specialist = models.ManyToManyField(
         "CustomUser",
         verbose_name= _("Specialist"),
-        related_name= "CustomUser.Position"
     )
     business = models.ForeignKey(
         "Business", 
