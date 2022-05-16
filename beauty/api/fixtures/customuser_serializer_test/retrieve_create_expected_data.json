@@ -2,10 +2,26 @@
   {
     "url": "http://testserver/api/v1/user/1/",
     "id": 1,
+    "email": "m@com.ua",
+    "first_name": "M",
+    "patronymic":"",
+    "last_name":"",
+    "phone_number": "+380967478912",
+    "bio": null,
+    "rating": 0,
+    "avatar": null,
+    "is_active": true,
+    "groups": [],
+    "specialist_orders": [],
+    "customer_orders": []
+  },
+  {
+    "url": "http://testserver/api/v1/user/2/",
+    "id": 2,
     "email": "m1@com.ua",
     "first_name": "Specialist_1",
-    "patronymic": "",
-    "last_name": "",
+    "patronymic":"",
+    "last_name":"",
     "phone_number": "+380967470000",
     "bio": null,
     "rating": 0,
@@ -15,21 +31,21 @@
       "Specialist"
     ],
     "specialist_orders": [
-      "http://testserver/api/v1/user/1/order/1/",
-      "http://testserver/api/v1/user/1/order/2/",
-      "http://testserver/api/v1/user/1/order/3/"
+      "http://testserver/api/v1/user/2/order/1/",
+      "http://testserver/api/v1/user/2/order/2/",
+      "http://testserver/api/v1/user/2/order/3/"
     ],
     "customer_orders": [
-      "http://testserver/api/v1/user/1/order/6/"
+      "http://testserver/api/v1/user/2/order/4/"
     ]
   },
   {
-    "url": "http://testserver/api/v1/user/2/",
-    "id": 2,
+    "url": "http://testserver/api/v1/user/3/",
+    "id": 3,
     "email": "m2@com.ua",
     "first_name": "Specialist_2",
-    "patronymic": "",
-    "last_name": "",
+    "patronymic":"",
+    "last_name":"",
     "phone_number": "+380967470001",
     "bio": null,
     "rating": 0,
@@ -39,43 +55,22 @@
       "Specialist"
     ],
     "specialist_orders": [
-      "http://testserver/api/v1/user/2/order/4/",
-      "http://testserver/api/v1/user/2/order/5/",
-      "http://testserver/api/v1/user/2/order/6/"
+      "http://testserver/api/v1/user/3/order/4/",
+      "http://testserver/api/v1/user/3/order/5/",
+      "http://testserver/api/v1/user/3/order/6/"
     ],
     "customer_orders": [
-      "http://testserver/api/v1/user/2/order/3/"
-    ]
-  },
-  {
-    "url": "http://testserver/api/v1/user/3/",
-    "id": 3,
-    "email": "m3@com.ua",
-    "first_name": "Customer_1",
-    "patronymic": "",
-    "last_name": "",
-    "phone_number": "+380967470002",
-    "bio": null,
-    "rating": 0,
-    "avatar": null,
-    "is_active": true,
-    "groups": [
-      "Customer"
-    ],
-    "specialist_orders": [],
-    "customer_orders": [
-      "http://testserver/api/v1/user/3/order/1/",
-      "http://testserver/api/v1/user/3/order/4/"
+      "http://testserver/api/v1/user/3/order/1/"
     ]
   },
   {
     "url": "http://testserver/api/v1/user/4/",
     "id": 4,
-    "email": "m4@com.ua",
-    "first_name": "Customer_2",
-    "patronymic": "",
-    "last_name": "",
-    "phone_number": "+380967470003",
+    "email": "m3@com.ua",
+    "first_name": "Customer_1",
+    "patronymic":"",
+    "last_name":"",
+    "phone_number": "+380967470002",
     "bio": null,
     "rating": 0,
     "avatar": null,
@@ -87,6 +82,27 @@
     "customer_orders": [
       "http://testserver/api/v1/user/4/order/2/",
       "http://testserver/api/v1/user/4/order/5/"
+    ]
+  },
+  {
+    "url": "http://testserver/api/v1/user/5/",
+    "id": 5,
+    "email": "m4@com.ua",
+    "first_name": "Customer_2",
+    "patronymic":"",
+    "last_name":"",
+    "phone_number": "+380967470003",
+    "bio": null,
+    "rating": 0,
+    "avatar": null,
+    "is_active": true,
+    "groups": [
+      "Customer"
+    ],
+    "specialist_orders": [],
+    "customer_orders": [
+      "http://testserver/api/v1/user/5/order/3/",
+      "http://testserver/api/v1/user/5/order/6/"
     ]
   }
 ]

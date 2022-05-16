@@ -17,9 +17,7 @@ request = factory.get('/')
 class CustomUserSerializerTestCase(TestCase):
     """Tests for CustomUser serializers."""
 
-    fixtures = ['customuser_serializer_test/customusers_test_data.json',
-                'customuser_serializer_test/groups_test_data.json',
-                'customuser_serializer_test/orders_test_data.json']
+    fixtures = ['customuser_serializer_test/customusers_test_data.json', ]
 
     def setUp(self):
         self.serializer = CustomUserSerializer
@@ -34,8 +32,7 @@ class CustomUserSerializerTestCase(TestCase):
                 self.queryset, many=True,
                 context={'request': None}
             )
-            with self.assertNumQueries(13):
-                self.assertEqual(serializer.data, expected)
+            self.assertEqual(serializer.data, expected)
 
     def test_reverse_many_to_many_retrieve(self):
         with open('api/fixtures/customuser_serializer_test/'
@@ -45,18 +42,18 @@ class CustomUserSerializerTestCase(TestCase):
                 self.queryset, many=True,
                 context={'request': request}
             )
-            with self.assertNumQueries(13):
+            with self.assertNumQueries(16):
                 self.assertEqual(serializer.data, expected)
 
     def test_reverse_many_to_many_create(self):
-        data = {"url": "http://testserver/api/v1/user/5/",
-                "id": 5,
-                "email": "m5@com.ua",
-                "first_name": "Specialist_5",
-                "patronymic": "PSpecialist_5",
-                "last_name": "LSpecialist_5",
-                "phone_number": "+380967470006",
-                "bio": "Specialist_5",
+        data = {"url": "http://testserver/api/v1/user/6/",
+                "id": 6,
+                "email": "m6@com.ua",
+                "first_name": "Specialist_6",
+                "patronymic": "PSpecialist_6",
+                "last_name": "LSpecialist_6",
+                "phone_number": "+380967470016",
+                "bio": "Specialist_6",
                 "rating": 0,
                 "avatar": None,
                 "is_active": True,
@@ -74,7 +71,7 @@ class CustomUserSerializerTestCase(TestCase):
         data.pop('password'),
         data.pop('confirm_password')
         self.assertEqual(serializer.data, data)
-        self.assertEqual(obj.email, "m5@com.ua")
+        self.assertEqual(obj.email, "m6@com.ua")
 
         # Ensure target 4 is added, and everything else is as expected
         with open('api/fixtures/customuser_serializer_test/'

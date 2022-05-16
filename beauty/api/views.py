@@ -1,8 +1,10 @@
-from rest_framework.generics import ListCreateAPIView
+from django.db.models import Q
+from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
-from .models import CustomUser
-from .serializers.serializers_customuser import CustomUserDetailSerializer
+from .models import CustomUser, Order
+from .serializers.serializers_customuser import CustomUserDetailSerializer, \
+    UserOrderDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
 
 
@@ -25,3 +27,17 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     # Permissions
     # rest git hub
+
+
+class CustomUserOrderDetailGenerics(RetrieveUpdateDestroyAPIView):
+    queryset = Order.objects.all()
+    serializer_class = UserOrderDetailSerializer
+    multiple_lookup_fields = ('user', 'id')
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, Q(customer=self.kwargs['user']) |
+                                Q(specialist=self.kwargs['user']),
+                                id=self.kwargs['id'])
+        self.check_object_permissions(self.request, obj)
+        return obj
