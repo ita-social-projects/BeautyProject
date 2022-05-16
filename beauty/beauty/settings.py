@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
-
 from pathlib import Path
 from decouple import config, Csv
 
@@ -29,6 +28,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 AUTH_USER_MODEL = "api.CustomUser"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -79,7 +79,6 @@ WSGI_APPLICATION = 'beauty.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 
 # DATABASES = {
 #     'default': dj_database_url.config(conn_max_age=500, default='postgres://postgres:postgres@db:5432/beauty')}
