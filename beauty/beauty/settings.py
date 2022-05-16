@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
-from pathlib import Path
 
-import dj_database_url
+from pathlib import Path
 from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,6 +28,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+AUTH_USER_MODEL = "api.CustomUser"
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,13 +41,14 @@ INSTALLED_APPS = [
     # other apps
     'rest_framework',
     'django_filters',
+    'phonenumber_field',
+    'address',
     # project apps
+    'api'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # WhiteNoiseMiddleware
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,9 +81,23 @@ WSGI_APPLICATION = 'beauty.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-DATABASES = {
-    'default': dj_database_url.config(conn_max_age=500, default='postgres://postgres:postgres@localhost:5432/beauty')}
+# DATABASES = {
+#     'default': dj_database_url.config(conn_max_age=500, default='postgres://postgres:postgres@db:5432/beauty')}
 
+DATABASES = {
+    # 'default': {
+    #   'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #   'HOST': config("DB_HOST"),
+    #   'NAME': config("DB_NAME"),
+    #   'USER': config("DB_USER"),
+    #   'PASSWORD': config("DB_PASS"),
+    #   'PORT': config("DB_PORT")
+    # }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase.sqlite3',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -121,9 +136,9 @@ STATIC_URL = 'static/'
 # for collectstatic
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Simplified static file serving.
-# https://warehouse.python.org/project/whitenoise/
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+MEDIA_URL = 'media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
