@@ -183,13 +183,11 @@ class CustomUserDetailSerializer(PasswordsValidation,
             user (object): instance with updated data
 
         """
-        confirm_password = validated_data.pop('confirm_password')
-        if confirm_password:
-            validated_data['password'] = make_password(confirm_password)
+        validated_data.pop('confirm_password')
         return super().update(instance, validated_data)
 
 
-class UserOrderDetailSerializer(serializers.HyperlinkedModelSerializer):
+class UserOrderDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order

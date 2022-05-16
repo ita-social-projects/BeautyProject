@@ -1,0 +1,105 @@
+[{
+    "model": "api.customuser",
+    "fields": {
+        "password": "pbkdf2_sha256$320000$YjcLwF0Ak07teig6cT0P5P$1yBaWtOzvOfX2BSI1gmQknaOKZemnGWT/sswLI9W9fU=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "Specialist_1",
+        "last_name": "",
+        "patronymic": "",
+        "email": "m1@com.ua",
+        "updated_at": "2022-05-15T10:08:27.321Z",
+        "created_at": "2022-05-15T10:08:27.321Z",
+        "bio": null,
+        "phone_number": "+380967470000",
+        "rating": 0,
+        "avatar": "",
+        "is_active": true,
+        "is_admin": false,
+        "groups": [
+            [
+                "Specialist"
+            ]
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "api.customuser",
+    "fields": {
+        "password": "pbkdf2_sha256$320000$RWleJpMMz9qTuAO22KNvjK$BDv16qQfb1Bf6E5iL481AzwLAn5or69cIrnX33ihsDM=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "Specialist_2",
+        "last_name": "",
+        "patronymic": "",
+        "email": "m2@com.ua",
+        "updated_at": "2022-05-15T10:09:02.921Z",
+        "created_at": "2022-05-15T10:09:02.921Z",
+        "bio": null,
+        "phone_number": "+380967470001",
+        "rating": 0,
+        "avatar": "",
+        "is_active": true,
+        "is_admin": false,
+        "groups": [
+            [
+                "Specialist"
+            ]
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "api.customuser",
+    "fields": {
+        "password": "pbkdf2_sha256$320000$No1uf16maef39Xs6fVsncT$GphmQmonKG25rex3n6w/zTCEUq6F0ojHnCOkGq6rkFE=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "Customer_1",
+        "last_name": "",
+        "patronymic": "",
+        "email": "m3@com.ua",
+        "updated_at": "2022-05-15T10:10:02.221Z",
+        "created_at": "2022-05-15T10:10:02.221Z",
+        "bio": null,
+        "phone_number": "+380967470002",
+        "rating": 0,
+        "avatar": "",
+        "is_active": true,
+        "is_admin": false,
+        "groups": [
+            [
+                "Customer"
+            ]
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "api.customuser",
+    "fields": {
+        "password": "pbkdf2_sha256$320000$7BhbJdPavtOfR5FzZvxEEz$vpNNxNdBDyXBGVXCDnlL0CZE5KF6p65UiR8OOSHrPL0=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "Customer_2",
+        "last_name": "",
+        "patronymic": "",
+        "email": "m4@com.ua",
+        "updated_at": "2022-05-15T10:10:41.405Z",
+        "created_at": "2022-05-15T10:10:41.405Z",
+        "bio": null,
+        "phone_number": "+380967470003",
+        "rating": 0,
+        "avatar": "",
+        "is_active": true,
+        "is_admin": false,
+        "groups": [
+            [
+                "Customer"
+            ]
+        ],
+        "user_permissions": []
+    }
+}
+]
