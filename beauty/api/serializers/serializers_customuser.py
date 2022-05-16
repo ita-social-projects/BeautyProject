@@ -139,7 +139,8 @@ class CustomUserSerializer(PasswordsValidation,
             user (object): new user
 
         """
-        validated_data.pop('confirm_password')
+        confirm_password = validated_data.pop('confirm_password')
+        validated_data['password'] = make_password(confirm_password)
         return super().create(validated_data)
 
 
@@ -184,6 +185,9 @@ class CustomUserDetailSerializer(PasswordsValidation,
 
         """
         validated_data.pop('confirm_password')
+        confirm_password = validated_data.pop('confirm_password')
+        if confirm_password:
+            validated_data['password'] = make_password(confirm_password)
         return super().update(instance, validated_data)
 
 
