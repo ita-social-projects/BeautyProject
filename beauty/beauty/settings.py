@@ -86,18 +86,18 @@ WSGI_APPLICATION = 'beauty.wsgi.application'
 #     'default': dj_database_url.config(conn_max_age=500, default='postgres://postgres:postgres@db:5432/beauty')}
 
 DATABASES = {
-    # 'default': {
-    #   'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #   'HOST': config("DB_HOST"),
-    #   'NAME': config("DB_NAME"),
-    #   'USER': config("DB_USER"),
-    #   'PASSWORD': config("DB_PASS"),
-    #   'PORT': config("DB_PORT")
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase.sqlite3',
+      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+      'HOST': config("DB_HOST"),
+      'NAME': config("DB_NAME"),
+      'USER': config("DB_USER"),
+      'PASSWORD': config("DB_PASS"),
+      'PORT': config("DB_PORT")
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': 'mydatabase.sqlite3',
+    # }
 }
 
 # Password validation
