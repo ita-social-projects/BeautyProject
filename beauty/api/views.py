@@ -3,12 +3,23 @@ from .serializers.serializers_customuser import CustomUserSerializer, CustomUser
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 
-class CustomUserRegistration(ListCreateAPIView):
+class CustomUserListCreateView(ListCreateAPIView):
+    """Generic API for custom POST method"""
+
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
+    # Permissions
+    # line with max chars in code
 
-class CustomUserDetailRegistration(RetrieveUpdateDestroyAPIView):
+
+class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
+    """Generic API for custom GET, PUT and DELETE method
+    RUD - Retrive, Update, Delete"""
+
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
+
+    # Permissions
+    # rest git hub 
 
