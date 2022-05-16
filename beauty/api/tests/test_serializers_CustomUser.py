@@ -1,7 +1,7 @@
-import json
-from django.test import TestCase, override_settings
-from django.urls import path, include
+"""The module includes tests for CustomUser serializers."""
 
+import json
+from django.test import TestCase
 from api.models import CustomUser
 from api.serializers.serializers_customuser import (CustomUserSerializer,
                                                     CustomUserDetailSerializer,
@@ -15,17 +15,20 @@ request = factory.get('/')
 
 
 class CustomUserSerializerTestCase(TestCase):
+    """Tests for CustomUser serializers."""
+
     fixtures = ['customuser_serializer_test/customusers_test_data.json',
                 'customuser_serializer_test/groups_test_data.json',
                 'customuser_serializer_test/orders_test_data.json']
 
     def setUp(self):
         self.serializer = CustomUserSerializer
+        self.detail_serializer = CustomUserDetailSerializer
         self.queryset = CustomUser.objects.all()
 
     def test_relative_hyperlinks(self):
         with open('api/fixtures/customuser_serializer_test/'
-                  'customer_relative_hyperlinks_data.json') as f:
+                  'relative_hyperlinks_expected_data.json') as f:
             expected = json.load(f)
             serializer = self.serializer(self.queryset, many=True,
                                          context={'request': None})
@@ -34,7 +37,7 @@ class CustomUserSerializerTestCase(TestCase):
 
     def test_reverse_many_to_many_retrieve(self):
         with open('api/fixtures/customuser_serializer_test/'
-                  'customerusers_reverse_retrieve.json') as f:
+                  'retrieve_create_expected_data.json') as f:
             expected = json.load(f)
             serializer = self.serializer(self.queryset, many=True,
                                          context={'request': request})
@@ -69,12 +72,24 @@ class CustomUserSerializerTestCase(TestCase):
 
         # Ensure target 4 is added, and everything else is as expected
         with open('api/fixtures/customuser_serializer_test/'
-                  'customerusers_reverse_retrieve.json') as f:
+                  'retrieve_create_expected_data.json') as f:
             expected = json.load(f)
             expected.append(data)
             serializer = self.serializer(self.queryset, many=True,
                                          context={'request': request})
             self.assertEqual(serializer.data, expected)
+
+    def test_reverse_many_to_many_update(self):
+        data = {'first_name': 'Specialist_1_1', 'email': 'test@com.ua'}
+        instance = self.queryset[0]
+        serializer = self.detail_serializer(instance=instance, data=data,
+                                            partial=True,
+                                            context={'request': request})
+
+        self.assertTrue(serializer.is_valid(raise_exception=True))
+        serializer.save()
+        self.assertEqual(serializer.data['first_name'], data['first_name'])
+        self.assertEqual(serializer.data['email'], data['email'])
 
 
 class PasswordsValidationTest(TestCase):

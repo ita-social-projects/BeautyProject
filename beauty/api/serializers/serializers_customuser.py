@@ -1,4 +1,4 @@
-"""The module includes serializers for all project models."""
+"""The module includes serializers for CustomUser model."""
 
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
@@ -184,10 +184,11 @@ class CustomUserDetailSerializer(PasswordsValidation,
             user (object): instance with updated data
 
         """
-        validated_data.pop('confirm_password')
-        confirm_password = validated_data.pop('confirm_password')
+        confirm_password = validated_data.get('confirm_password', None)
         if confirm_password:
             validated_data['password'] = make_password(confirm_password)
+        else:
+            validated_data['password'] = instance.password
         return super().update(instance, validated_data)
 
 

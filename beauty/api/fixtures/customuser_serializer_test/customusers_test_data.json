@@ -13,7 +13,7 @@
         "bio": null,
         "phone_number": "+380967470000",
         "rating": 0,
-        "avatar": "",
+        "avatar": null,
         "is_active": true,
         "is_admin": false,
         "groups": [
@@ -39,7 +39,7 @@
         "bio": null,
         "phone_number": "+380967470001",
         "rating": 0,
-        "avatar": "",
+        "avatar": null,
         "is_active": true,
         "is_admin": false,
         "groups": [
@@ -65,7 +65,7 @@
         "bio": null,
         "phone_number": "+380967470002",
         "rating": 0,
-        "avatar": "",
+        "avatar": null,
         "is_active": true,
         "is_admin": false,
         "groups": [
@@ -91,7 +91,7 @@
         "bio": null,
         "phone_number": "+380967470003",
         "rating": 0,
-        "avatar": "",
+        "avatar": null,
         "is_active": true,
         "is_admin": false,
         "groups": [
