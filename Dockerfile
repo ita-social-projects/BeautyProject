@@ -12,5 +12,4 @@ WORKDIR /app
 # Install required packages
 RUN apk add --update --no-cache --virtual .tmp gcc libc-dev \ 
     linux-headers postgresql-dev postgresql-client
-RUN ls
 RUN pip install -r /app/requirements.txt
