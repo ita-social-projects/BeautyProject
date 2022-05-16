@@ -1,8 +1,6 @@
 """This module provides all needed models"""
 
-import datetime
-import os
-
+from datetime import timedelta
 from address.models import AddressField
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -63,22 +61,22 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     Attributes:
 
-        first_name: First name of the user
-        last_name: (optiomal) Last name of the user
-        patronymic: (optiomal) Patronymic of the user
-        email: Email of the user
-        updated_at: Time of the last update
-        created_at: Time when user was created
-        bio: (optiomal) Additional information about user
-        phone_number: Phone number of the user
-        rating: Rating of the user (specialist group only)
-        avatar: (optiomal) Avatar of the user
-        is_active: Determines whether user account is active
-        is_admin: Determines whether user is admin
+        first_name (str): First name of the user
+        last_name (str, optional): Last name of the user
+        patronymic (str, optional): Patronymic of the user
+        email (str): Email of the user
+        updated_at (datetime): Time of the last update
+        created_at (datetime): Time when user was created
+        bio (str, optional): Additional information about user
+        phone_number (str): Phone number of the user
+        rating (int): Rating of the user (specialist group only)
+        avatar (image, optional): Avatar of the user
+        is_active (bool): Determines whether user account is active
+        is_admin (bool): Determines whether user is admin
 
     Properties:
 
-        is_staff: Returns true if user is admin
+        is_staff (bool): Returns true if user is admin
 
     """
 
@@ -161,13 +159,13 @@ class Business(models.Model):
     
     Attributes:
 
-        name: Name of business
-        type: Type of business
-        logo: Photo of business
-        owner: Owner of business
-        address: Location of business
-        description: Description of business
-        created_at: Time when business was created
+        name (str): Name of business
+        type (str): Type of business
+        logo (image): Photo of business
+        owner (CustomUser): Owner of business
+        address (AddressField): Location of business
+        description (str): Description of business
+        created_at (datetime): Time when business was created
 
     """
 
@@ -231,10 +229,10 @@ class WorkingTime(DbView):
 
     Attributes:
 
-        block: is free or not
-        date: working day
-        specialist: specialist id
-        order: order id
+        block (bool): is free or not
+        date (datetime): working day
+        specialist (CustomUser): specialist id
+        order (Order): order id
 
     """
 
@@ -281,11 +279,11 @@ class Position(models.Model):
 
     Attributes:
 
-        name: position name
-        specialist: specialist id
-        business: business id
-        start_time: specialist work starts at
-        end_time: specialist work ends at
+        name (str): position name
+        specialist (CustomUser): specialist id
+        business (Business): business id
+        start_time (datetime): specialist work starts at
+        end_time (datetime): specialist work ends at
 
     """
 
@@ -295,7 +293,8 @@ class Position(models.Model):
     )
     specialist = models.ManyToManyField(
         "CustomUser",
-        verbose_name= _("Specialist")
+        verbose_name= _("Specialist"),
+        related_name= "CustomUser.Position"
     )
     business = models.ForeignKey(
         "Business", 
@@ -329,11 +328,11 @@ class Review(models.Model):
 
     Attributes:
 
-        text_body: body of the review
-        rating: Rating of review(natural number from 1 to 5)
-        date_of_publication: Date and time of review publication
-        from_user: Foreign key, that determines Customer, who sent a review
-        to_user: Foreign key, that determines Specialist, who must have
+        text_body (str): body of the review
+        rating (int): Rating of review(natural number from 1 to 5)
+        date_of_publication (datetime): Date and time of review publication
+        from_user (CustomUser): Foreign key, that determines Customer, who sent a review
+        to_user (CustomUser): Foreign key, that determines Specialist, who must have
                  received review
 
     """
@@ -386,14 +385,14 @@ class Order(models.Model):
 
     Attributes:
 
-        status: Status of the order
-        start_time: Appointment time and date of the order
-        end_time: Time that is calculated according to the duration of service
-        created_at: Time of creation of the order
-        specialist: An appointed specialist for the order
-        customer: A customer who will recieve the order
-        service: Service that will be fulfield for the order
-        reason: (optional) Reason for cancellation
+        status (TextChoices): Status of the order
+        start_time (datetime): Appointment time and date of the order
+        end_time (datetime): Time that is calculated according to the duration of service
+        created_at (datetime): Time of creation of the order
+        specialist (CustomUser): An appointed specialist for the order
+        customer (CustomUser): A customer who will recieve the order
+        service (Service): Service that will be fulfield for the order
+        reason (str, optional): Reason for cancellation
 
     Properties:
         is_active: Returns true if order's status is active
@@ -468,7 +467,6 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation"""
-        from datetime import timedelta
         self.end_time = self.start_time + timedelta(minutes=self.service.duration)
         super(Order, self).save(*args, **kwargs)
         return self
@@ -531,11 +529,11 @@ class Service(models.Model):
 
     Attributes:
 
-        position: Position that provides a service
-        name: Name of the service
-        price: Price of the service
-        description: Description of the service
-        duration: The time during which service is provided
+        position (Position): Position that provides a service
+        name (str): Name of the service
+        price (decimal): Price of the service
+        description (str): Description of the service
+        duration (int): The time during which service is provided
 
     """
 
