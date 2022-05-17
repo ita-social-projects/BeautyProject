@@ -1,9 +1,6 @@
 """The module includes tests for CustomUser serializers."""
 
 import json
-import tempfile
-
-from PIL import Image
 from django.test import TestCase
 from api.models import CustomUser
 from api.serializers.serializers_customuser import (CustomUserSerializer,
@@ -24,11 +21,15 @@ class CustomUserSerializerTestCase(TestCase):
     fixtures = ['customuser_serializer_test/customusers_test_data.json', ]
 
     def setUp(self):
+        """Set up data for tests."""
         self.serializer = CustomUserSerializer
         self.detail_serializer = CustomUserDetailSerializer
         self.queryset = CustomUser.objects.all()
 
     def test_relative_hyperlinks(self):
+        """Serialize all users with relative hyperlinks using
+        CustomUserSerializer.
+        """
         with open('api/fixtures/customuser_serializer_test/'
                   'relative_hyperlinks_expected_data.json') as f:
             expected = json.load(f)
@@ -39,6 +40,9 @@ class CustomUserSerializerTestCase(TestCase):
             self.assertEqual(serializer.data, expected)
 
     def test_reverse_many_to_many_retrieve(self):
+        """Serialize all users with reverse many to many retrieve using
+        CustomUserSerializer.
+        """
         with open('api/fixtures/customuser_serializer_test/'
                   'retrieve_create_expected_data.json') as f:
             expected = json.load(f)
@@ -49,7 +53,8 @@ class CustomUserSerializerTestCase(TestCase):
             with self.assertNumQueries(16):
                 self.assertEqual(serializer.data, expected)
 
-    def test_reverse_many_to_many_create(self):
+    def test_deserialize_create_user(self):
+        """Deserializing a data and creating a new user."""
         data = {"url": "http://testserver/api/v1/user/6/",
                 "id": 6,
                 "email": "m6@com.ua",
@@ -59,7 +64,6 @@ class CustomUserSerializerTestCase(TestCase):
                 "phone_number": "+380967470016",
                 "bio": "Specialist_6",
                 "rating": 0,
-                # "avatar": 'data:image/jpeg;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
                 "is_active": True,
                 "groups": ['Specialist', ],
                 'specialist_orders': [],
@@ -72,13 +76,15 @@ class CustomUserSerializerTestCase(TestCase):
         )
         self.assertTrue(serializer.is_valid(raise_exception=True))
         obj = serializer.save()
+        saved_obj = self.queryset.get(id=6)
         data['avatar'] = 'http://testserver/media/default_avatar.jpeg'
         data.pop('password'),
         data.pop('confirm_password')
+        self.assertEqual(saved_obj, obj)
         self.assertEqual(serializer.data, data)
         self.assertEqual(obj.email, "m6@com.ua")
 
-        # Ensure target 4 is added, and everything else is as expected
+        # Ensure target 6 is added, and everything else is as expected
         with open('api/fixtures/customuser_serializer_test/'
                   'retrieve_create_expected_data.json') as f:
             expected = json.load(f)
@@ -89,7 +95,8 @@ class CustomUserSerializerTestCase(TestCase):
             )
             self.assertEqual(serializer.data, expected)
 
-    def test_reverse_many_to_many_update(self):
+    def test_deserialize_update_user(self):
+        """Deserializing a data and updating a user data."""
         data = {'first_name': 'Specialist_1_1', 'email': 'test@com.ua'}
         instance = self.queryset[0]
         serializer = self.detail_serializer(
@@ -104,19 +111,26 @@ class CustomUserSerializerTestCase(TestCase):
 
 
 class PasswordsValidationTest(TestCase):
+    """Tests for checking password and password confirmation when user
+     creating user or updating user data.
+     """
+
     valid_data = {"password": "0967478911m", "confirm_password": "0967478911m"}
     invalid_data = {"password": "0967478911m", "confirm_password": "096747891"}
     null_data_one = {"password": "", "confirm_password": "096747891"}
     null_data_two = {"password": "0967478911m", "confirm_password": ""}
 
     def setUp(self):
+        """Set up data for tests."""
         self.validator = PasswordsValidation()
 
     def test_valid_data(self):
+        """Checking valid data."""
         data = self.validator.validate(self.valid_data)
         self.assertEqual(data, self.valid_data)
 
     def test_invalid_data(self):
+        """Checking invalid data."""
         with self.assertRaises(ValidationError) as ex:
             self.validator.validate(self.invalid_data)
         self.assertEqual(
@@ -125,6 +139,7 @@ class PasswordsValidationTest(TestCase):
         )
 
     def test_password_null(self):
+        """Checking when password or password confirmation is null."""
         with self.assertRaises(ValidationError) as ex:
             self.validator.validate(self.null_data_one)
             self.validator.validate(self.null_data_two)
