@@ -1,13 +1,15 @@
 from django.db.models import Q
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from .models import CustomUser, Order
 from .serializers.serializers_customuser import CustomUserDetailSerializer, \
     UserOrderDetailSerializer
-from .serializers.serializers_customuser import CustomUserSerializer
+from .serializers.serializers_customuser import CustomUserSerializer, \
+    ChangePasswordSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -58,3 +60,26 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
                                 id=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+class ChangePasswordView(UpdateAPIView):
+    """Generic API for changing password for the user """
+    model = CustomUser
+    serializer_class = ChangePasswordSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None, *args, **kwargs):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get("old_password")):
+                return Response({"old_password": ["Wrong password."]}, 
+                status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
