@@ -2,6 +2,7 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 
 from .models import CustomUser
+from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
 from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
 
@@ -19,6 +20,7 @@ class CustomUserListCreateView(ListCreateAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for custom GET, PUT and DELETE method.
     RUD - Retrieve, Update, Destroy"""
+    permission_classes = [IsAdminOrIsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
