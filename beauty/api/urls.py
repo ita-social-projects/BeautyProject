@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import *
-app_name = "api"
 
+
+app_name = "api"
 
 urlpatterns = [
     path('', CustomUserListCreateView.as_view(), name='user-list'),

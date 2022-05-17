@@ -1,25 +1,21 @@
+from rest_framework.permissions import IsAdminUser
+from rest_framework.generics import (
+                                    ListCreateAPIView,
+                                    RetrieveUpdateDestroyAPIView
+                                    )
+
 from .models import CustomUser
-from .serializers.serializers_customuser import CustomUserSerializer, CustomUserDetailSerializer
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from .serializers.serializers_customuser import (
+                                                CustomUserSerializer, 
+                                                CustomUserDetailSerializer
+                                                )
 
 
 class CustomUserListCreateView(ListCreateAPIView):
-    """Generic API for custom POST method"""
+    """Generic API for POST and GET all method"""
 
+    permission_classes = [IsAdminUser]
     queryset = CustomUser.objects.all()
+
+    # This serializer is attached to POST method
     serializer_class = CustomUserSerializer
-
-    # Permissions
-    # line with max chars in code
-
-
-class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
-    """Generic API for custom GET, PUT and DELETE method
-    RUD - Retrive, Update, Delete"""
-
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserDetailSerializer
-
-    # Permissions
-    # rest git hub 
-
