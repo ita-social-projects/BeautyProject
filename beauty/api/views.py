@@ -14,8 +14,19 @@ from .serializers.serializers_customuser import (
 class CustomUserListCreateView(ListCreateAPIView):
     """Generic API for POST and GET all method"""
 
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
     queryset = CustomUser.objects.all()
 
     # This serializer is attached to POST method
     serializer_class = CustomUserSerializer
+
+
+class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
+    """Generic API for GET, PUT and DELETE method,
+    RUD - Retrive, Update, Delete"""
+
+    permission_classes = [IsAdminUser]
+    queryset = CustomUser.objects.all()
+
+    # This serializer is attached to GET, PUT, DELETE methods
+    serializer_class = CustomUserDetailSerializer
