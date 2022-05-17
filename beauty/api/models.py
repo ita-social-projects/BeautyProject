@@ -117,7 +117,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     )
     avatar = models.ImageField(
         blank=True,
-        null=True,
+        default='default_avatar.jpeg',
         upload_to=ModelsUtils.upload_location
     )
 

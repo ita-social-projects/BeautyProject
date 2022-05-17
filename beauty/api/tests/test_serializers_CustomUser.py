@@ -1,6 +1,9 @@
 """The module includes tests for CustomUser serializers."""
 
 import json
+import tempfile
+
+from PIL import Image
 from django.test import TestCase
 from api.models import CustomUser
 from api.serializers.serializers_customuser import (CustomUserSerializer,
@@ -8,6 +11,7 @@ from api.serializers.serializers_customuser import (CustomUserSerializer,
                                                     PasswordsValidation)
 from rest_framework.test import APIRequestFactory
 from rest_framework.serializers import ValidationError
+
 
 factory = APIRequestFactory()
 
@@ -55,7 +59,7 @@ class CustomUserSerializerTestCase(TestCase):
                 "phone_number": "+380967470016",
                 "bio": "Specialist_6",
                 "rating": 0,
-                "avatar": None,
+                # "avatar": 'data:image/jpeg;base64, iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
                 "is_active": True,
                 "groups": ['Specialist', ],
                 'specialist_orders': [],
@@ -68,6 +72,7 @@ class CustomUserSerializerTestCase(TestCase):
         )
         self.assertTrue(serializer.is_valid(raise_exception=True))
         obj = serializer.save()
+        data['avatar'] = 'http://testserver/media/default_avatar.jpeg'
         data.pop('password'),
         data.pop('confirm_password')
         self.assertEqual(serializer.data, data)

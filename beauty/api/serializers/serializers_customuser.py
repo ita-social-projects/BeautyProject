@@ -200,7 +200,6 @@ class CustomUserDetailSerializer(PasswordsValidation,
             user (object): instance with updated data
 
         """
-
         confirm_password = validated_data.get('confirm_password', None)
         if confirm_password:
             validated_data['password'] = make_password(confirm_password)
