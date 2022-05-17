@@ -3,11 +3,13 @@ from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 
 from .models import CustomUser, Order
 from .serializers.serializers_customuser import CustomUserDetailSerializer, \
     UserOrderDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -58,3 +60,18 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
                                 id=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+class UserAPIGetByIdView(APIView):
+    """API for getting all information about customer by id"""
+    serializer_class = CustomUserSerializer
+
+    def get(self, pk):
+        """Implementation of GET method by id.
+        Return all information about a specific customer.
+        """
+
+        queryset = get_object_or_404(CustomUser, pk=pk)
+        serializer = self.serializer_class(queryset)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
