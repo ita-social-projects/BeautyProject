@@ -54,7 +54,7 @@ pip install -r /requirements.txt
 
 ### Environment
 
-Add the environment variables file (.env) to the project folder.
+- Add the environment variables file (.env) to the project folder.
 It must contain the following settings:
 ```
 SECRET_KEY = '😊YOUR_SECRET_KEY😊'
@@ -70,6 +70,9 @@ GOOGLE_API_KEY='😊YOUR_GOOGLE_API_KEY😊'
 
 ### How to run local
 
+- Start the terminal.
+- Go to the directory "your way to the project" / BeautyProject / beauty
+- Run the following commands
 ```
 python manage.py makemigrations
 python manage.py migrate
@@ -197,6 +200,7 @@ git clone https://github.com/ita-social-projects/BeautyProject.git
 
 ### IT Academy team
 [![@kolyasalubov](https://github.com/kolyasalubov.png?size=200)](https://github.com/kolyasalubov)
+[![@Deer-WarLord](https://github.com/Deer-WarLord.png?size=200)](https://github.com/Deer-WarLord)
 
 ---
 
