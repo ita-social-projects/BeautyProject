@@ -190,7 +190,9 @@ class Business(models.Model):
     )
     address = AddressField(
         verbose_name=_("Location"), 
-        max_length=500
+        max_length=500,
+        blank=True,
+        null=True
     )
     description = models.CharField(
         verbose_name=_('Created at'),
@@ -198,8 +200,8 @@ class Business(models.Model):
     )
     created_at = models.DateTimeField(
         verbose_name=_('Created at'),
-        auto_now_add=True,
-        editable=False
+        blank=True,
+        auto_now_add=True
     )
 
     class Meta:

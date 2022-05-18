@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     # other apps
     'rest_framework',
     'django_filters',
+    'djoser',
+    'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'phonenumber_field',
     'address',
     # project apps
@@ -74,8 +77,44 @@ TEMPLATES = [
         },
     },
 ]
+### WIP settings
+EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'dietrich.kreze@gmail.com'
+EMAIL_HOST_PASSWORD = 'bedbmaroiyuppyvf'
+### WIP settings
 
 WSGI_APPLICATION = 'beauty.wsgi.application'
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'LOGOUT_ON_PASSWORD_CHANGE': True,
+    'TOKEN_MODEL': None,
+    'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': [
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3000/home',
+        'http://127.0.0.1:3000/login'
+    ],
+    'HIDE_USERS': True,
+
+
+    'SERIALIZERS': {
+        'user': 'api.serializers.serializers_customuser.CustomUserSerializer'
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -152,15 +191,17 @@ GROUP_ID = "id -g"
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'TEST_REQUEST_RENDERER_CLASSES':
-        [
+    'TEST_REQUEST_RENDERER_CLASSES': (
             'rest_framework.renderers.MultiPartRenderer',
-            'rest_framework.renderers.JSONRenderer'
-        ],
-    'DEFAULT_PARSER_CLASSES': [
+            'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.FormParser',
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FileUploadParser',
-    ]
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }

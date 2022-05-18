@@ -1,5 +1,4 @@
 """beauty URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
 https://docs.djangoproject.com/en/4.0/topics/http/urls/
 Examples:
@@ -13,19 +12,7 @@ Including another URLconf
 1. Import the include() function: from django.urls import include, path
 2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# from django.contrib import admin
-# from django.urls import path
-# from django.conf import settings
-# from django.conf.urls.static import static
-#
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-# ]
-#
-#
-# if settings.DEBUG:
-#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -33,6 +20,8 @@ from django.urls import include, path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+
+from api.views import UserActivationView
 
 
 @api_view(['GET'])
@@ -42,28 +31,24 @@ def api_root(request, format=None):
     )
 
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
-
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('api:user-list', request=request, format=format),
-    })
-
-
 urlpatterns = [
     path('', api_root),
     path('admin/', admin.site.urls),
-    path('api/v1/user/', include(
-                                'api.urls', 
-                                namespace="api")),
-    path('api-auth/', include(
-                            'rest_framework.urls', 
-                            namespace='rest_framework'
-                            )),
+    path(
+        'activate/<uidb64>/<token>/',
+        UserActivationView.as_view(),
+        name='user-activation'
+    ),
+    # path('api/v1/auth/', include('djoser.urls')),
+    # path('api/v1/auth_token/', include('djoser.urls.authtoken')),
+    path('api/v1/user/', include('api.urls', namespace="api")),
+    # path(
+    #     'api-auth/',
+    #     include('rest_framework.urls', namespace='rest_framework')
+    # ),
+    path(r'auth/', include('djoser.urls')),
+    path(r'auth/', include('djoser.urls.jwt'))
+
 ]
 
 if settings.DEBUG:

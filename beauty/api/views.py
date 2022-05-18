@@ -1,13 +1,20 @@
 from django.db.models import Q
+from django.shortcuts import redirect
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
+from rest_framework.generics import GenericAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.reverse import reverse
 
 from .models import CustomUser, Order
-from .serializers.serializers_customuser import CustomUserDetailSerializer, \
-    UserOrderDetailSerializer
+from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
+from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
+from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
+from .serializers.serializers_customuser import UserOrderDetailSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -17,9 +24,25 @@ class CustomUserListCreateView(ListCreateAPIView):
     serializer_class = CustomUserSerializer
 
 
+class UserActivationView(GenericAPIView):
+    """Generic view for user account activation"""
+
+    def get(self, request, uidb64, token):
+
+        id = int(force_str(urlsafe_base64_decode(uidb64)))
+
+        user = get_object_or_404(CustomUser, id=id)
+        user.is_active = True
+        user.save()
+        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
+
+
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
     RUD - Retrieve, Update, Destroy"""
+    # permission_classes = [IsOrReadOnly]
+    permission_classes = [IsAccountOwnerOrReadOnly]
+    # permission_classes = [IsAdminOrIsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
