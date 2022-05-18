@@ -1132,14 +1132,6 @@
   },
   {
     "model": "contenttypes.contenttype",
-    "pk": 6,
-    "fields": {
-      "app_label": "address",
-      "model": "address"
-    }
-  },
-  {
-    "model": "contenttypes.contenttype",
     "pk": 7,
     "fields": {
       "app_label": "address",
