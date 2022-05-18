@@ -199,6 +199,7 @@ git clone https://github.com/ita-social-projects/BeautyProject.git
 
 ### IT Academy team
 [![@kolyasalubov](https://github.com/kolyasalubov.png?size=200)](https://github.com/kolyasalubov)
+[![@Deer-WarLord](https://github.com/Deer-WarLord.png?size=200)](https://github.com/Deer-WarLord)
 
 ---
 
