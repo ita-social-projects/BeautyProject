@@ -1,5 +1,6 @@
 """The module includes serializers for CustomUser model."""
 
+from dataclasses import fields
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
@@ -216,3 +217,30 @@ class UserOrderDetailSerializer(serializers.ModelSerializer):
 
         model = Order
         fields = ['id', 'customer_id', 'specialist_id']
+
+
+class ResetPasswordSerializer(PasswordsValidation):
+    """"""
+    password = serializers.CharField(
+            write_only=True,
+            validators=[validate_password],
+            style={'input_type': 'password', 'placeholder': 'New Password'}
+        )
+    confirm_password = serializers.CharField(
+            write_only=True,
+            style={
+                'input_type': 'password',
+                'placeholder': 'Confirmation Password'
+            }
+        )
+
+    class Meta:
+        model = CustomUser
+        fields = ('password', 'confirm_password')
+
+    def validate(self, data: dict) -> dict:
+        if all([data.get('password'), data.get('confirm_password')]):
+            return super().validate(data)
+        else:
+            raise serializers.ValidationError({'password': 'Fields should be valid'})
+    

@@ -21,7 +21,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from api.views import UserActivationView
+from api.views import UserActivationView, ResetPasswordView
 
 
 @api_view(['GET'])
@@ -39,13 +39,18 @@ urlpatterns = [
         UserActivationView.as_view(),
         name='user-activation'
     ),
+    path(
+        'password/reset/confirm/<uidb64>/<token>/',
+        ResetPasswordView.as_view(),
+        name='reset-password'
+    ),
     # path('api/v1/auth/', include('djoser.urls')),
     # path('api/v1/auth_token/', include('djoser.urls.authtoken')),
     path('api/v1/user/', include('api.urls', namespace="api")),
-    # path(
-    #     'api-auth/',
-    #     include('rest_framework.urls', namespace='rest_framework')
-    # ),
+    path(
+        'api-auth/',
+     include('rest_framework.urls', namespace='rest_framework')
+     ),
     path(r'auth/', include('djoser.urls')),
     path(r'auth/', include('djoser.urls.jwt'))
 

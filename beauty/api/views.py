@@ -15,6 +15,7 @@ from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
 from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
 from .serializers.serializers_customuser import UserOrderDetailSerializer
+from .serializers.serializers_customuser import ResetPasswordSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -33,6 +34,20 @@ class UserActivationView(GenericAPIView):
 
         user = get_object_or_404(CustomUser, id=id)
         user.is_active = True
+        user.save()
+        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
+
+
+class ResetPasswordView(GenericAPIView):
+    """Generic view for reset password"""
+    serializer_class = ResetPasswordSerializer
+    model = CustomUser
+
+    def post(self, request, uidb64, token):
+        id = int(force_str(urlsafe_base64_decode(uidb64)))
+        user = get_object_or_404(CustomUser, id=id)
+        self.get_serializer().validate(request.POST)
+        user.set_password(request.POST.get('password'))
         user.save()
         return redirect(reverse("api:user-detail", kwargs={"pk": id}))
 
