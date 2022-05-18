@@ -1,9 +1,9 @@
-"""The module includes serializers for all project models."""
+"""The module includes serializers for CustomUser model."""
 
-from django.contrib.auth.password_validation import validate_password
-from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
+from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from api.models import (CustomUser, Order)
@@ -31,6 +31,7 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
 
         Returns:
             url (str):  hyperlinks to the object
+
         """
         url_kwargs = {
             'user': getattr(obj, self.url_user_id),
@@ -59,7 +60,8 @@ class PasswordsValidation(serializers.Serializer):
         if password and confirm_password:
             if password != confirm_password:
                 raise serializers.ValidationError(
-                    {"password": "Password confirmation does not match."})
+                    {"password": "Password confirmation does not match."}
+                )
         elif any([password, confirm_password]):
             raise serializers.ValidationError(
              {"confirm_password": "Didn`t enter the password confirmation."})
@@ -103,21 +105,28 @@ class CustomUserSerializer(PasswordsValidation,
         view_name='api:user-detail', lookup_field='pk'
     )
     password = serializers.CharField(
-        write_only=True, required=True,
+        write_only=True,
+        required=True,
         style={'input_type': 'password', 'placeholder': 'Password'},
         validators=[validate_password]
     )
     confirm_password = serializers.CharField(
-        write_only=True, required=True,
+        write_only=True,
+        required=True,
         style={'input_type': 'password',
-               'placeholder': 'Confirmation Password'}
+               'placeholder': 'Confirmation Password'
+               }
     )
     groups = GroupListingField(
-        many=True, required=False, queryset=group_queryset
+        many=True,
+        required=False,
+        queryset=group_queryset
     )
     specialist_orders = OrderUserHyperlink(many=True, read_only=True)
     customer_orders = OrderUserHyperlink(
-        many=True, read_only=True, url_user_id='customer_id'
+        many=True,
+        read_only=True,
+        url_user_id='customer_id'
     )
 
     class Meta:
@@ -139,28 +148,36 @@ class CustomUserSerializer(PasswordsValidation,
             user (object): new user
 
         """
-        validated_data.pop('confirm_password')
+        confirm_password = validated_data.pop('confirm_password')
+        validated_data['password'] = make_password(confirm_password)
         return super().create(validated_data)
 
 
 class CustomUserDetailSerializer(PasswordsValidation,
                                  serializers.ModelSerializer):
-    """Serializer for getting and updating a concreted user."""
+    """Serializer to receive and update a specific user."""
 
     groups = GroupListingField(many=True, queryset=group_queryset)
     password = serializers.CharField(
-        write_only=True, allow_blank=True, validators=[validate_password],
+        write_only=True,
+        allow_blank=True,
+        validators=[validate_password],
         style={'input_type': 'password', 'placeholder': 'New Password'}
     )
     confirm_password = serializers.CharField(
-        write_only=True, allow_blank=True,
+        write_only=True,
+        allow_blank=True,
         help_text='Leave empty if no change needed',
-        style={'input_type': 'password',
-               'placeholder': 'Confirmation Password'}
+        style={
+            'input_type': 'password',
+            'placeholder': 'Confirmation Password'
+        }
     )
     specialist_orders = OrderUserHyperlink(many=True, read_only=True)
     customer_orders = OrderUserHyperlink(
-        many=True, read_only=True, url_user_id='customer_id'
+        many=True,
+        read_only=True,
+        url_user_id='customer_id'
     )
 
     class Meta:
@@ -183,14 +200,19 @@ class CustomUserDetailSerializer(PasswordsValidation,
             user (object): instance with updated data
 
         """
-        confirm_password = validated_data.pop('confirm_password')
+        confirm_password = validated_data.get('confirm_password', None)
         if confirm_password:
             validated_data['password'] = make_password(confirm_password)
+        else:
+            validated_data['password'] = instance.password
         return super().update(instance, validated_data)
 
 
-class UserOrderDetailSerializer(serializers.HyperlinkedModelSerializer):
+class UserOrderDetailSerializer(serializers.ModelSerializer):
+    """Serializer to receive and update a specific order."""
 
     class Meta:
+        """Class with a model and model fields for serialization."""
+
         model = Order
         fields = ['id', 'customer_id', 'specialist_id']

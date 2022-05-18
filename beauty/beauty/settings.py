@@ -11,8 +11,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from pathlib import Path
-
-import dj_database_url
 from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,6 +28,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 AUTH_USER_MODEL = "api.CustomUser"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -80,7 +79,6 @@ WSGI_APPLICATION = 'beauty.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 
 # DATABASES = {
 #     'default': dj_database_url.config(conn_max_age=500, default='postgres://postgres:postgres@db:5432/beauty')}
@@ -141,6 +139,8 @@ MEDIA_URL = 'media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
+FIXTURE_DIRS = 'fixtures/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -149,3 +149,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 GOOGLE_API_KEY = config("GOOGLE_API_KEY")
 USER_ID = "id -u"
 GROUP_ID = "id -g"
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES':
+        [
+            'rest_framework.renderers.MultiPartRenderer',
+            'rest_framework.renderers.JSONRenderer'
+        ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FileUploadParser',
+    ]
+}
