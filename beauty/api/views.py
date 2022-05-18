@@ -1,13 +1,15 @@
 from django.db.models import Q
+from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
-from rest_framework import status
 
 from .models import CustomUser, Order
-from .serializers.serializers_customuser import CustomUserDetailSerializer, \
-    UserOrderDetailSerializer
+from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
+from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
+from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
+from .serializers.serializers_customuser import UserOrderDetailSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -16,14 +18,13 @@ class CustomUserListCreateView(ListCreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
-    # Permissions
-    # line with max chars in code
-
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
     RUD - Retrieve, Update, Destroy"""
-    permission_classes = [IsAdminOrIsAccountOwnerOrReadOnly]
+    # permission_classes = [IsOrReadOnly]
+    permission_classes = [IsAccountOwnerOrReadOnly]
+    # permission_classes = [IsAdminOrIsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
@@ -37,9 +38,6 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
             instance.save()
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    # Permissions
-    # rest git hub
 
 
 class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
