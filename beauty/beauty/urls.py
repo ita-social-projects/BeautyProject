@@ -47,10 +47,10 @@ urlpatterns = [
     # path('api/v1/auth/', include('djoser.urls')),
     # path('api/v1/auth_token/', include('djoser.urls.authtoken')),
     path('api/v1/user/', include('api.urls', namespace="api")),
-    path(
-        'api-auth/',
-     include('rest_framework.urls', namespace='rest_framework')
-     ),
+    #path(
+    #    'api-auth/',
+    # include('rest_framework.urls', namespace='rest_framework')
+    # ),
     path(r'auth/', include('djoser.urls')),
     path(r'auth/', include('djoser.urls.jwt'))
 
