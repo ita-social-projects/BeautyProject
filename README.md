@@ -54,7 +54,7 @@ pip install -r /requirements.txt
 
 ### Environment
 
-Add the environment variables file (.env) to the project folder.
+- Add the environment variables file (.env) to the project folder.
 It must contain the following settings:
 ```
 SECRET_KEY = '😊YOUR_SECRET_KEY😊'
@@ -69,6 +69,9 @@ DB_PORT='😊YOUR_DB_PORT😊'
 
 ### How to run local
 
+- Start the terminal.
+- Go to the directory "your way to the project" / BeautyProject / beauty
+- Run the following commands
 ```
 python manage.py makemigrations
 python manage.py migrate
