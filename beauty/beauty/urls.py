@@ -40,6 +40,9 @@ urlpatterns = [
         'api-auth/',
         include('rest_framework.urls', namespace='rest_framework')
     ),
+    path(r'auth/', include('djoser.urls')),
+    path(r'auth/', include('djoser.urls.jwt'))
+
 ]
 
 if settings.DEBUG:

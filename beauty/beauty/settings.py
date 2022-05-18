@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     # other apps
     'rest_framework',
     'django_filters',
+    'djoser',
+    'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'phonenumber_field',
     'address',
     # project apps
@@ -76,6 +79,27 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'beauty.wsgi.application'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ),
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+
+    'SERIALIZERS': {
+        'user': 'api.serializers.serializers_customuser.CustomUserSerializer'
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
