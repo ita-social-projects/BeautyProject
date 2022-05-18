@@ -1,3 +1,5 @@
+"""Module contains Views for CustomUser API"""
+
 from rest_framework.permissions import IsAdminUser
 from rest_framework.generics import (
                                     ListCreateAPIView,
@@ -6,7 +8,7 @@ from rest_framework.generics import (
 
 from .models import CustomUser
 from .serializers.serializers_customuser import (
-                                                CustomUserSerializer, 
+                                                CustomUserSerializer,
                                                 CustomUserDetailSerializer
                                                 )
 
