@@ -3,11 +3,11 @@
     "model": "admin.logentry",
     "pk": 1,
     "fields": {
-      "action_time": "2022-05-09T15:51:41.904Z",
+      "action_time": "2022-05-16T19:24:40.951Z",
       "user": 1,
-      "content_type": 6,
-      "object_id": "2",
-      "object_repr": "Oleksii ",
+      "content_type": 12,
+      "object_id": "1",
+      "object_repr": "B1",
       "action_flag": 1,
       "change_message": "[{\"added\": {}}]"
     }
@@ -16,11 +16,11 @@
     "model": "admin.logentry",
     "pk": 2,
     "fields": {
-      "action_time": "2022-05-09T15:52:23.578Z",
+      "action_time": "2022-05-16T19:25:16.632Z",
       "user": 1,
-      "content_type": 6,
-      "object_id": "3",
-      "object_repr": "Someone ",
+      "content_type": 13,
+      "object_id": "1",
+      "object_repr": "P1",
       "action_flag": 1,
       "change_message": "[{\"added\": {}}]"
     }
@@ -29,11 +29,11 @@
     "model": "admin.logentry",
     "pk": 3,
     "fields": {
-      "action_time": "2022-05-09T15:53:33.046Z",
+      "action_time": "2022-05-16T19:25:37.350Z",
       "user": 1,
-      "content_type": 3,
+      "content_type": 14,
       "object_id": "1",
-      "object_repr": "Admin",
+      "object_repr": "s1",
       "action_flag": 1,
       "change_message": "[{\"added\": {}}]"
     }
@@ -42,11 +42,11 @@
     "model": "admin.logentry",
     "pk": 4,
     "fields": {
-      "action_time": "2022-05-09T15:53:59.386Z",
+      "action_time": "2022-05-16T19:25:56.304Z",
       "user": 1,
-      "content_type": 3,
-      "object_id": "2",
-      "object_repr": "Customer",
+      "content_type": 16,
+      "object_id": "1",
+      "object_repr": "Order #1",
       "action_flag": 1,
       "change_message": "[{\"added\": {}}]"
     }
@@ -55,11 +55,11 @@
     "model": "admin.logentry",
     "pk": 5,
     "fields": {
-      "action_time": "2022-05-09T15:54:04.099Z",
+      "action_time": "2022-05-16T19:26:34.719Z",
       "user": 1,
-      "content_type": 3,
-      "object_id": "3",
-      "object_repr": "Specialist",
+      "content_type": 16,
+      "object_id": "2",
+      "object_repr": "Order #2",
       "action_flag": 1,
       "change_message": "[{\"added\": {}}]"
     }
@@ -68,37 +68,37 @@
     "model": "admin.logentry",
     "pk": 6,
     "fields": {
-      "action_time": "2022-05-09T15:54:32.600Z",
+      "action_time": "2022-05-16T19:26:44.751Z",
       "user": 1,
-      "content_type": 6,
-      "object_id": "2",
-      "object_repr": "Oleksii ",
-      "action_flag": 3,
-      "change_message": ""
+      "content_type": 16,
+      "object_id": "3",
+      "object_repr": "Order #3",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
     }
   },
   {
     "model": "admin.logentry",
     "pk": 7,
     "fields": {
-      "action_time": "2022-05-09T15:54:32.604Z",
+      "action_time": "2022-05-16T19:26:57.137Z",
       "user": 1,
-      "content_type": 6,
-      "object_id": "3",
-      "object_repr": "Someone ",
-      "action_flag": 3,
-      "change_message": ""
+      "content_type": 16,
+      "object_id": "4",
+      "object_repr": "Order #4",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
     }
   },
   {
     "model": "admin.logentry",
     "pk": 8,
     "fields": {
-      "action_time": "2022-05-09T15:55:47.347Z",
+      "action_time": "2022-05-16T19:27:05.942Z",
       "user": 1,
-      "content_type": 6,
-      "object_id": "4",
-      "object_repr": "John Snow",
+      "content_type": 16,
+      "object_id": "5",
+      "object_repr": "Order #5",
       "action_flag": 1,
       "change_message": "[{\"added\": {}}]"
     }
@@ -107,11 +107,11 @@
     "model": "admin.logentry",
     "pk": 9,
     "fields": {
-      "action_time": "2022-05-09T15:56:19.187Z",
+      "action_time": "2022-05-16T19:27:22.140Z",
       "user": 1,
-      "content_type": 6,
-      "object_id": "5",
-      "object_repr": "John Wick",
+      "content_type": 16,
+      "object_id": "6",
+      "object_repr": "Order #6",
       "action_flag": 1,
       "change_message": "[{\"added\": {}}]"
     }
@@ -625,36 +625,36 @@
     "model": "auth.permission",
     "pk": 21,
     "fields": {
-      "name": "Can add custom user",
+      "name": "Can add address",
       "content_type": 6,
-      "codename": "add_customuser"
+      "codename": "add_address"
     }
   },
   {
     "model": "auth.permission",
     "pk": 22,
     "fields": {
-      "name": "Can change custom user",
+      "name": "Can change address",
       "content_type": 6,
-      "codename": "change_customuser"
+      "codename": "change_address"
     }
   },
   {
     "model": "auth.permission",
     "pk": 23,
     "fields": {
-      "name": "Can delete custom user",
+      "name": "Can delete address",
       "content_type": 6,
-      "codename": "delete_customuser"
+      "codename": "delete_address"
     }
   },
   {
     "model": "auth.permission",
     "pk": 24,
     "fields": {
-      "name": "Can view custom user",
+      "name": "Can view address",
       "content_type": 6,
-      "codename": "view_customuser"
+      "codename": "view_address"
     }
   },
   {
@@ -1056,102 +1056,167 @@
   {
     "model": "auth.group",
     "pk": 1,
-    "fields": { "name": "Owner", "permissions": [] }
+    "fields": {
+      "name": "Owner",
+      "permissions": []
+    }
   },
   {
     "model": "auth.group",
     "pk": 2,
-    "fields": { "name": "Customer", "permissions": [] }
+    "fields": {
+      "name": "Customer",
+      "permissions": []
+    }
   },
   {
     "model": "auth.group",
     "pk": 3,
-    "fields": { "name": "Specialist", "permissions": [] }
+    "fields": {
+      "name": "Specialist",
+      "permissions": []
+    }
   },
   {
     "model": "auth.group",
     "pk": 4,
-    "fields": { "name": "Admin", "permissions": [21, 22, 23, 24] }
+    "fields": {
+      "name": "Admin",
+      "permissions": [
+        41,
+        42,
+        43,
+        44
+      ]
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 1,
-    "fields": { "app_label": "admin", "model": "logentry" }
+    "fields": {
+      "app_label": "admin",
+      "model": "logentry"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 2,
-    "fields": { "app_label": "auth", "model": "permission" }
+    "fields": {
+      "app_label": "auth",
+      "model": "permission"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 3,
-    "fields": { "app_label": "auth", "model": "group" }
+    "fields": {
+      "app_label": "auth",
+      "model": "group"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 4,
-    "fields": { "app_label": "contenttypes", "model": "contenttype" }
+    "fields": {
+      "app_label": "contenttypes",
+      "model": "contenttype"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 5,
-    "fields": { "app_label": "sessions", "model": "session" }
+    "fields": {
+      "app_label": "sessions",
+      "model": "session"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 6,
-    "fields": { "app_label": "address", "model": "address" }
+    "fields": {
+      "app_label": "address",
+      "model": "address"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 7,
-    "fields": { "app_label": "address", "model": "country" }
+    "fields": {
+      "app_label": "address",
+      "model": "country"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 8,
-    "fields": { "app_label": "address", "model": "locality" }
+    "fields": {
+      "app_label": "address",
+      "model": "locality"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 9,
-    "fields": { "app_label": "address", "model": "state" }
+    "fields": {
+      "app_label": "address",
+      "model": "state"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 10,
-    "fields": { "app_label": "api", "model": "workingtime" }
+    "fields": {
+      "app_label": "api",
+      "model": "workingtime"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 11,
-    "fields": { "app_label": "api", "model": "customuser" }
+    "fields": {
+      "app_label": "api",
+      "model": "customuser"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 12,
-    "fields": { "app_label": "api", "model": "business" }
+    "fields": {
+      "app_label": "api",
+      "model": "business"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 13,
-    "fields": { "app_label": "api", "model": "position" }
+    "fields": {
+      "app_label": "api",
+      "model": "position"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 14,
-    "fields": { "app_label": "api", "model": "service" }
+    "fields": {
+      "app_label": "api",
+      "model": "service"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 15,
-    "fields": { "app_label": "api", "model": "review" }
+    "fields": {
+      "app_label": "api",
+      "model": "review"
+    }
   },
   {
     "model": "contenttypes.contenttype",
     "pk": 16,
-    "fields": { "app_label": "api", "model": "order" }
+    "fields": {
+      "app_label": "api",
+      "model": "order"
+    }
   },
   {
     "model": "sessions.session",
@@ -1163,10 +1228,65 @@
   },
   {
     "model": "sessions.session",
+    "pk": "qx869ubqi2wz4u1xc92cam4gm0jc90os",
+    "fields": {
+      "session_data": ".eJxVjEEOwiAQRe_C2hAoWAaX7nsGMgMzUjVtUtqV8e7apAvd_vfef6mE21rT1nhJY1EXZa1Tp9-VMD942lG543SbdZ6ndRlJ74o-aNPDXPh5Pdy_g4qtfmsxPQVPVHznWAgCREb25MBHMTGECHQWkQ6YCwekINYbQz1CdsBGvT9K5zkV:1nrEhL:COyp88yELk_97zn_cM2c5jAkxb-Ar_Fm-rZKSqKPM-g",
+      "expire_date": "2022-06-01T08:06:23.458Z"
+    }
+  },
+  {
+    "model": "sessions.session",
     "pk": "u127bs0rcnpn457c73pqoyfnscs1znsw",
     "fields": {
       "session_data": ".eJxVjDsOwjAQBe_iGlnZfNYOJT1nsNZ-axJAiRQnFeLuECkFtG9m3ssE2dYhbEWXMMKcDZnT7xYlPXTaAe4y3Wab5mldxmh3xR602OsMfV4O9-9gkDJ866bLSn3LjXCNWj1XEHaUCRmJGMxOyXF0Xqq-bxHJSwQQlVPu0Jj3B-VmOJ0:1no5ZJ:NdZf4fSCuLpMvEGpZaL5piBiyv9FqLA109DB3V_t330",
       "expire_date": "2022-05-23T15:45:05.877Z"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "znhv2h2a82dczeqb5l7lms8ite2zfvrh",
+    "fields": {
+      "session_data": ".eJxVjDsOwjAQRO_iGll28JeSnjNY690NDiBbipMKcXcSKQVUI817M2-RYF1KWjvPaSJxEVqcfrsM-OS6A3pAvTeJrS7zlOWuyIN2eWvEr-vh_h0U6GVbo40qjGyICdFoz0jZgqLgfFTOb8EW_BCJnYdR0xnjkKNVJlB2xirx-QIAMjgd:1nqgHr:XwyRMvui2E_a28c1xbO1jEBcU2EEEsBYn_zT1t2pCTU",
+      "expire_date": "2022-05-30T19:21:47.644Z"
+    }
+  },
+  {
+    "model": "address.country",
+    "pk": 1,
+    "fields": {
+      "name": "Україна",
+      "code": "UA"
+    }
+  },
+  {
+    "model": "address.state",
+    "pk": 1,
+    "fields": {
+      "name": "Рівненська область",
+      "code": "",
+      "country": 1
+    }
+  },
+  {
+    "model": "address.locality",
+    "pk": 1,
+    "fields": {
+      "name": "Рівне",
+      "postal_code": "",
+      "state": 1
+    }
+  },
+  {
+    "model": "address.address",
+    "pk": 1,
+    "fields": {
+      "street_number": "",
+      "route": "",
+      "locality": 1,
+      "raw": "Рівне, Рівненська область, Україна",
+      "formatted": "Рівне, Рівненська область, Україна",
+      "latitude": 50.6199,
+      "longitude": 26.251617
     }
   },
   {
@@ -1185,10 +1305,12 @@
       "bio": "",
       "phone_number": "+13602682510",
       "rating": 0,
-      "avatar": "upload/1╟э│ьюъ_хъЁрэр_2022-04-07_ю_15.45.27.png",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": true,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1208,10 +1330,12 @@
       "bio": null,
       "phone_number": "+380975040738",
       "rating": 5,
-      "avatar": "BlueMan",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1231,10 +1355,12 @@
       "bio": null,
       "phone_number": "+380975040758",
       "rating": 5,
-      "avatar": "BlueMan",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1254,10 +1380,12 @@
       "bio": "",
       "phone_number": "+380975040568",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1277,10 +1405,12 @@
       "bio": "",
       "phone_number": "+380975040569",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1300,10 +1430,12 @@
       "bio": "",
       "phone_number": "+380975040468",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1323,10 +1455,12 @@
       "bio": "",
       "phone_number": "+380975040789",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1346,10 +1480,12 @@
       "bio": "",
       "phone_number": "+380975040588",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1369,10 +1505,12 @@
       "bio": "",
       "phone_number": "+380978540568",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1392,10 +1530,12 @@
       "bio": "",
       "phone_number": "+380975040658",
       "rating": 0,
-      "avatar": "upload/10╟э│ьюъ_хъЁрэр_2022-04-07_ю_15.45.27.png",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1415,10 +1555,12 @@
       "bio": "",
       "phone_number": "+380978840568",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1438,10 +1580,12 @@
       "bio": null,
       "phone_number": "+622241537557",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1461,10 +1605,12 @@
       "bio": null,
       "phone_number": "+7 579 990 5817",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1484,10 +1630,12 @@
       "bio": null,
       "phone_number": "+86 485 516 2767",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1507,10 +1655,12 @@
       "bio": null,
       "phone_number": "+16728195553",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1530,10 +1680,12 @@
       "bio": null,
       "phone_number": "+86 681 229 3310",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1553,10 +1705,12 @@
       "bio": null,
       "phone_number": "+64 880 168 9724",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1576,10 +1730,12 @@
       "bio": null,
       "phone_number": "+63 642 732 4092",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1],
+      "groups": [
+        1
+      ],
       "user_permissions": []
     }
   },
@@ -1599,10 +1755,13 @@
       "bio": null,
       "phone_number": "+63 305 829 6883",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [1, 3],
+      "groups": [
+        1,
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1622,10 +1781,12 @@
       "bio": null,
       "phone_number": "+261 928 617 5544",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1645,10 +1806,12 @@
       "bio": null,
       "phone_number": "+559641509664",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1668,10 +1831,12 @@
       "bio": null,
       "phone_number": "+81 243 930 7824",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1691,10 +1856,12 @@
       "bio": null,
       "phone_number": "+559448562903",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1714,10 +1881,12 @@
       "bio": null,
       "phone_number": "+63 511 958 3267",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1737,10 +1906,12 @@
       "bio": null,
       "phone_number": "+46 113 334 2166",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1760,10 +1931,12 @@
       "bio": null,
       "phone_number": "+389 878 661 7675",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1783,10 +1956,12 @@
       "bio": null,
       "phone_number": "+48 258 288 7402",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1806,10 +1981,12 @@
       "bio": null,
       "phone_number": "+86 926 357 8465",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1829,10 +2006,12 @@
       "bio": null,
       "phone_number": "+62 700 951 5174",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1852,10 +2031,12 @@
       "bio": null,
       "phone_number": "+86 731 715 1593",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1875,10 +2056,12 @@
       "bio": null,
       "phone_number": "+558342386591",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1898,10 +2081,12 @@
       "bio": null,
       "phone_number": "+255 653 783 3666",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1921,10 +2106,12 @@
       "bio": null,
       "phone_number": "+20 260 873 9941",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1944,10 +2131,12 @@
       "bio": null,
       "phone_number": "+351 965 110 8790",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1967,10 +2156,12 @@
       "bio": null,
       "phone_number": "+33 131 382 9407",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -1990,10 +2181,12 @@
       "bio": null,
       "phone_number": "+256 831 424 5141",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2013,10 +2206,12 @@
       "bio": null,
       "phone_number": "+595 243 267 2730",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2036,10 +2231,12 @@
       "bio": null,
       "phone_number": "+63 486 693 3591",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2059,10 +2256,12 @@
       "bio": null,
       "phone_number": "+7 461 879 2480",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2082,10 +2281,12 @@
       "bio": null,
       "phone_number": "+868867162863",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2105,10 +2306,12 @@
       "bio": null,
       "phone_number": "+374 987 219 5050",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2128,10 +2331,12 @@
       "bio": null,
       "phone_number": "+7 610 735 2603",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2151,10 +2356,12 @@
       "bio": null,
       "phone_number": "+86 602 804 8982",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2174,10 +2381,12 @@
       "bio": null,
       "phone_number": "+998 193 343 0175",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2197,10 +2406,12 @@
       "bio": null,
       "phone_number": "+622834805478",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2220,10 +2431,12 @@
       "bio": null,
       "phone_number": "+966 911 745 4718",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2243,10 +2456,12 @@
       "bio": null,
       "phone_number": "+63 112 612 2519",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2266,10 +2481,12 @@
       "bio": null,
       "phone_number": "+371 367 236 5843",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2289,10 +2506,12 @@
       "bio": null,
       "phone_number": "+504 928 377 9539",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2312,10 +2531,12 @@
       "bio": null,
       "phone_number": "+2347052770104",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2335,10 +2556,12 @@
       "bio": null,
       "phone_number": "+48 130 619 2405",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2358,10 +2581,12 @@
       "bio": null,
       "phone_number": "+351 178 669 4014",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2381,10 +2606,12 @@
       "bio": null,
       "phone_number": "+63 637 735 3416",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2404,10 +2631,12 @@
       "bio": null,
       "phone_number": "+63 806 877 0230",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2427,10 +2656,12 @@
       "bio": null,
       "phone_number": "+351 841 613 3024",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2450,10 +2681,12 @@
       "bio": null,
       "phone_number": "+1 308 197 3790",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2473,10 +2706,12 @@
       "bio": null,
       "phone_number": "+46 294 930 1843",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2496,10 +2731,12 @@
       "bio": null,
       "phone_number": "+864764966248",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2519,10 +2756,12 @@
       "bio": null,
       "phone_number": "+33 993 396 1782",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [3],
+      "groups": [
+        3
+      ],
       "user_permissions": []
     }
   },
@@ -2542,10 +2781,12 @@
       "bio": null,
       "phone_number": "+73457775965",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2565,10 +2806,12 @@
       "bio": null,
       "phone_number": "+62 806 895 0461",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2588,10 +2831,12 @@
       "bio": null,
       "phone_number": "+627176003749",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2611,10 +2856,12 @@
       "bio": null,
       "phone_number": "+625348022321",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2634,10 +2881,12 @@
       "bio": null,
       "phone_number": "+380 940 889 1691",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2657,10 +2906,12 @@
       "bio": null,
       "phone_number": "+351 888 312 8733",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2680,10 +2931,12 @@
       "bio": null,
       "phone_number": "+351 987 878 1836",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2703,10 +2956,12 @@
       "bio": null,
       "phone_number": "+84 874 641 5852",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2726,10 +2981,12 @@
       "bio": null,
       "phone_number": "+212 666 543 3150",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2749,10 +3006,12 @@
       "bio": null,
       "phone_number": "+381 633 853 1292",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2772,10 +3031,12 @@
       "bio": null,
       "phone_number": "+234 727 475 8762",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2795,10 +3056,12 @@
       "bio": null,
       "phone_number": "+81 559 479 8067",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2818,10 +3081,12 @@
       "bio": null,
       "phone_number": "+509 293 719 0113",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2841,10 +3106,12 @@
       "bio": null,
       "phone_number": "+505 208 733 2805",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2864,10 +3131,12 @@
       "bio": null,
       "phone_number": "+7 602 488 7009",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2887,10 +3156,12 @@
       "bio": null,
       "phone_number": "+63 475 116 0497",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2910,10 +3181,12 @@
       "bio": null,
       "phone_number": "+47 802 883 9979",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2933,10 +3206,12 @@
       "bio": null,
       "phone_number": "+493833917567",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2956,10 +3231,12 @@
       "bio": null,
       "phone_number": "+629622215762",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -2979,10 +3256,12 @@
       "bio": null,
       "phone_number": "+20 803 898 0308",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3002,10 +3281,12 @@
       "bio": null,
       "phone_number": "+7 734 604 8202",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3025,10 +3306,12 @@
       "bio": null,
       "phone_number": "+639566938220",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3048,10 +3331,12 @@
       "bio": null,
       "phone_number": "+994 429 754 7658",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3071,10 +3356,12 @@
       "bio": null,
       "phone_number": "+850 875 784 5670",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3094,10 +3381,12 @@
       "bio": null,
       "phone_number": "+227 442 202 3816",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3117,10 +3406,12 @@
       "bio": null,
       "phone_number": "+62 689 152 3950",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3140,10 +3431,12 @@
       "bio": null,
       "phone_number": "+62 667 867 4298",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3163,10 +3456,12 @@
       "bio": null,
       "phone_number": "+84 438 276 6488",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3186,10 +3481,12 @@
       "bio": null,
       "phone_number": "+507 824 637 3718",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3209,10 +3506,12 @@
       "bio": null,
       "phone_number": "+66 968 879 0237",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3232,10 +3531,12 @@
       "bio": null,
       "phone_number": "+86 688 440 2100",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3255,10 +3556,12 @@
       "bio": null,
       "phone_number": "+862328197069",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3278,10 +3581,12 @@
       "bio": null,
       "phone_number": "+862051040730",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3301,10 +3606,12 @@
       "bio": null,
       "phone_number": "+998 382 868 6527",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3324,10 +3631,12 @@
       "bio": null,
       "phone_number": "+54 699 658 2317",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3347,10 +3656,12 @@
       "bio": null,
       "phone_number": "+12144579962",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3370,10 +3681,12 @@
       "bio": null,
       "phone_number": "+86 918 802 8905",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3393,10 +3706,12 @@
       "bio": null,
       "phone_number": "+62 441 732 8051",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3416,10 +3731,12 @@
       "bio": null,
       "phone_number": "+86 907 478 2089",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3439,10 +3756,12 @@
       "bio": null,
       "phone_number": "+86 945 824 5076",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3462,10 +3781,12 @@
       "bio": null,
       "phone_number": "+375 489 581 1298",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3485,10 +3806,12 @@
       "bio": null,
       "phone_number": "+62 347 425 1337",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3508,10 +3831,12 @@
       "bio": null,
       "phone_number": "+1 278 681 6786",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3531,10 +3856,12 @@
       "bio": null,
       "phone_number": "+866359545736",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3554,10 +3881,12 @@
       "bio": null,
       "phone_number": "+850 841 979 2497",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3577,10 +3906,12 @@
       "bio": null,
       "phone_number": "+20 378 159 6795",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3600,10 +3931,12 @@
       "bio": null,
       "phone_number": "+46 969 962 0749",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3623,10 +3956,12 @@
       "bio": null,
       "phone_number": "+51 879 959 6208",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3646,10 +3981,12 @@
       "bio": null,
       "phone_number": "+553033337551",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3669,10 +4006,12 @@
       "bio": null,
       "phone_number": "+82 800 943 6183",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3692,10 +4031,12 @@
       "bio": null,
       "phone_number": "+869987978004",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3715,10 +4056,12 @@
       "bio": null,
       "phone_number": "+86 980 134 5667",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": false,
-      "groups": [2],
+      "groups": [
+        2
+      ],
       "user_permissions": []
     }
   },
@@ -3738,11 +4081,156 @@
       "bio": null,
       "phone_number": "+380967478910",
       "rating": 0,
-      "avatar": "",
+      "avatar": "default_avatar.jpeg",
       "is_active": true,
       "is_admin": true,
       "groups": [],
       "user_permissions": []
+    }
+  },
+  {
+    "model": "api.customuser",
+    "pk": 113,
+    "fields": {
+      "password": "pbkdf2_sha256$320000$zserRuah1jBMBdxp39RREU$Jd8v+LuAWfhWF87jCutytiT6PYLbdj+KxNmNg9eGb5M=",
+      "last_login": "2022-05-18T08:06:23.456Z",
+      "is_superuser": true,
+      "first_name": "M",
+      "last_name": "",
+      "patronymic": "",
+      "email": "m1@com.ua",
+      "updated_at": "2022-05-18T07:57:31.975Z",
+      "created_at": "2022-05-18T07:57:31.958Z",
+      "bio": null,
+      "phone_number": "+380967478911",
+      "rating": 0,
+      "avatar": "default_avatar.jpeg",
+      "is_active": true,
+      "is_admin": true,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "api.business",
+    "pk": 1,
+    "fields": {
+      "name": "B1",
+      "type": "B1 type",
+      "logo": "",
+      "owner": 1,
+      "address": 1,
+      "description": "16.05.2022",
+      "created_at": "2022-05-16T19:24:40.951Z"
+    }
+  },
+  {
+    "model": "api.position",
+    "pk": 1,
+    "fields": {
+      "name": "P1",
+      "business": 1,
+      "start_time": "2022-05-16T19:25:03Z",
+      "end_time": "2022-05-16T20:25:05Z",
+      "specialist": [
+        2,
+        3
+      ]
+    }
+  },
+  {
+    "model": "api.order",
+    "pk": 1,
+    "fields": {
+      "status": "0",
+      "start_time": "2022-05-16T19:25:44Z",
+      "end_time": "2022-05-16T19:35:44Z",
+      "created_at": "2022-05-16T19:25:56.303Z",
+      "specialist": 2,
+      "customer": 3,
+      "service": 1,
+      "reason": ""
+    }
+  },
+  {
+    "model": "api.order",
+    "pk": 2,
+    "fields": {
+      "status": "0",
+      "start_time": "2022-05-16T19:26:03Z",
+      "end_time": "2022-05-16T19:36:03Z",
+      "created_at": "2022-05-16T19:26:34.718Z",
+      "specialist": 2,
+      "customer": 4,
+      "service": 1,
+      "reason": ""
+    }
+  },
+  {
+    "model": "api.order",
+    "pk": 3,
+    "fields": {
+      "status": "0",
+      "start_time": "2022-05-16T19:26:37Z",
+      "end_time": "2022-05-16T19:36:37Z",
+      "created_at": "2022-05-16T19:26:44.750Z",
+      "specialist": 2,
+      "customer": 5,
+      "service": 1,
+      "reason": ""
+    }
+  },
+  {
+    "model": "api.order",
+    "pk": 4,
+    "fields": {
+      "status": "0",
+      "start_time": "2022-05-16T19:26:53Z",
+      "end_time": "2022-05-16T19:36:53Z",
+      "created_at": "2022-05-16T19:26:57.136Z",
+      "specialist": 3,
+      "customer": 2,
+      "service": 1,
+      "reason": ""
+    }
+  },
+  {
+    "model": "api.order",
+    "pk": 5,
+    "fields": {
+      "status": "0",
+      "start_time": "2022-05-16T19:27:04Z",
+      "end_time": "2022-05-16T19:37:04Z",
+      "created_at": "2022-05-16T19:27:05.941Z",
+      "specialist": 3,
+      "customer": 4,
+      "service": 1,
+      "reason": ""
+    }
+  },
+  {
+    "model": "api.order",
+    "pk": 6,
+    "fields": {
+      "status": "0",
+      "start_time": "2022-05-16T19:27:08Z",
+      "end_time": "2022-05-16T19:37:08Z",
+      "created_at": "2022-05-16T19:27:22.139Z",
+      "specialist": 3,
+      "customer": 5,
+      "service": 1,
+      "reason": ""
+    }
+  },
+  {
+    "model": "api.service",
+    "pk": 1,
+    "fields": {
+      "position": 1,
+      "name": "s1",
+      "price": "10.00",
+      "description": "",
+      "duration": 10
     }
   }
 ]
