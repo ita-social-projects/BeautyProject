@@ -1,27 +1,59 @@
-from rest_framework.generics import ListCreateAPIView
+from django.db.models import Q
+from rest_framework import status
+from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.response import Response
 
-from .models import CustomUser
+from .models import CustomUser, Order
+from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
+from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
 from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
+from .serializers.serializers_customuser import UserOrderDetailSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
-    """Generic API for custom POST method"""
+    """Generic API for users custom POST methods"""
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
-    # Permissions
-    # line with max chars in code
-
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
-    """Generic API for custom GET, PUT and DELETE method.
+    """Generic API for users custom GET, PUT and DELETE methods.
     RUD - Retrieve, Update, Destroy"""
+    # permission_classes = [IsOrReadOnly]
+    permission_classes = [IsAccountOwnerOrReadOnly]
+    # permission_classes = [IsAdminOrIsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
 
-    # Permissions
-    # rest git hub
+    def perform_destroy(self, instance):
+        """Reimplementation of the DESTROY (DELETE) method.
+        Makes current user inactive by changing its' field
+        """
+        if instance.is_active:
+            instance.is_active = False
+            instance.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
+    """Generic API for orders custom GET, PUT and DELETE methods.
+       RUD - Retrieve, Update, Destroy"""
+
+    queryset = Order.objects.all()
+    serializer_class = UserOrderDetailSerializer
+    multiple_lookup_fields = ('user', 'id')
+
+    def get_object(self):
+        """Method for getting order objects by using both order user id
+         and order id lookup fields."""
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, Q(customer=self.kwargs['user']) |
+                                Q(specialist=self.kwargs['user']),
+                                id=self.kwargs['id'])
+        self.check_object_permissions(self.request, obj)
+        return obj
