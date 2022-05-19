@@ -132,7 +132,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     REQUIRED_FIELDS = ('password', 'first_name', 'phone_number')
 
     class Meta:
-        """This meta class stores verbose names ordering data"""
+        """This metaclass stores verbose names ordering data"""
         ordering = ['id']
         verbose_name = "User"
         verbose_name_plural = "Users"
@@ -205,7 +205,7 @@ class Business(models.Model):
     )
 
     class Meta:
-        """This meta class stores verbose names"""
+        """This metaclass stores verbose names"""
         
         ordering = ['type']
         verbose_name = _('Business')
@@ -215,7 +215,7 @@ class Business(models.Model):
         """str: Returns a verbose title of the business"""
         return str(self.name)
 
-    #TODO: methods: get_all_specialist & create_position
+    # TODO: methods: get_all_specialist & create_position
     # def create_position(self, name, type, logo, owner, description):
     #     pos = Position(name=name)
     #     pos.save()
@@ -261,7 +261,7 @@ class WorkingTime(DbView):
     @classmethod
     def view(cls):
         """Return string of our request"""
-        #TODO: add request when all class will be realized
+        # TODO: add request when all class will be realized
         req = ()
         return str(req.query)
 
@@ -270,7 +270,7 @@ class WorkingTime(DbView):
         return self.block
 
     class Meta:
-        """This meta class stores verbose names and permissions"""
+        """This metaclass stores verbose names and permissions"""
 
         managed = False
         verbose_name = _("WorkingTime")
@@ -292,24 +292,24 @@ class Position(models.Model):
 
     name = models.CharField(
         max_length=40,
-        verbose_name= _("Name")
+        verbose_name=_("Name")
     )
     specialist = models.ManyToManyField(
         "CustomUser",
-        verbose_name= _("Specialist"),
+        verbose_name=_("Specialist"),
     )
     business = models.ForeignKey(
         "Business", 
         on_delete=models.CASCADE,
-        verbose_name= _("Business")
+        verbose_name=_("Business")
     )
     start_time = models.DateTimeField(
         editable=True,
-        verbose_name= _("Start time")
+        verbose_name=_("Start time")
     )
     end_time = models.DateTimeField(
         editable=True,
-        verbose_name= _("End time")
+        verbose_name=_("End time")
     )
 
     def __str__(self):
@@ -317,7 +317,7 @@ class Position(models.Model):
         return self.name
 
     class Meta:
-        """This meta class stores verbose names and ordering data"""
+        """This metaclass stores verbose names and ordering data"""
         
         ordering = ['name']
         verbose_name = _("Position")
@@ -370,7 +370,7 @@ class Review(models.Model):
         return self.text_body
 
     class Meta:
-        """This meta class stores verbose names and permissions data"""
+        """This metaclass stores verbose names and permissions data"""
 
         ordering = ["date_of_publication"]
         verbose_name = _("Review")
@@ -382,8 +382,8 @@ class Order(models.Model):
     that stores all the required information.
 
     Note:
-        reason attribute is only neaded if order's status is cancelled
-        end_time is autocalculated during creation, no need to put it
+        reason attribute is only needed if order's status is cancelled
+        end_time is auto calculated during creation, no need to put it
 
     Attributes:
 
@@ -392,8 +392,8 @@ class Order(models.Model):
         end_time (datetime): Time that is calculated according to the duration of service
         created_at (datetime): Time of creation of the order
         specialist (CustomUser): An appointed specialist for the order
-        customer (CustomUser): A customer who will recieve the order
-        service (Service): Service that will be fulfield for the order
+        customer (CustomUser): A customer who will receive the order
+        service (Service): Service that will be fulfilled for the order
         reason (str, optional): Reason for cancellation
 
     Properties:
@@ -413,16 +413,16 @@ class Order(models.Model):
         DECLINED = 4, _('Declined')
 
     class Meta:
-        """This meta class stores ordering and permissions data"""
+        """This metaclass stores ordering and permissions data"""
 
         ordering = ['id']
         unique_together = ['specialist', 'customer']
         get_latest_by = "created_at"
         permissions = [
-        ('can_add_order', 'Can add an order'),
-        ('can_change_order', 'Can change an order'),
-        ('can_set_status', 'Can set a status of the order'),
-        ('can_view_order', 'Can view an order')
+            ('can_add_order', 'Can add an order'),
+            ('can_change_order', 'Can change an order'),
+            ('can_set_status', 'Can set a status of the order'),
+            ('can_view_order', 'Can view an order')
         ]
 
     status = models.CharField(
@@ -446,13 +446,13 @@ class Order(models.Model):
     )
     specialist = models.ForeignKey(
         'CustomUser',
-        related_name = 'specialist_orders',
+        related_name='specialist_orders',
         on_delete=models.CASCADE,
         verbose_name=_('Specialist')
     )
     customer = models.ForeignKey(
         'CustomUser',
-        related_name = 'customer_orders',
+        related_name='customer_orders',
         on_delete=models.CASCADE,
         verbose_name=_('Customer')
     )
@@ -542,7 +542,7 @@ class Service(models.Model):
     position = models.ForeignKey(
         "Position",
         on_delete=models.CASCADE,
-        verbose_name= _("Position")
+        verbose_name=_("Position")
     )
     name = models.CharField(
         max_length=50,
@@ -569,7 +569,7 @@ class Service(models.Model):
 
     class Meta:
 
-        """This meta class stores ordering and verbose name"""
+        """This metaclass stores ordering and verbose name"""
         ordering = ['id']
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
