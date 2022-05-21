@@ -206,3 +206,23 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'SUPPORTED_SUBMIT_METHODS': ['get', 'put', 'post', 'delete', 'patch'],
+}
+
+REDOC_SETTINGS = {
+    'LAZY_RENDERING': False,
+}
+
+LOGIN_URL = "/auth/jwt/create/"
