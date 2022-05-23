@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'phonenumber_field',
     'address',
+    'drf_yasg',
     # project apps
     'api'
 ]
@@ -65,7 +66,7 @@ ROOT_URLCONF = 'beauty.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,18 +79,17 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
-
 WSGI_APPLICATION = 'beauty.wsgi.application'
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 DJOSER = {
@@ -110,7 +110,6 @@ DJOSER = {
         'http://127.0.0.1:3000/login'
     ],
     'HIDE_USERS': True,
-
 
     'SERIALIZERS': {
         'user': 'api.serializers.serializers_customuser.CustomUserSerializer'
@@ -193,8 +192,8 @@ GROUP_ID = "id -g"
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'TEST_REQUEST_RENDERER_CLASSES': (
-            'rest_framework.renderers.MultiPartRenderer',
-            'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
@@ -205,4 +204,41 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
+
+SWAGGER_SETTINGS = {
+    # 'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        },
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        },
+    #     'Your App API - Swagger': {
+    #         'type': 'oauth2',
+    #         'description': 'Google OAuth',
+    #         'authorizationUrl': 'https://accounts.google.com/o/oauth2/v2/auth',
+    #         'tokenUrl': 'https://oauth2.googleapis.com/token',
+    #         'flow': 'accessCode',
+    #         'scopes': {
+    #             'read:adwords': 'read adwords',
+    #         }
+    #     }
+    },
+    # 'OAUTH2_CONFIG': {
+    #     'clientId': '701216664577-ttag7920obptmhqnfmhecgcbcug2ilf3.apps.googleusercontent.com',
+    #     'clientSecret': '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',
+    #     'appName': 'beauty'
+    # },
+    'SUPPORTED_SUBMIT_METHODS': ['get', 'put', 'post', 'delete', 'patch'],
+}
+
+REDOC_SETTINGS = {
+    'LAZY_RENDERING': False,
+}
+
+LOGIN_URL = "/auth/jwt/create/"
