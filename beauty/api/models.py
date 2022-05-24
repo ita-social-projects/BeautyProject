@@ -100,7 +100,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         auto_now=True
     )
     created_at = models.DateTimeField(
-        auto_now=True,
+        auto_now_add=True,
     )
     bio = models.TextField(
         max_length=255,
