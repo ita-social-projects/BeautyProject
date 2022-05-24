@@ -9,13 +9,14 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import CustomUser, Order
+from .models import CustomUser, Order, Business
 from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
 from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
-from .serializers.serializers_customuser import CustomUserDetailSerializer
-from .serializers.serializers_customuser import CustomUserSerializer
-from .serializers.serializers_customuser import UserOrderDetailSerializer
-from .serializers.serializers_customuser import ResetPasswordSerializer
+from .serializers.serializers_customuser import (CustomUserDetailSerializer, 
+                                                 CustomUserSerializer, 
+                                                 UserOrderDetailSerializer,
+                                                 ResetPasswordSerializer)
+from .serializers.business_serializers import BusinessListCreateSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -90,3 +91,8 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
                                 id=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+class BusinessListCreateView(ListCreateAPIView):
+    queryset = Business.objects.all()
+    serializer_class = BusinessListCreateSerializer
