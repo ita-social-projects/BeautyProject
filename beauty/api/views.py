@@ -16,6 +16,9 @@ from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
 from .serializers.serializers_customuser import UserOrderDetailSerializer
 from .serializers.serializers_customuser import ResetPasswordSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -29,12 +32,14 @@ class UserActivationView(GenericAPIView):
     """Generic view for user account activation"""
 
     def get(self, request, uidb64, token):
-
         id = int(force_str(urlsafe_base64_decode(uidb64)))
 
         user = get_object_or_404(CustomUser, id=id)
         user.is_active = True
         user.save()
+
+        logger.info(f"User {user} was activated")
+
         return redirect(reverse("api:user-detail", kwargs={"pk": id}))
 
 
@@ -49,6 +54,9 @@ class ResetPasswordView(GenericAPIView):
         self.get_serializer().validate(request.POST)
         user.set_password(request.POST.get('password'))
         user.save()
+
+        logger.info(f"User {user} password was reset")
+
         return redirect(reverse("api:user-detail", kwargs={"pk": id}))
 
 
@@ -69,6 +77,9 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         if instance.is_active:
             instance.is_active = False
             instance.save()
+
+            logger.info(f"User {instance} was deactivated")
+
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -89,4 +100,10 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
                                 Q(specialist=self.kwargs['user']),
                                 id=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
+
+        user = obj.customer if self.kwargs['user'] ==\
+                               obj.customer.id else obj.specialist
+
+        logger.info(f"{obj} was got for user {user} (id={user.id})")
+
         return obj
