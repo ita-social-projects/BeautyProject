@@ -99,3 +99,4 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
 class BusinessListCreateView(ListCreateAPIView):
     queryset = Business.objects.all()
     serializer_class = BusinessListCreateSerializer
+    permission_classes = [IsAccountOwnerOrReadOnly, ]
