@@ -100,8 +100,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         auto_now=True
     )
     created_at = models.DateTimeField(
-        auto_now_add=True,
-        editable=False
+        auto_now=True,
     )
     bio = models.TextField(
         max_length=255,
@@ -195,12 +194,11 @@ class Business(models.Model):
         null=True
     )
     description = models.CharField(
-        verbose_name=_('Created at'),
+        verbose_name=_('Description'),
         max_length=255
     )
     created_at = models.DateTimeField(
         verbose_name=_('Created at'),
-        blank=True,
         auto_now_add=True
     )
 

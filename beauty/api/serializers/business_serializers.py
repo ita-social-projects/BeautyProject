@@ -5,5 +5,4 @@ from api.models import Business
 class BusinessListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
-        fields = ('name', 'type', 'owner', 'address')
-
+        fields = ('name', 'type', 'owner', 'description')
