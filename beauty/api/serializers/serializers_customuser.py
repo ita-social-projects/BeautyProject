@@ -73,13 +73,13 @@ class PasswordsValidation(serializers.Serializer):
                 )
         elif any([password, confirm_password]):
 
-            logger.error(f"Password: One of the password fields is empty")
+            logger.error("Password: One of the password fields is empty")
 
             raise serializers.ValidationError(
                 {"confirm_password": "Didn`t enter the password confirmation."}
             )
 
-        logger.info(f"Password and Confirm password is checked")
+        logger.info("Password and Confirm password is checked")
 
         return super().validate(data)
 
