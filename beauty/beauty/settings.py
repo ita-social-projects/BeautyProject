@@ -220,10 +220,6 @@ LOGGING = {
         },
     },
     'filters': {
-        # 'special': {
-        #     '()': 'project.logging.SpecialFilter',
-        #     'foo': 'bar',
-        # },
         'require_debug_true': {
             '()': 'django.utils.log.RequireDebugTrue',
         },
@@ -237,7 +233,6 @@ LOGGING = {
         },
         'file': {
             'level': 'INFO',
-            'filters': ['require_debug_true', ],
             'class': 'logging.handlers.RotatingFileHandler',
             'mode': 'a',
             'maxBytes': 15728640,  # 1024 * 1024 * 15B = 15MB
@@ -253,8 +248,7 @@ LOGGING = {
         },
         'api': {
             'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': True
+            'level': 'INFO'
         }
     }
 }
