@@ -95,5 +95,5 @@ class BusinessListCreateView(ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == "POST":
-            self.permission_classes = (IsAccountOwnerOrReadOnly, )
+            self.permission_classes = (IsAccountOwnerOrReadOnly,)
         return super().get_permissions()

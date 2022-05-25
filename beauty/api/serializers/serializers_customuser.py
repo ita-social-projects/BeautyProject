@@ -65,7 +65,8 @@ class PasswordsValidation(serializers.Serializer):
                 )
         elif any([password, confirm_password]):
             raise serializers.ValidationError(
-             {"confirm_password": "Didn`t enter the password confirmation."})
+                {"confirm_password": "Didn`t enter the password confirmation."}
+            )
 
         return super().validate(data)
 
@@ -187,7 +188,7 @@ class CustomUserDetailSerializer(PasswordsValidation,
         model = CustomUser
         fields = ['id', 'email', 'first_name', 'patronymic', 'last_name',
                   'phone_number', 'bio', 'rating', 'avatar', 'is_active',
-                  'groups', 'specialist_orders',  'customer_orders',
+                  'groups', 'specialist_orders', 'customer_orders',
                   'password', 'confirm_password']
 
     def update(self, instance: object, validated_data: dict) -> object:
@@ -222,17 +223,17 @@ class UserOrderDetailSerializer(serializers.ModelSerializer):
 class ResetPasswordSerializer(PasswordsValidation):
     """"""
     password = serializers.CharField(
-            write_only=True,
-            validators=[validate_password],
-            style={'input_type': 'password', 'placeholder': 'New Password'}
-        )
+        write_only=True,
+        validators=[validate_password],
+        style={'input_type': 'password', 'placeholder': 'New Password'}
+    )
     confirm_password = serializers.CharField(
-            write_only=True,
-            style={
-                'input_type': 'password',
-                'placeholder': 'Confirmation Password'
-            }
-        )
+        write_only=True,
+        style={
+            'input_type': 'password',
+            'placeholder': 'Confirmation Password'
+        }
+    )
 
     class Meta:
         model = CustomUser
@@ -242,5 +243,5 @@ class ResetPasswordSerializer(PasswordsValidation):
         if all([data.get('password'), data.get('confirm_password')]):
             return super().validate(data)
         else:
-            raise serializers.ValidationError({'password': 'Fields should be valid'})
-    
+            raise serializers.ValidationError(
+                {'password': 'Fields should be valid'})

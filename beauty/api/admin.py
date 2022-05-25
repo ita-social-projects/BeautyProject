@@ -37,7 +37,6 @@ class CustomUserInline(admin.TabularInline):
 
 
 class CustomGroupAdmin(BaseGroupAdmin):
-
     inlines = [
         CustomUserInline,
     ]

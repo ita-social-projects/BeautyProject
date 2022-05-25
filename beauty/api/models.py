@@ -212,16 +212,17 @@ class Business(models.Model):
         """str: Returns a verbose title of the business"""
         return str(self.name)
 
-    # TODO: methods: get_all_specialist & create_position
-    # def create_position(self, name, type, logo, owner, description):
-    #     pos = Position(name=name)
-    #     pos.save()
+    def create_position(self, name, specialist, start_time, end_time):
+        position = Position.objects.create(name=name, business=self,
+                                           start_time=start_time,
+                                           end_time=end_time)
+        position.specialist.add(specialist)
+        return position
 
     def get_all_specialist(self):
-        """"""
-        specialists = [position.specialists.all() for position in
-                       self.positions.all()]
-        return specialists
+        """Gets all Specialists who belong to this Business """
+        positions = self.position_set.all().values_list("id", flat=True)
+        return CustomUser.objects.filter(position__in=positions)
 
 
 class WorkingTime(DbView):

@@ -108,7 +108,7 @@ python manage.py test
 
 ## Project Deploy
 
-- TBC
+- http://3.65.253.196/
 
 ---
 ## Usage

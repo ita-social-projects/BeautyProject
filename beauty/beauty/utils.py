@@ -17,15 +17,21 @@ class ModelsUtils:
         Returns:
             str: Path to the media file
         """
-        new_name = instance.id if instance.id else instance.__class__.objects.all().last().id + 1
+        if instance.id:
+            new_name = instance.id
+        else:
+            new_name = instance.__class__.objects.all().last().id + 1
+
         new_path = os.path.join(instance.__class__.__name__.lower(),
                                 f"{new_name}.{filename.split('.')[-1]}")
+
         if hasattr(instance, "avatar"):
             image = instance.avatar.path
         else:
             image = instance.logo.path
-        path = os.path.join(os.path.split(image)[0],
-                            new_path)
+
+        path = os.path.join(os.path.split(image)[0], new_path)
+
         if os.path.exists(path):
             os.remove(path)
         return new_path
