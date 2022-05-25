@@ -4,23 +4,17 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, get_object_or_404
-from rest_framework.generics import GenericAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, get_object_or_404, \
+    GenericAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .models import CustomUser, Order, Business
+from .permissions import IsAccountOwnerOrReadOnly
 
-from .permissions import (IsAdminOrIsAccountOwnerOrReadOnly,
-                          IsAccountOwnerOrReadOnly, 
-                          IsOrReadOnly)
-
-from .serializers.serializers_customuser import (CustomUserDetailSerializer, 
-                                                 CustomUserSerializer, 
-                                                 UserOrderDetailSerializer,
-                                                 ResetPasswordSerializer)
-
+from .serializers.serializers_customuser import CustomUserDetailSerializer, \
+    CustomUserSerializer, \
+    UserOrderDetailSerializer, ResetPasswordSerializer
 from .serializers.business_serializers import BusinessListCreateSerializer
 
 
@@ -35,13 +29,12 @@ class UserActivationView(GenericAPIView):
     """Generic view for user account activation"""
 
     def get(self, request, uidb64, token):
+        user_id = int(force_str(urlsafe_base64_decode(uidb64)))
 
-        id = int(force_str(urlsafe_base64_decode(uidb64)))
-
-        user = get_object_or_404(CustomUser, id=id)
+        user = get_object_or_404(CustomUser, id=user_id)
         user.is_active = True
         user.save()
-        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
+        return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
 
 
 class ResetPasswordView(GenericAPIView):
@@ -50,12 +43,12 @@ class ResetPasswordView(GenericAPIView):
     model = CustomUser
 
     def post(self, request, uidb64, token):
-        id = int(force_str(urlsafe_base64_decode(uidb64)))
-        user = get_object_or_404(CustomUser, id=id)
+        user_id = int(force_str(urlsafe_base64_decode(uidb64)))
+        user = get_object_or_404(CustomUser, id=user_id)
         self.get_serializer().validate(request.POST)
         user.set_password(request.POST.get('password'))
         user.save()
-        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
+        return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
 
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
@@ -99,4 +92,8 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
 class BusinessListCreateView(ListCreateAPIView):
     queryset = Business.objects.all()
     serializer_class = BusinessListCreateSerializer
-    permission_classes = [IsAccountOwnerOrReadOnly, ]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = (IsAccountOwnerOrReadOnly, )
+        return super().get_permissions()

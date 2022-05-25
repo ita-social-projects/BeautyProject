@@ -2,10 +2,9 @@
 
 from datetime import timedelta
 from address.models import AddressField
-from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email, MinValueValidator,\
+from django.core.validators import validate_email, MinValueValidator, \
     MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
@@ -182,13 +181,13 @@ class Business(models.Model):
         blank=True
     )
     owner = models.ForeignKey(
-        'CustomUser', 
+        'CustomUser',
         verbose_name=_('Owner'),
-        on_delete=models.PROTECT, 
+        on_delete=models.PROTECT,
         related_name='businesses'
     )
     address = AddressField(
-        verbose_name=_("Location"), 
+        verbose_name=_("Location"),
         max_length=500,
         blank=True,
         null=True
@@ -204,7 +203,7 @@ class Business(models.Model):
 
     class Meta:
         """This meta class stores verbose names"""
-        
+
         ordering = ['type']
         verbose_name = _('Business')
         verbose_name_plural = _('Businesses')
@@ -213,14 +212,15 @@ class Business(models.Model):
         """str: Returns a verbose title of the business"""
         return str(self.name)
 
-    #TODO: methods: get_all_specialist & create_position
+    # TODO: methods: get_all_specialist & create_position
     # def create_position(self, name, type, logo, owner, description):
     #     pos = Position(name=name)
     #     pos.save()
 
     def get_all_specialist(self):
         """"""
-        specialists = [position.specialists.all() for position in self.positions.all()]
+        specialists = [position.specialists.all() for position in
+                       self.positions.all()]
         return specialists
 
 
@@ -259,7 +259,7 @@ class WorkingTime(DbView):
     @classmethod
     def view(cls):
         """Return string of our request"""
-        #TODO: add request when all class will be realized
+        # TODO: add request when all class will be realized
         req = ()
         return str(req.query)
 
@@ -290,24 +290,24 @@ class Position(models.Model):
 
     name = models.CharField(
         max_length=40,
-        verbose_name= _("Name")
+        verbose_name=_("Name")
     )
     specialist = models.ManyToManyField(
         "CustomUser",
-        verbose_name= _("Specialist"),
+        verbose_name=_("Specialist"),
     )
     business = models.ForeignKey(
-        "Business", 
+        "Business",
         on_delete=models.CASCADE,
-        verbose_name= _("Business")
+        verbose_name=_("Business")
     )
     start_time = models.DateTimeField(
         editable=True,
-        verbose_name= _("Start time")
+        verbose_name=_("Start time")
     )
     end_time = models.DateTimeField(
         editable=True,
-        verbose_name= _("End time")
+        verbose_name=_("End time")
     )
 
     def __str__(self):
@@ -316,7 +316,7 @@ class Position(models.Model):
 
     class Meta:
         """This meta class stores verbose names and ordering data"""
-        
+
         ordering = ['name']
         verbose_name = _("Position")
         verbose_name_plural = _("Positions")
@@ -327,7 +327,6 @@ class Review(models.Model):
     that stores all the required information.
 
     Attributes:
-
         text_body (str): body of the review
         rating (int): Rating of review(natural number from 1 to 5)
         date_of_publication (datetime): Date and time of review publication
@@ -417,10 +416,10 @@ class Order(models.Model):
         unique_together = ['specialist', 'customer']
         get_latest_by = "created_at"
         permissions = [
-        ('can_add_order', 'Can add an order'),
-        ('can_change_order', 'Can change an order'),
-        ('can_set_status', 'Can set a status of the order'),
-        ('can_view_order', 'Can view an order')
+            ('can_add_order', 'Can add an order'),
+            ('can_change_order', 'Can change an order'),
+            ('can_set_status', 'Can set a status of the order'),
+            ('can_view_order', 'Can view an order')
         ]
 
     status = models.CharField(
@@ -444,13 +443,13 @@ class Order(models.Model):
     )
     specialist = models.ForeignKey(
         'CustomUser',
-        related_name = 'specialist_orders',
+        related_name='specialist_orders',
         on_delete=models.CASCADE,
         verbose_name=_('Specialist')
     )
     customer = models.ForeignKey(
         'CustomUser',
-        related_name = 'customer_orders',
+        related_name='customer_orders',
         on_delete=models.CASCADE,
         verbose_name=_('Customer')
     )
@@ -467,7 +466,8 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation"""
-        self.end_time = self.start_time + timedelta(minutes=self.service.duration)
+        self.end_time = self.start_time + timedelta(
+            minutes=self.service.duration)
         super(Order, self).save(*args, **kwargs)
         return self
 
@@ -540,7 +540,7 @@ class Service(models.Model):
     position = models.ForeignKey(
         "Position",
         on_delete=models.CASCADE,
-        verbose_name= _("Position")
+        verbose_name=_("Position")
     )
     name = models.CharField(
         max_length=50,
@@ -566,7 +566,6 @@ class Service(models.Model):
         return self.name
 
     class Meta:
-
         """This meta class stores ordering and verbose name"""
         ordering = ['id']
         verbose_name = _("Service")
