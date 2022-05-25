@@ -108,13 +108,19 @@ class OrderListCreateView(ListCreateAPIView):
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    #
+    # def get_permissions(self):
+    #     """Permission for order POST method.
+    #     User should be authenticated.
+    #     """
+    #     if self.request.method == "POST":
+    #         self.permission_classes = (IsAuthenticated,)
+    #     return super().get_permissions()
 
-    def get_permissions(self):
-        """Permission for order POST method.
-        User should be authenticated.
-        """
-        if self.request.method == "POST":
-            self.permission_classes = (IsAuthenticated,)
-        return super().get_permissions()
 
+class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """Generic API for orders custom POST method"""
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
 
