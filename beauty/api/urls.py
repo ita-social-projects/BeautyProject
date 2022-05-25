@@ -11,6 +11,7 @@ urlpatterns = [
     path('user/<int:user>/order/<int:pk>/',
          OrderRetrieveUpdateDestroyView.as_view(),
          name='user-order-detail'),
+
     path('orders/', OrderListCreateView.as_view(),
          name='order-list-create'),
     path('order/<int:pk>/', OrderRetrieveUpdateDestroyView.as_view(),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('order/<str:uid>/<str:token>/<str:status>/',
          OrderApprovingView.as_view(),
          name='order-approving'),
-    path('user/<int:user>/reviews/add/', ReviewAddView.as_view(),
+    
+    path('<int:user>/reviews/add/', ReviewAddView.as_view(),
          name='review-add'),
 ]

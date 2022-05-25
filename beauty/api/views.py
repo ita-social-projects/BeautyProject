@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
+from rest_framework.permissions import IsAuthenticated
 
 from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order
@@ -226,6 +227,7 @@ class OrderApprovingView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
+
 
 
 class ReviewAddView(GenericAPIView):
