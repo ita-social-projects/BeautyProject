@@ -28,6 +28,7 @@ import logging
 
 
 logger = logging.getLogger(__name__)
+from .serializers.review_serializers import ReviewAddSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -228,3 +229,25 @@ class OrderApprovingView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
+
+
+class ReviewAddView(GenericAPIView):
+    """This class represents a view which is accessed when someone
+    is trying to create a new Review. It makes use of the POST method,
+    other methods are not allowed in this view.
+    """
+
+    serializer_class = ReviewAddSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user):
+        """This is a POST method of the view"""
+        serializer = ReviewAddSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(
+                from_user=self.request.user,
+                to_user=CustomUser.objects.get(pk=user)
+            )
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
