@@ -1,6 +1,5 @@
 """The module includes serializers for CustomUser model."""
 
-from dataclasses import fields
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password

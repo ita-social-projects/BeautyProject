@@ -4,18 +4,22 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, get_object_or_404, \
-    GenericAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
+                                     GenericAPIView,
+                                     RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.permissions import IsAuthenticated
 
 from .models import CustomUser, Order, Business
 from .permissions import IsAccountOwnerOrReadOnly
 
-from .serializers.serializers_customuser import CustomUserDetailSerializer, \
-    CustomUserSerializer, \
-    UserOrderDetailSerializer, ResetPasswordSerializer
+from .serializers.customuser_serializers import (CustomUserDetailSerializer,
+                                                 CustomUserSerializer,
+                                                 UserOrderDetailSerializer,
+                                                 ResetPasswordSerializer)
 from .serializers.business_serializers import BusinessListCreateSerializer
+from api.serializers.order_serializers import OrderSerializer
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -95,5 +99,20 @@ class BusinessListCreateView(ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == "POST":
-            self.permission_classes = (IsAccountOwnerOrReadOnly, )
+            self.permission_classes = (IsAccountOwnerOrReadOnly,)
+        return super().get_permissions()
+
+
+class OrderListCreateView(ListCreateAPIView):
+    """Generic API for orders custom POST method"""
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def get_permissions(self):
+        """Permission for order POST method.
+        User should be authenticated.
+        """
+        if self.request.method == "POST":
+            self.permission_classes = (IsAuthenticated,)
         return super().get_permissions()

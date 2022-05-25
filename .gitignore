@@ -131,3 +131,4 @@ dmypy.json
 .pyre/
 /beauty/docs/
 migrations/
+/beauty/api/serializers/order_serializers.py
