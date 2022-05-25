@@ -85,6 +85,9 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+GOOGLE_API_KEY = config("GOOGLE_API_KEY")
+USER_ID = "id -u"
+GROUP_ID = "id -g"
 
 WSGI_APPLICATION = 'beauty.wsgi.application'
 
@@ -187,10 +190,6 @@ FIXTURE_DIRS = 'fixtures/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-GOOGLE_API_KEY = config("GOOGLE_API_KEY")
-USER_ID = "id -u"
-GROUP_ID = "id -g"
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',

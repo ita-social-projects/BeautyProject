@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import GenericAPIView
@@ -10,13 +11,18 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 
-from .models import CustomUser, Order, Position
-from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
-from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
-from .serializers.serializers_customuser import CustomUserDetailSerializer
-from .serializers.serializers_customuser import CustomUserSerializer
-from .serializers.serializers_customuser import UserOrderDetailSerializer
-from .serializers.serializers_customuser import ResetPasswordSerializer
+from .models import CustomUser, Order, Business, Position
+
+from .permissions import (IsAdminOrIsAccountOwnerOrReadOnly,
+                          IsAccountOwnerOrReadOnly, 
+                          IsOrReadOnly)
+
+from .serializers.serializers_customuser import (CustomUserDetailSerializer, 
+                                                 CustomUserSerializer, 
+                                                 UserOrderDetailSerializer,
+                                                 ResetPasswordSerializer)
+
+from .serializers.business_serializers import BusinessListCreateSerializer
 from .serializers.serializers_position import PositionSerializer
 
 
@@ -57,9 +63,7 @@ class ResetPasswordView(GenericAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
     RUD - Retrieve, Update, Destroy"""
-    # permission_classes = [IsOrReadOnly]
     permission_classes = [IsAccountOwnerOrReadOnly]
-    # permission_classes = [IsAdminOrIsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
@@ -99,3 +103,9 @@ class PositionListCreateView(ListCreateAPIView):
     
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
+
+
+class BusinessListCreateView(ListCreateAPIView):
+    queryset = Business.objects.all()
+    serializer_class = BusinessListCreateSerializer
+    permission_classes = [IsAccountOwnerOrReadOnly, ]

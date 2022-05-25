@@ -50,5 +50,3 @@ admin.site.register(Order)
 admin.site.register(Service)
 admin.site.register(Position)
 admin.site.register(Business)
-
-
