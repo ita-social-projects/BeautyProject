@@ -44,7 +44,7 @@ class MyUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        logger.info(f"User {user['first_name']} with"
+        logger.info(f"User {user['first_name']} (id={user.id}) with"
                     f" {user['email']} was created.")
 
         return user

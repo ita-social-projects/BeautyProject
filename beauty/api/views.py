@@ -101,9 +101,9 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
                                 id=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
 
-        user = obj.customer if self.kwargs['user'] ==\
-                               obj.customer.id else obj.specialist
+        user = (obj.customer if self.kwargs['user'] ==
+                                obj.customer.id else obj.specialist)
 
-        logger.info(f"{obj} was got for user {user} (id={user.id})")
+        logger.info(f"{obj} was got for the user {user} (id={user.id})")
 
         return obj
