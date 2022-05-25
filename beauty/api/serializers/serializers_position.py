@@ -1,24 +1,20 @@
 """The module includes serializers for Position model."""
 
 from rest_framework import serializers
-from rest_framework.reverse import reverse
 
-from api.models import Position
+from api.models import Position, Business
 from api.serializers.serializers_customuser import CustomUserSerializer
 
 
-class PositionSerializer(serializers.HyperlinkedRelatedField):
+class PositionSerializer(serializers.ModelSerializer):
     """Custom HyperlinkedRelatedField for user orders."""
 
-    url = serializers.HyperlinkedIdentityField(
-        view_name='api:position-detail', lookup_field='pk'
-    )
     specialist = CustomUserSerializer(many=True, read_only=True)
-    # business = BusinessSeializer(read_only=True)
+    # business = BusinessListCreateSerializer(read_only=True)
 
     class Meta:
         """Class with a model and model fields for serialization."""
 
         model = Position
-        fields = ['name', 'start_time', 'end_time']
+        fields = ['name', 'specialist', 'business', 'start_time', 'end_time']
     
