@@ -20,7 +20,6 @@ urlpatterns = [
          OrderApprovingView.as_view(),
          name='order-approving'),
     
-
-    path('user/<int:user>/reviews/add/', ReviewAddView.as_view(),
+    path(r'<int:user>/reviews/add/', ReviewAddView.as_view(),
          name='review-add'),
 ]
