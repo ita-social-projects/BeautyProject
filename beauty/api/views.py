@@ -118,6 +118,7 @@ class OrderListCreateView(ListCreateAPIView):
         return super().get_permissions()
 
     def post(self, request, *args, **kwargs):
+        """Create order and add authenticated customer."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(customer=request.user)
