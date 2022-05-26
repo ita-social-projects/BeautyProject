@@ -37,7 +37,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         service = validated_data.get("service")
         specialist = validated_data.get("specialist")
         specialist_services = Position.objects.filter(
-            specialist=specialist).values_list("service__id", flat=True)
+            specialist=specialist).values_list("service__name", flat=True)
         if not service.position.specialist.filter(id=specialist.id):
             raise serializers.ValidationError(
                 {"service": "Specialist does not have such service.",
