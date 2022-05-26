@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticated
 
-from .models import CustomUser, Order, Business
+from .models import CustomUser, Order, Business, Service
 from .permissions import IsAccountOwnerOrReadOnly
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
@@ -108,14 +108,22 @@ class OrderListCreateView(ListCreateAPIView):
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    #
-    # def get_permissions(self):
-    #     """Permission for order POST method.
-    #     User should be authenticated.
-    #     """
-    #     if self.request.method == "POST":
-    #         self.permission_classes = (IsAuthenticated,)
-    #     return super().get_permissions()
+
+    def get_permissions(self):
+        """Permission for order POST method.
+        User should be authenticated.
+        """
+        if self.request.method == "POST":
+            self.permission_classes = (IsAuthenticated,)
+        return super().get_permissions()
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(customer=request.user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED,
+                        headers=headers)
 
 
 class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
