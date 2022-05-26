@@ -11,13 +11,10 @@ urlpatterns = [
     path('users/<int:user>/order/<int:id>/',
          CustomUserOrderDetailRUDView.as_view(),
          name='specialist-order-detail'),
-<<<<<<< HEAD
-=======
 
     path('orders/', OrderListCreateView.as_view(),
          name='order-list-create'),
 
     path('orders/<int:pk>/', OrderRetrieveUpdateDestroyView.as_view(),
          name='order-detail'),
->>>>>>> Feature/#141_implement_view_for_order_creation
 ]
