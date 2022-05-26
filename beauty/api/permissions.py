@@ -44,4 +44,6 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
         )
 
     def has_object_permission(self, request, view, obj):
-        return bool(obj.email == request.user.emai)
+        if request.user.is_authenticated:
+            return bool(obj.email == request.user.email)
+        return False

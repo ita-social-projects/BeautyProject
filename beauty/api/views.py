@@ -11,15 +11,16 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticated
 
-from .models import CustomUser, Order, Business, Service
+from .models import CustomUser, Order
 from .permissions import IsAccountOwnerOrReadOnly
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  UserOrderDetailSerializer,
                                                  ResetPasswordSerializer)
-from .serializers.business_serializers import BusinessListCreateSerializer
 from api.serializers.order_serializers import OrderSerializer
+from beauty import signals
+from beauty.utils import ApprovingOrderEmail
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -80,7 +81,6 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     queryset = Order.objects.all()
     serializer_class = UserOrderDetailSerializer
-    multiple_lookup_fields = ('user', 'id')
 
     def get_object(self):
         """Method for getting order objects by using both order user id
@@ -108,11 +108,20 @@ class OrderListCreateView(ListCreateAPIView):
         return super().get_permissions()
 
     def post(self, request, *args, **kwargs):
-        """Create order and add authenticated customer."""
+        """Create an order and add an authenticated customer to it."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(customer=request.user)
+        order = serializer.save(customer=request.user)
         headers = self.get_success_headers(serializer.data)
+
+        signals.order_activated.send(
+            sender=self.__class__, user=request.user, request=request
+        )
+
+        context = {"user": order.specialist,
+                   "order": order}
+        to = [request.user.email, ]
+        ApprovingOrderEmail(request, context).send(to)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
 
@@ -122,4 +131,14 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+
+    # def get(self, request, pk, uidb64, token, status):
+    #     """wfwfwefewf"""
+    #     user_id = int(force_str(urlsafe_base64_decode(uidb64)))
+    #
+    #
+    #     user = get_object_or_404(CustomUser, id=user_id)
+    #     user.is_active = True
+    #     user.save()
+    #     return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
 
