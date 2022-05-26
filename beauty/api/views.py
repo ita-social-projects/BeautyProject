@@ -120,7 +120,7 @@ class OrderListCreateView(ListCreateAPIView):
 
         context = {"user": order.specialist,
                    "order": order}
-        to = [request.user.email, ]
+        to = [order.specialist.email, ]
         ApprovingOrderEmail(request, context).send(to)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
@@ -135,10 +135,11 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     # def get(self, request, pk, uidb64, token, status):
     #     """wfwfwefewf"""
     #     user_id = int(force_str(urlsafe_base64_decode(uidb64)))
-    #
-    #
+
+
     #     user = get_object_or_404(CustomUser, id=user_id)
     #     user.is_active = True
     #     user.save()
     #     return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
 
+# def
