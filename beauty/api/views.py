@@ -91,3 +91,35 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
                                 id=self.kwargs['id'])
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+class OrderListCreateView(ListCreateAPIView):
+    """Generic API for orders custom POST method"""
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def get_permissions(self):
+        """Permission for order POST method.
+        User should be authenticated.
+        """
+        if self.request.method == "POST":
+            self.permission_classes = (IsAuthenticated,)
+        return super().get_permissions()
+
+    def post(self, request, *args, **kwargs):
+        """Create order and add authenticated customer."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(customer=request.user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED,
+                        headers=headers)
+
+
+class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """Generic API for orders custom POST method"""
+
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
