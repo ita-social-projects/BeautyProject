@@ -1,17 +1,22 @@
-import factory
-from faker import Factory
-
 from django.contrib.auth import get_user_model
-from api.models import Business
 
+from random import randint
+from datetime import datetime, timedelta
+
+import factory
+from factory.django import DjangoModelFactory
+from faker import Factory, Faker
+
+from api.models import Business, Position
 
 User = get_user_model()
-faker = Factory.create()
+faker = Faker()
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
+        django_get_or_create = ('email', 'phone_number')
 
     @staticmethod
     def get_first_and_last_names():
@@ -26,7 +31,7 @@ class UserFactory(factory.DjangoModelFactory):
     password = faker.password()
 
 
-class BusinessFactory(factory.DjangoModelFactory):
+class BusinessFactory(DjangoModelFactory):
     class Meta:
         model = Business
 
@@ -34,3 +39,19 @@ class BusinessFactory(factory.DjangoModelFactory):
     type = faker.word()
     description = faker.text()
     owner = factory.SubFactory(UserFactory)
+
+
+class PositionFactory(DjangoModelFactory):
+    class Meta:
+        model = Position
+
+    @staticmethod
+    def fake_start_end_datetime():
+        start_time = datetime(
+            2022, randint(1, 12), randint(1, 31), randint(1, 24)
+        )
+        return start_time, start_time + timedelta(hours=8)
+
+    name = faker.word()
+    business = factory.SubFactory(BusinessFactory)
+    start_time, end_time = fake_start_end_datetime()

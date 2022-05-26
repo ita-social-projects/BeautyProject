@@ -107,7 +107,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         null=True
     )
     phone_number = PhoneNumberField(
-        unique=True
+        unique=True,
     )
     rating = models.IntegerField(
         blank=True,
@@ -213,13 +213,14 @@ class Business(models.Model):
         return str(self.name)
 
     def create_position(self, name, specialist, start_time, end_time):
+        """Creates Position for specific Business"""
         position = Position.objects.create(name=name, business=self,
                                            start_time=start_time,
                                            end_time=end_time)
         position.specialist.add(specialist)
         return position
 
-    def get_all_specialist(self):
+    def get_all_specialists(self):
         """Gets all Specialists who belong to this Business """
         positions = self.position_set.all().values_list("id", flat=True)
         return CustomUser.objects.filter(position__in=positions)
