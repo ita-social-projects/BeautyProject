@@ -1,7 +1,10 @@
 from rest_framework import serializers
-from api.models import Business
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
+
+from api.models import Business
 
 User = get_user_model()
 
@@ -15,14 +18,10 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
         """Checks if such user exists and validates if user belongs to
         Specialist group
         """
-        user = User.objects.filter(id=value).first()
-        if user is None:
-            raise ValidationError(_('User does not exist'), code='invalid')
-
-        group = user.groups.filter(group__name="Specialist").exists()
-        if not group:
+        group = value.groups.filter(name="Owner").first()
+        if group is None:
             raise ValidationError(
-                _('User must belong to Specialist group'), code='invalid'
+                _('Only Owners can create Business'), code='invalid'
             )
 
         return value
