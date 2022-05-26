@@ -16,7 +16,6 @@ from .permissions import IsAccountOwnerOrReadOnly
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
-                                                 UserOrderDetailSerializer,
                                                  ResetPasswordSerializer)
 from api.serializers.order_serializers import OrderSerializer
 from beauty import signals
@@ -80,7 +79,7 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
        RUD - Retrieve, Update, Destroy"""
 
     queryset = Order.objects.all()
-    serializer_class = UserOrderDetailSerializer
+    serializer_class =OrderSerializer
 
     def get_object(self):
         """Method for getting order objects by using both order user id
@@ -112,34 +111,40 @@ class OrderListCreateView(ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = serializer.save(customer=request.user)
-        headers = self.get_success_headers(serializer.data)
 
         signals.order_activated.send(
             sender=self.__class__, user=request.user, request=request
         )
-
         context = {"user": order.specialist,
                    "order": order}
         to = [order.specialist.email, ]
         ApprovingOrderEmail(request, context).send(to)
-        return Response(serializer.data, status=status.HTTP_201_CREATED,
-                        headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    """Generic API for orders custom POST method"""
+    """Generic API for orders custom POST method."""
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
-    # def get(self, request, pk, uidb64, token, status):
-    #     """wfwfwefewf"""
-    #     user_id = int(force_str(urlsafe_base64_decode(uidb64)))
 
+class OrderApprovingView(ListCreateAPIView):
+    """Approving orders custom GET method."""
 
-    #     user = get_object_or_404(CustomUser, id=user_id)
-    #     user.is_active = True
-    #     user.save()
-    #     return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
 
-# def
+    def get(self, request, *args, **kwargs):
+        order_id = kwargs["pk"]
+        specialist_id = int(force_str(urlsafe_base64_decode(kwargs["uid"])))
+        order_status = kwargs["status"]
+        order = self.get_queryset().get(id=order_id)
+        if order.specialist.id == specialist_id:
+            if order_status == 'approved':
+                order.mark_as_approved()
+            elif order_status == 'declined':
+                order.mark_as_declined()
+        return redirect(reverse("api:specialist-order-detail",
+                                kwargs={"user": specialist_id,
+                                        "id": order_id}))

@@ -19,6 +19,6 @@ urlpatterns = [
          name='order-detail'),
 
     path('order/<int:pk>/user/<str:uid>/<str:token>/<str:status>/',
-         OrderRetrieveUpdateDestroyView.as_view(),
+         OrderApprovingView.as_view(),
          name='order-approving'),
 ]

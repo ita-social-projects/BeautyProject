@@ -208,16 +208,6 @@ class CustomUserDetailSerializer(PasswordsValidation,
         return super().update(instance, validated_data)
 
 
-class UserOrderDetailSerializer(serializers.ModelSerializer):
-    """Serializer to receive and update a specific order."""
-
-    class Meta:
-        """Class with a model and model fields for serialization."""
-
-        model = Order
-        fields = ['id', 'customer_id', 'specialist_id']
-
-
 class ResetPasswordSerializer(PasswordsValidation):
     """"""
     password = serializers.CharField(
