@@ -413,7 +413,6 @@ class Order(models.Model):
         """This meta class stores ordering and permissions data"""
 
         ordering = ['id']
-        unique_together = ['specialist', 'customer']
         get_latest_by = "created_at"
         permissions = [
             ('can_add_order', 'Can add an order'),
