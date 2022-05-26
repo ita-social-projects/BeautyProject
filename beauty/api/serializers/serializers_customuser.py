@@ -66,14 +66,14 @@ class PasswordsValidation(serializers.Serializer):
         confirm_password = data.get('confirm_password')
         if password and confirm_password:
             if password != confirm_password:
-                logger.error(f"Password: Password confirmation does not match")
+                logger.info(f"Password: Password confirmation does not match")
 
                 raise serializers.ValidationError(
                     {"password": "Password confirmation does not match."}
                 )
         elif any([password, confirm_password]):
 
-            logger.error("Password: One of the password fields is empty")
+            logger.info("Password: One of the password fields is empty")
 
             raise serializers.ValidationError(
                 {"confirm_password": "Didn`t enter the password confirmation."}
@@ -274,7 +274,7 @@ class ResetPasswordSerializer(PasswordsValidation):
             return super().validate(data)
         else:
 
-            logger.error("Password: Fields should be valid")
+            logger.info("Password: Fields should be valid")
 
             raise serializers.ValidationError(
                 {'password': 'Fields should be valid'})
