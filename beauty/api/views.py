@@ -93,16 +93,6 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         return obj
 
 
-class BusinessListCreateView(ListCreateAPIView):
-    queryset = Business.objects.all()
-    serializer_class = BusinessListCreateSerializer
-
-    def get_permissions(self):
-        if self.request.method == "POST":
-            self.permission_classes = (IsAccountOwnerOrReadOnly,)
-        return super().get_permissions()
-
-
 class OrderListCreateView(ListCreateAPIView):
     """Generic API for orders custom POST method"""
 

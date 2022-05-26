@@ -12,9 +12,6 @@ urlpatterns = [
          CustomUserOrderDetailRUDView.as_view(),
          name='specialist-order-detail'),
 
-    path('businesses/', BusinessListCreateView.as_view(),
-         name='business-list-create'),
-
     path('orders/', OrderListCreateView.as_view(),
          name='order-list-create'),
 
