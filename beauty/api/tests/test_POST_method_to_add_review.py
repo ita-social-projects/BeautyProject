@@ -2,7 +2,6 @@
 
 It tests ReviewAddView and ReviewAddSerializer.
 
-
 Tests:
     *   Test that unauthorized user won't be able to access API
     *   Test that an authorized user can create a Review
