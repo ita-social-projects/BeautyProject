@@ -10,7 +10,7 @@ urlpatterns = [
          name='user-detail'),
     path('user/<int:user>/order/<int:id>/',
          CustomUserOrderDetailRUDView.as_view(),
-         name='specialist-order-detail'),
+         name='user-order-detail'),
 
     path('order/', OrderListCreateView.as_view(),
          name='order-list-create'),

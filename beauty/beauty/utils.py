@@ -35,9 +35,15 @@ class ModelsUtils:
 
 
 class ApprovingOrderEmail(BaseEmailMessage):
+    """Send mail to the specialist for change order status with two links:
+    - for approve order;
+    - for decline order.
+    """
+
     template_name = "email/order_approve.html"
 
     def get_context_data(self):
+        """Get context data for rendering HTML messages."""
         from djoser.utils import encode_uid
         context = super().get_context_data()
 
@@ -56,3 +62,13 @@ class ApprovingOrderEmail(BaseEmailMessage):
         context["url_declined"] = reverse("api:order-approving",
                                           kwargs=url_declined_params)
         return context
+
+
+class StatusOrderEmail(BaseEmailMessage):
+    """Send mail to the specialist for change order status with two links:
+    - for approve order;
+    - for decline order.
+    """
+
+    template_name = "email/customer_order_status.html"
+

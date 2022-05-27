@@ -111,10 +111,6 @@ class OrderListCreateView(ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = serializer.save(customer=request.user)
-
-        signals.order_activated.send(
-            sender=self.__class__, user=request.user, request=request
-        )
         context = {"user": order.specialist,
                    "order": order}
         to = [order.specialist.email, ]
@@ -136,6 +132,9 @@ class OrderApprovingView(ListCreateAPIView):
     serializer_class = OrderSerializer
 
     def get(self, request, *args, **kwargs):
+        """Get an answer from a specialist according to
+        order and implement it.
+        """
         order_id = kwargs["pk"]
         specialist_id = int(force_str(urlsafe_base64_decode(kwargs["uid"])))
         order_status = kwargs["status"]
@@ -145,6 +144,10 @@ class OrderApprovingView(ListCreateAPIView):
                 order.mark_as_approved()
             elif order_status == 'declined':
                 order.mark_as_declined()
-        return redirect(reverse("api:specialist-order-detail",
+
+        signals.order_status_changed.send(
+            sender=self.__class__, order=order, request=request
+        )
+        return redirect(reverse("api:user-order-detail",
                                 kwargs={"user": specialist_id,
                                         "id": order_id}))
