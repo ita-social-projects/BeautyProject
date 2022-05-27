@@ -1,4 +1,5 @@
 """All views for the BeatyProject."""
+import logging
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -24,12 +25,10 @@ from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDeleteSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
-import logging
+from .serializers.serializers_review import ReviewAddSerializer
 
 
 logger = logging.getLogger(__name__)
-from .serializers.review_serializers import ReviewAddSerializer
-
 
 class CustomUserListCreateView(ListCreateAPIView):
     """Generic API for users custom POST methods."""

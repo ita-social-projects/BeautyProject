@@ -18,11 +18,6 @@ urlpatterns = [
     path('order/<str:uid>/<str:token>/<str:status>/',
          OrderApprovingView.as_view(),
          name='order-approving'),
-    path('', CustomUserListCreateView.as_view(), name='user-list'),
-    path('<int:pk>/', CustomUserDetailRUDView.as_view(), name='user-detail'),
-    path('<int:user>/order/<int:id>/',
-         CustomUserOrderDetailRUDView.as_view(),
-         name='specialist-order-detail'),
-    path(r'<int:user>/reviews/add/', ReviewAddView.as_view(),
+    path('user/<int:user>/reviews/add/', ReviewAddView.as_view(),
          name='review-add'),
 ]
