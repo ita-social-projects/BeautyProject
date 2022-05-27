@@ -5,7 +5,7 @@ from django.test import TestCase, override_settings
 from django.urls import path
 
 from api.models import CustomUser
-from api.serializers.serializers_customuser import (CustomUserSerializer,
+from api.serializers.customuser_serializers import (CustomUserSerializer,
                                                     CustomUserDetailSerializer,
                                                     PasswordsValidation)
 from rest_framework.test import APIRequestFactory

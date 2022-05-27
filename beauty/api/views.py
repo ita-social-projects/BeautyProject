@@ -3,9 +3,9 @@ from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, get_object_or_404
-from rest_framework.generics import GenericAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
+                                     GenericAPIView,
+                                     RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticated
@@ -13,13 +13,10 @@ from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser, Order
 from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
 from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
-from .serializers.serializers_customuser import CustomUserDetailSerializer
-from .serializers.serializers_customuser import CustomUserSerializer
-from .serializers.serializers_customuser import UserOrderDetailSerializer
-from .serializers.serializers_customuser import ResetPasswordSerializer
-import logging
-
-logger = logging.getLogger(__name__)
+from .serializers.customuser_serializers import (CustomUserDetailSerializer,
+                                                 CustomUserSerializer,
+                                                 UserOrderDetailSerializer,
+                                                 ResetPasswordSerializer)
 from .serializers.serializers_review import ReviewAddSerializer
 
 

@@ -15,18 +15,6 @@ class ReviewAddSerializer(serializers.ModelSerializer):
         model = Review
         fields = ['text_body', 'rating', 'from_user', 'to_user']
 
-    def update(self, instance, validated_data):
-        """This method is used in order to update/edit a review"""
-        instance.text_body = validated_data.get(
-            'text_body',
-            instance.text_body
-        )
-        instance.rating = validated_data.get(
-            'rating',
-            instance.rating
-        )
-        instance.save()
-        return instance
 
     def save(self, **kwargs):
         """The save method was redefined in order to check whether users
