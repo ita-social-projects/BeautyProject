@@ -9,7 +9,7 @@ urlpatterns = [
     path('user/<int:pk>/', CustomUserDetailRUDView.as_view(),
          name='user-detail'),
     path('user/<int:user>/order/<int:id>/',
-         CustomUserOrderDetailRUDView.as_view(),
+         OrderRetrieveUpdateDestroyView.as_view(),
          name='user-order-detail'),
 
     path('order/', OrderListCreateView.as_view(),

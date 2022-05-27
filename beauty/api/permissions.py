@@ -29,3 +29,12 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return bool(request.method in permissions.SAFE_METHODS or
                     obj == request.user)
+
+
+class IsOrderUserOrReadOnly(permissions.BasePermission):
+    """Object-level permission to only allow users of an object to edit it."""
+
+    def has_object_permission(self, request, view, obj):
+        return bool(request.method in permissions.SAFE_METHODS or
+                    obj.specialist == request.user or
+                    obj.customer == request.user)

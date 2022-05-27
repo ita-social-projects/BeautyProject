@@ -12,7 +12,7 @@ from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import CustomUser, Order
-from .permissions import IsAccountOwnerOrReadOnly
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUserOrReadOnly)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -75,24 +75,6 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
-    """Generic API for orders custom GET, PUT and DELETE methods.
-       RUD - Retrieve, Update, Destroy"""
-
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-
-    def get_object(self):
-        """Method for getting order objects by using both order user id
-         and order id lookup fields."""
-        queryset = self.get_queryset()
-        obj = get_object_or_404(queryset, Q(customer=self.kwargs['user']) |
-                                Q(specialist=self.kwargs['user']),
-                                id=self.kwargs['id'])
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-
 class OrderListCreateView(ListCreateAPIView):
     """Generic API for orders custom POST method"""
 
@@ -113,10 +95,25 @@ class OrderListCreateView(ListCreateAPIView):
 
 
 class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    """Generic API for orders custom POST method."""
+    """Generic API for orders custom GET, PUT and DELETE methods.
+       RUD - Retrieve, Update, Destroy"""
 
     queryset = Order.objects.all()
     serializer_class = OrderDetailSerializer
+    permission_classes = (IsOrderUserOrReadOnly,)
+
+    def get_object(self):
+        """Method for getting order objects by using both order user id
+         and order id lookup fields."""
+
+        if len(self.kwargs) > 1:
+            obj = get_object_or_404(self.get_queryset(),
+                                    Q(customer=self.kwargs['user']) |
+                                    Q(specialist=self.kwargs['user']),
+                                    id=self.kwargs['id'])
+            self.check_object_permissions(self.request, obj)
+            return obj
+        return super().get_object()
 
 
 class OrderApprovingView(ListCreateAPIView):
