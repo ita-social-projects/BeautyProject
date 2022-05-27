@@ -3,7 +3,7 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-from api.serializers.serializers_customuser import (
+from api.serializers.customuser_serializers import (
                                                     CustomUserSerializer,
                                                     CustomUserDetailSerializer
                                                     )
