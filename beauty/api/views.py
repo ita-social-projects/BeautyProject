@@ -17,8 +17,10 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  UserOrderDetailSerializer,
                                                  ResetPasswordSerializer)
-from .serializers.serializers_review import ReviewAddSerializer
+from .serializers.review_serializers import ReviewAddSerializer
+import logging
 
+logger = logging.getLogger(__name__)
 
 class CustomUserListCreateView(ListCreateAPIView):
     """Generic API for users custom POST methods"""
