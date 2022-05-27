@@ -9,7 +9,7 @@ from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
                                      RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .models import CustomUser, Order
 from .permissions import IsAccountOwnerOrReadOnly
@@ -95,16 +95,9 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
 class OrderListCreateView(ListCreateAPIView):
     """Generic API for orders custom POST method"""
 
-    queryset = Order.objects.all()
+    queryset = Order.objects.exclude(status__in=[2, 4])
     serializer_class = OrderSerializer
-
-    def get_permissions(self):
-        """Permission for order POST method.
-        User should be authenticated.
-        """
-        if self.request.method == "POST":
-            self.permission_classes = (IsAuthenticated,)
-        return super().get_permissions()
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
         """Create an order and add an authenticated customer to it."""
