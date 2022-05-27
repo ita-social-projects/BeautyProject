@@ -79,7 +79,7 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
        RUD - Retrieve, Update, Destroy"""
 
     queryset = Order.objects.all()
-    serializer_class =OrderSerializer
+    serializer_class = OrderSerializer
 
     def get_object(self):
         """Method for getting order objects by using both order user id
@@ -142,12 +142,16 @@ class OrderApprovingView(ListCreateAPIView):
         if order.specialist.id == specialist_id:
             if order_status == 'approved':
                 order.mark_as_approved()
+                self.send_signal(order, request)
+                return redirect(reverse("api:user-order-detail",
+                                        kwargs={"user": specialist_id,
+                                                "id": order_id}))
             elif order_status == 'declined':
                 order.mark_as_declined()
+                self.send_signal(order, request)
+        return redirect(reverse("api:user-detail", args=[specialist_id, ]))
 
+    def send_signal(self, order, request):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request
         )
-        return redirect(reverse("api:user-order-detail",
-                                kwargs={"user": specialist_id,
-                                        "id": order_id}))

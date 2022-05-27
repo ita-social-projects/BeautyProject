@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 from decouple import config, Csv
 
@@ -78,7 +79,7 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -88,11 +89,12 @@ GOOGLE_API_KEY = config("GOOGLE_API_KEY")
 USER_ID = "id -u"
 GROUP_ID = "id -g"
 
-
 WSGI_APPLICATION = 'beauty.wsgi.application'
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=20),
 }
 
 DJOSER = {
@@ -113,7 +115,6 @@ DJOSER = {
         'http://127.0.0.1:3000/login'
     ],
     'HIDE_USERS': True,
-
 
     'SERIALIZERS': {
         'user': 'api.serializers.customuser_serializers.CustomUserSerializer'
@@ -192,8 +193,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'TEST_REQUEST_RENDERER_CLASSES': (
-            'rest_framework.renderers.MultiPartRenderer',
-            'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',

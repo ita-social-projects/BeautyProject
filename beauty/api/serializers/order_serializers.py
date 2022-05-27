@@ -36,6 +36,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
          """
         service = validated_data.get("service")
         specialist = validated_data.get("specialist")
+        customer = validated_data.get("customer")
         specialist_services = Position.objects.filter(
             specialist=specialist).values_list("service__name", flat=True)
         if not service.position.specialist.filter(id=specialist.id):
@@ -44,4 +45,11 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
                  "help_text": f"Specialist has such services "
                               f"{list(specialist_services)}."}
             )
+
+        if specialist == customer:
+            raise serializers.ValidationError(
+                {"users": "Customer and specialist are the same person!"})
+
         return super().create(validated_data)
+
+
