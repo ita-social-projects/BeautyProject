@@ -35,7 +35,7 @@ class ModelsUtils:
 
 
 class ApprovingOrderEmail(BaseEmailMessage):
-    """Send mail to the specialist for change order status with two links:
+    """Send email message to the specialist for change order status with two links:
     - for approve order;
     - for decline order.
     """
@@ -65,10 +65,7 @@ class ApprovingOrderEmail(BaseEmailMessage):
 
 
 class StatusOrderEmail(BaseEmailMessage):
-    """Send mail to the specialist for change order status with two links:
-    - for approve order;
-    - for decline order.
-    """
+    """Class for sending an email message which renders HTML for it."""
 
     template_name = "email/customer_order_status.html"
 

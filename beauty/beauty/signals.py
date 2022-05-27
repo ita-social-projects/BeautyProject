@@ -1,8 +1,7 @@
-from django.dispatch import Signal, receiver
-from django.core.mail import send_mail
-from django.template import loader
-from rest_framework.reverse import reverse
+"""Module with all project signals. """
 
+from django.dispatch import Signal, receiver
+from rest_framework.reverse import reverse
 from beauty.utils import StatusOrderEmail
 
 order_status_changed = Signal()
@@ -10,6 +9,13 @@ order_status_changed = Signal()
 
 @receiver(order_status_changed)
 def send_order_status_for_customer(sender, **kwargs):
+    """Send an email message to the customer with changed
+    order status from a specialist.
+
+    Args:
+        sender (OrderApprovingView): class sender
+        **kwargs (order, request): kwargs from a sender class
+    """
     order = kwargs['order']
     request = kwargs['request']
     context = {"order": order,
