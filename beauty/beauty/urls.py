@@ -34,7 +34,7 @@ def api_root(request, format=None):
 
 urlpatterns = [
     path('', api_root),
-    path('api/v1/user/', include('api.urls', namespace="api")),
+    #path('api/v1/user/', include('api.urls', namespace="api")),
     path('admin/', admin.site.urls),
     path(
         'activate/<uidb64>/<token>/',
