@@ -12,6 +12,9 @@ from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
 from beauty.utils import ModelsUtils
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MyUserManager(BaseUserManager):
@@ -25,6 +28,9 @@ class MyUserManager(BaseUserManager):
         Creates and saves CustomUser user instance with given fields values
         """
         if not email:
+
+            logger.error("Users must have an email address")
+
             raise ValueError('Users must have an email address')
 
         user = self.model(
@@ -37,6 +43,10 @@ class MyUserManager(BaseUserManager):
 
         user.set_password(password)
         user.save(using=self._db)
+
+        logger.info(f"User {user['first_name']} (id={user.id}) with"
+                    f" {user['email']} was created.")
+
         return user
 
     def create_superuser(self, email: str, first_name: str,
@@ -50,6 +60,10 @@ class MyUserManager(BaseUserManager):
         user.is_superuser = True
         user.is_active = True
         user.save(using=self._db)
+
+        logger.info(f"Superuser {user['first_name']} with"
+                    f" {user['email']} was created.")
+
         return user
 
 
@@ -223,6 +237,9 @@ class Business(models.Model):
     def get_all_specialist(self):
         """"""
         specialists = [position.specialists.all() for position in self.positions.all()]
+
+        logger.info(f"Got all specialists from business positions")
+
         return specialists
 
 
@@ -470,6 +487,9 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation"""
         self.end_time = self.start_time + timedelta(minutes=self.service.duration)
+
+        logger.info(f"Added end time({self.end_time}) for order")
+
         super(Order, self).save(*args, **kwargs)
         return self
 
