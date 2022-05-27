@@ -25,10 +25,11 @@ from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDeleteSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
-from .serializers.serializers_review import ReviewAddSerializer
+from .serializers.review_serializers import ReviewAddSerializer
 
 
 logger = logging.getLogger(__name__)
+
 
 class CustomUserListCreateView(ListCreateAPIView):
     """Generic API for users custom POST methods."""
