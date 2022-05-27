@@ -205,6 +205,8 @@ REST_FRAMEWORK = {
     ),
 }
 
+ADMINS = [("Admin", config("EMAIL_HOST_USER")), ]
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -244,18 +246,18 @@ LOGGING = {
             "formatter": "verbose"
         },
         "mail_admins": {
-            "level": "ERROR",
+            "level": "CRITICAL",
             "filters": ["require_debug_false", ],
             "class": "django.utils.log.AdminEmailHandler",
         }
     },
     "loggers": {
         "django": {
-            "handlers": ["console", ],
+            "handlers": ["console", "mail_admins"],
             "propagate": True,
         },
         "api": {
-            "handlers": ["console", "file"],
+            "handlers": ["console", "file", "mail_admins"],
             "level": "INFO"
         }
     }
