@@ -103,6 +103,7 @@ class PositionListCreateView(ListCreateAPIView):
     
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
+    permission_classes = [IsAccountOwnerOrReadOnly]
 
 
 class BusinessListCreateView(ListCreateAPIView):
