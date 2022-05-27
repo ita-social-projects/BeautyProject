@@ -17,7 +17,8 @@ from .permissions import IsAccountOwnerOrReadOnly
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
-from api.serializers.order_serializers import OrderSerializer
+from api.serializers.order_serializers import (OrderSerializer,
+                                               OrderDetailSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
 
@@ -115,7 +116,7 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """Generic API for orders custom POST method."""
 
     queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    serializer_class = OrderDetailSerializer
 
 
 class OrderApprovingView(ListCreateAPIView):

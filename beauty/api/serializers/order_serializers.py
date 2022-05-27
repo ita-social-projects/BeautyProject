@@ -53,3 +53,31 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
 
 
+class OrderDetailSerializer(serializers.ModelSerializer):
+    """Serializer for order cancellation."""
+
+    reason = serializers.CharField(required=True)
+
+    class Meta:
+        """Class with a model and model fields for serialization."""
+
+        model = Order
+        fields = '__all__'
+        read_only_fields = ("customer", "start_time",
+                            "specialist", "service", "status")
+
+    def update(self, instance: object, validated_data: dict) -> object:
+        """Set canceled status for order.
+
+        Args:
+            instance (object): instance for changing
+            validated_data (dict): validated data for updating instance
+
+        Returns:
+            user (object): instance with updated data
+
+        """
+        validated_data["status"] = 2
+        return super().update(instance, validated_data)
+
+
