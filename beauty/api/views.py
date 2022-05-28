@@ -129,7 +129,7 @@ class OrderApprovingView(ListCreateAPIView):
         """
         token = kwargs["token"]
         order_id = int(force_str(urlsafe_base64_decode(kwargs["uid"])))
-        order_status = kwargs["status"]
+        order_status = force_str(urlsafe_base64_decode(kwargs["status"]))
         order = self.get_queryset().get(id=order_id)
         if OrderApprovingTokenGenerator().check_token(order, token):
             if order_status == 'approved':

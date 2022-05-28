@@ -18,7 +18,7 @@ You're receiving this email because you made order on {{ site_name }} and specia
 
 <h3>
     You're receiving this email because you made an order on {{ site_name }} and
-    specialist {{ order.specialist.get_full_name }} <i>{{ order.get_status_display|lower }}</i> it.
+    specialist {{ order.specialist.get_full_name }} <i style="color: red">{{ order.get_status_display|lower }}</i> it.
 </h3>
 
 <h3>{% trans "Order details:" %}</h3>

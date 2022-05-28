@@ -48,13 +48,15 @@ class ApprovingOrderEmail(BaseEmailMessage):
         context = super().get_context_data()
 
         order = context.get("order")
-        context["uid"] = encode_uid(order.pk)
-        context["token"] = OrderApprovingTokenGenerator().make_token(order)
-        url_approved_params = {"uid": context['uid'],
-                               "token": context['token'],
-                               "status": "approved"}
-        url_declined_params = {**url_approved_params, **{"status": "declined"}}
+        token = OrderApprovingTokenGenerator().make_token(order)
 
+        params = {"uid": encode_uid(order.pk), "token": token}
+
+        url_approved_params = params | {"status": encode_uid("approved")}
+        context["url_approved"] = reverse("api:order-approving",
+                                          kwargs=url_approved_params)
+
+        url_declined_params = params | {"status": encode_uid("declined")}
         context["url_approved"] = reverse("api:order-approving",
                                           kwargs=url_approved_params)
 
@@ -67,4 +69,3 @@ class StatusOrderEmail(BaseEmailMessage):
     """Class for sending an email message which renders HTML for it."""
 
     template_name = "email/customer_order_status.html"
-
