@@ -457,7 +457,7 @@ class Order(models.Model):
         verbose_name=_('End time')
     )
     created_at = models.DateTimeField(
-        auto_now=True,
+        auto_now_add=True,
         editable=False,
         verbose_name=_('Created at')
     )
