@@ -20,7 +20,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.models import CustomUser
-from api.serializers.serializers_review import ReviewAddSerializer
+from api.serializers.review_serializers import ReviewAddSerializer
 from api.views import ReviewAddView
 
 

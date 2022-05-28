@@ -1,5 +1,6 @@
 """The module includes serializers for Review model."""
 
+from asyncio.log import logger
 from rest_framework import serializers
 from api.models import Review
 
@@ -21,6 +22,7 @@ class ReviewAddSerializer(serializers.ModelSerializer):
         are trying to review themselves, which is not allowed.
         """
         if kwargs['from_user'] == kwargs['to_user']:
+            logger.info(f"User {kwargs['from_user']} tried reviewing himself.")
             raise serializers.ValidationError(
                 {'error': 'You are not able to review yourself'}
             )
