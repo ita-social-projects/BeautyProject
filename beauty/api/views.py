@@ -246,7 +246,6 @@ class ReviewAddView(GenericAPIView):
         author = self.request.user
         to_user = CustomUser.objects.get(pk=user)
         if serializer.is_valid():
-            to_user = CustomUser.objects.get(pk=user)
             serializer.save(
                 from_user=author,
                 to_user=to_user

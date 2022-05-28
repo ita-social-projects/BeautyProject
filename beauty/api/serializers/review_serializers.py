@@ -1,6 +1,5 @@
 """The module includes serializers for Review model."""
 
-from asyncio.log import logger
 from rest_framework import serializers
 from api.models import Review
 
