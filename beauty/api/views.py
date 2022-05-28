@@ -122,13 +122,15 @@ class ReviewAddView(GenericAPIView):
     def post(self, request, user):
         """This is a POST method of the view"""
         serializer = ReviewAddSerializer(data=request.data)
+        author = self.request.user
+        to_user = CustomUser.objects.get(pk=user)
         if serializer.is_valid():
-            to_user = CustomUser.objects.get(pk=user)
             serializer.save(
-                from_user=self.request.user,
+                from_user=author,
                 to_user=to_user
             )
-            logger.info(f"User {self.request.user} posted a review for {to_user}")
+            logger.info(f"User {author} (id = {author.id}) posted a review for {to_user} (id = {to_user.id})")
             return Response(status=status.HTTP_201_CREATED)
         else:
+            logger.info(f"Error validating review: Field {serializer.errors.popitem()}")
             return Response(status=status.HTTP_400_BAD_REQUEST)
