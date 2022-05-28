@@ -59,9 +59,6 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
 
             raise serializers.ValidationError(
                 {"users": "Customer and specialist are the same person!"})
-
-        logger.info(f"Order with {service.name} was created")
-
         return super().create(validated_data)
 
 

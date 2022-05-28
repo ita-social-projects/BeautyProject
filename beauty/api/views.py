@@ -95,6 +95,9 @@ class OrderListCreateView(ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = serializer.save(customer=request.user)
+
+        logger.info(f"{order} with {order.service.name} was created")
+
         context = {"order": order}
         to = [order.specialist.email, ]
         ApprovingOrderEmail(request, context).send(to)
@@ -149,21 +152,21 @@ class OrderApprovingView(ListCreateAPIView):
         if OrderApprovingTokenGenerator().check_token(order, token):
             if order_status == 'approved':
                 order.mark_as_approved()
-                self.send_signal(order, request)
 
-                logger.info(f"{order} was approved by specialist "
+                logger.info(f"{order} was approved by the specialist "
                             f"{order.specialist.get_full_name()}")
 
+                self.send_signal(order, request)
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
                                                 "id": order_id}))
             elif order_status == 'declined':
                 order.mark_as_declined()
-                self.send_signal(order, request)
 
                 logger.info(f"{order} was declined by specialist "
                             f"{order.specialist.get_full_name()}")
 
+                self.send_signal(order, request)
         logger.info(f"Token for {order} is not valid")
 
         return redirect(
@@ -177,8 +180,9 @@ class OrderApprovingView(ListCreateAPIView):
             order: instance order
             request: metadata about the request
         """
+
+        logger.info(f"Signal was sent with {order}")
+
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request
         )
-
-        logger.info(f"Signal was sent with {order}")
