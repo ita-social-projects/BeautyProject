@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUserOrReadOnly)
 
@@ -89,8 +90,7 @@ class OrderListCreateView(ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         order = serializer.save(customer=request.user)
-        context = {"user": order.specialist,
-                   "order": order}
+        context = {"order": order}
         to = [order.specialist.email, ]
         ApprovingOrderEmail(request, context).send(to)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -127,23 +127,31 @@ class OrderApprovingView(ListCreateAPIView):
         """Get an answer from a specialist according to
         order and implement it.
         """
-        order_id = kwargs["pk"]
-        specialist_id = int(force_str(urlsafe_base64_decode(kwargs["uid"])))
+        token = kwargs["token"]
+        order_id = int(force_str(urlsafe_base64_decode(kwargs["uid"])))
         order_status = kwargs["status"]
         order = self.get_queryset().get(id=order_id)
-        if order.specialist.id == specialist_id:
+        if OrderApprovingTokenGenerator().check_token(order, token):
             if order_status == 'approved':
                 order.mark_as_approved()
                 self.send_signal(order, request)
                 return redirect(reverse("api:user-order-detail",
-                                        kwargs={"user": specialist_id,
+                                        kwargs={"user": order.specialist.id,
                                                 "id": order_id}))
             elif order_status == 'declined':
                 order.mark_as_declined()
                 self.send_signal(order, request)
-        return redirect(reverse("api:user-detail", args=[specialist_id, ]))
+        return redirect(
+            reverse("api:user-detail", args=[order.specialist.id, ]))
 
-    def send_signal(self, order, request):
+    def send_signal(self, order: object, request: dict) -> None:
+        """Send signal for sending an email message to the customer
+         with the specialist's order status decision
+
+        Args:
+            order: instance order
+            request: metadata about the request
+        """
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request
         )

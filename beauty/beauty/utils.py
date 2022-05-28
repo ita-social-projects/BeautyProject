@@ -1,9 +1,9 @@
 """This module provides you with all needed utility functions"""
 
 import os
-from django.contrib.auth.tokens import default_token_generator
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
+from beauty.tokens import OrderApprovingTokenGenerator
 
 
 class ModelsUtils:
@@ -47,11 +47,10 @@ class ApprovingOrderEmail(BaseEmailMessage):
         from djoser.utils import encode_uid
         context = super().get_context_data()
 
-        user = context.get("user")
-        context["uid"] = encode_uid(user.pk)
-        context["token"] = default_token_generator.make_token(user)
-        url_approved_params = {"pk": context['order'].id,
-                               "uid": context['uid'],
+        order = context.get("order")
+        context["uid"] = encode_uid(order.pk)
+        context["token"] = OrderApprovingTokenGenerator().make_token(order)
+        url_approved_params = {"uid": context['uid'],
                                "token": context['token'],
                                "status": "approved"}
         url_declined_params = {**url_approved_params, **{"status": "declined"}}
