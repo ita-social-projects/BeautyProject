@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
@@ -105,7 +107,6 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     def get_object(self):
         """Method for getting order objects by using both order user id
          and order id lookup fields."""
-
         if len(self.kwargs) > 1:
             obj = get_object_or_404(self.get_queryset(),
                                     Q(customer=self.kwargs['user']) |
