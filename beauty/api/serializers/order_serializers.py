@@ -2,6 +2,9 @@
 
 from rest_framework import serializers
 from api.models import (Order, CustomUser, Service, Position)
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SpecialistRelatedField(serializers.PrimaryKeyRelatedField):
@@ -40,6 +43,10 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         specialist_services = Position.objects.filter(
             specialist=specialist).values_list("service__name", flat=True)
         if not service.position.specialist.filter(id=specialist.id):
+
+            logger.info(f"Specialist {specialist.get_full_name()}"
+                        f"does not have such service")
+
             raise serializers.ValidationError(
                 {"service": "Specialist does not have such service.",
                  "help_text": f"Specialist has such services "
@@ -47,8 +54,13 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             )
 
         if specialist == customer:
+
+            logger.info("Customer and specialist are the same person!")
+
             raise serializers.ValidationError(
                 {"users": "Customer and specialist are the same person!"})
+
+        logger.info(f"Order with {service.name} was created")
 
         return super().create(validated_data)
 
@@ -78,6 +90,9 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
         """
         validated_data["status"] = 2
+
+        logger.info(f"{Order} was canceled")
+
         return super().update(instance, validated_data)
 
 

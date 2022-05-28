@@ -1,6 +1,9 @@
 """Module for all custom project tokens."""
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class OrderApprovingTokenGenerator(PasswordResetTokenGenerator):
@@ -25,4 +28,7 @@ class OrderApprovingTokenGenerator(PasswordResetTokenGenerator):
         # database doesn't support microseconds.
         update_at_timestamp = order.update_at.replace(
             microsecond=0, tzinfo=None).timestamp()
+
+        logger.info(f"Token for {order} was created")
+
         return f"{order.pk}{order.status}{update_at_timestamp}{timestamp}"

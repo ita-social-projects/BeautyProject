@@ -24,6 +24,9 @@ from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDetailSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -85,6 +88,8 @@ class OrderListCreateView(ListCreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    logger.info("Orders was loaded")
+
     def post(self, request, *args, **kwargs):
         """Create an order and add an authenticated customer to it."""
         serializer = self.get_serializer(data=request.data)
@@ -93,6 +98,10 @@ class OrderListCreateView(ListCreateAPIView):
         context = {"order": order}
         to = [order.specialist.email, ]
         ApprovingOrderEmail(request, context).send(to)
+
+        logger.info(f"{order}: approving email was sent to the specialist "
+                    f"{order.specialist.get_full_name()}")
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -113,7 +122,13 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
                                     Q(specialist=self.kwargs['user']),
                                     id=self.kwargs['id'])
             self.check_object_permissions(self.request, obj)
+
+            logger.info(f"{obj} was got from user page")
+
             return obj
+
+        logger.info(f"{super().get_object()} was got")
+
         return super().get_object()
 
 
@@ -135,12 +150,22 @@ class OrderApprovingView(ListCreateAPIView):
             if order_status == 'approved':
                 order.mark_as_approved()
                 self.send_signal(order, request)
+
+                logger.info(f"{order} was approved by specialist "
+                            f"{order.specialist.get_full_name()}")
+
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
                                                 "id": order_id}))
             elif order_status == 'declined':
                 order.mark_as_declined()
                 self.send_signal(order, request)
+
+                logger.info(f"{order} was declined by specialist "
+                            f"{order.specialist.get_full_name()}")
+
+        logger.info(f"Token for {order} is not valid")
+
         return redirect(
             reverse("api:user-detail", args=[order.specialist.id, ]))
 
@@ -155,3 +180,5 @@ class OrderApprovingView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request
         )
+
+        logger.info(f"Signal was sent with {order}")

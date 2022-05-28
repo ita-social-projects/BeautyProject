@@ -206,3 +206,65 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+ADMINS = [("Admin", config("EMAIL_HOST_USER")), ]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{levelname}: {asctime}] {module} | "
+                      "{funcName}:{lineno} - {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "filters": ["require_debug_true", ],
+            "class": "logging.StreamHandler",
+            "formatter": "verbose"
+        },
+        "file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "mode": "a",
+            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
+            "backupCount": 10,
+            "filename": "logs/info.log",
+            "formatter": "verbose"
+        },
+        "mail_admins": {
+            "level": "CRITICAL",
+            "filters": ["require_debug_false", ],
+            "class": "django.utils.log.AdminEmailHandler",
+        }
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "mail_admins"],
+            "propagate": True,
+        },
+        "api": {
+            "handlers": ["console", "file", "mail_admins"],
+            "level": "INFO"
+        },
+        "beauty": {
+            "handlers": ["console", "file", "mail_admins"],
+            "level": "INFO"
+        }
+    }
+}
