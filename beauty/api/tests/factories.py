@@ -78,8 +78,8 @@ class SpecialistFactory(UserFactory):
 
 
 class BusinessFactory:
-    @classmethod
-    def create(cls) -> Business:
+    @staticmethod
+    def create() -> Business:
         owner = OwnerFactory.create()
 
         return Business.objects.create(
@@ -99,8 +99,8 @@ class BusinessFactory:
 
 
 class PositionFactory:
-    @classmethod
-    def create(cls) -> Position:
+    @staticmethod
+    def create() -> Position:
         business = BusinessFactory.create()
         start_time, end_time = get_random_start_end_datetime()
 
