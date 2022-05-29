@@ -4,7 +4,6 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-
 from rest_framework import status
 from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
                                      GenericAPIView,
@@ -40,12 +39,15 @@ class UserActivationView(GenericAPIView):
     """Generic view for user account activation"""
 
     def get(self, request, uidb64, token):
-        user_id = int(force_str(urlsafe_base64_decode(uidb64)))
+        id = int(force_str(urlsafe_base64_decode(uidb64)))
 
-        user = get_object_or_404(CustomUser, id=user_id)
+        user = get_object_or_404(CustomUser, id=id)
         user.is_active = True
         user.save()
-        return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
+
+        logger.info(f"User {user} was activated")
+
+        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
 
 
 class ResetPasswordView(GenericAPIView):
@@ -54,12 +56,15 @@ class ResetPasswordView(GenericAPIView):
     model = CustomUser
 
     def post(self, request, uidb64, token):
-        user_id = int(force_str(urlsafe_base64_decode(uidb64)))
-        user = get_object_or_404(CustomUser, id=user_id)
+        id = int(force_str(urlsafe_base64_decode(uidb64)))
+        user = get_object_or_404(CustomUser, id=id)
         self.get_serializer().validate(request.POST)
         user.set_password(request.POST.get('password'))
         user.save()
-        return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
+
+        logger.info(f"User {user} password was reset")
+
+        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
 
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
@@ -77,6 +82,9 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         if instance.is_active:
             instance.is_active = False
             instance.save()
+
+            logger.info(f"User {instance} was deactivated")
+
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
