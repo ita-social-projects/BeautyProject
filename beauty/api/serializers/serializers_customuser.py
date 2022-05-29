@@ -43,6 +43,7 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
 
         url = reverse(
             view_name, kwargs=url_kwargs, request=request, format=format_,
+        )
 
         logger.debug(f"User order url: {url} was added to "
                      f"user with id={getattr(obj, self.url_user_id)}")
