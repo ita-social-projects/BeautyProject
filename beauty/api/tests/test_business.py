@@ -14,8 +14,10 @@ faker = Faker()
 
 class BusinessModelTest(TestCase):
     def setUp(self) -> None:
-        self.owner_group = Group.objects.create(name="Owner")
-        self.specialist_group = Group.objects.create(name="Specialist")
+        self.owner_group = Group.objects.get_or_create(name="Owner")[0]
+        self.specialist_group = Group.objects.get_or_create(
+            name="Specialist"
+        )[0]
 
         self.owner = UserFactory.create()
         self.owner_group.user_set.add(self.owner)
@@ -56,12 +58,14 @@ class BusinessModelTest(TestCase):
 
 class BusinessListCreateViewTest(TestCase):
     def setUp(self) -> None:
-        self.business1 = BusinessFactory()
-        self.business2 = BusinessFactory()
+        self.business1 = BusinessFactory.create()
+        self.business2 = BusinessFactory.create()
 
-        self.client_group = Group.objects.create(name="Client")
-        self.owner_group = Group.objects.create(name="Owner")
-        # self.specialist_group = Group.objects.create(name="Specialist")
+        self.client_group = Group.objects.get_or_create(name="Client")[0]
+        self.owner_group = Group.objects.get_or_create(name="Owner")[0]
+        self.specialist_group = Group.objects.get_or_create(
+            name="Specialist"
+        )[0]
 
         self.test_client = UserFactory.create()
         self.client_group.user_set.add(self.test_client)

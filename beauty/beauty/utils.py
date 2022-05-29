@@ -4,6 +4,7 @@ import os
 from random import randint
 from datetime import datetime, timedelta
 from typing import Tuple
+import pytz
 
 
 class ModelsUtils:
@@ -43,6 +44,7 @@ class ModelsUtils:
 def get_random_start_end_datetime() -> Tuple[datetime, datetime]:
     """Gives random times for start, end of the working day"""
     start_time = datetime(
-            2022, randint(1, 12), randint(1, 28), randint(0, 23)
+            2022, randint(1, 12), randint(1, 28), randint(0, 23), 
+            tzinfo=pytz.UTC
         )
     return start_time, start_time + timedelta(hours=8)
