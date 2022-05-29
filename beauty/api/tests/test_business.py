@@ -1,11 +1,13 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.urls import reverse
 
 from faker import Faker
 
-from .factories import UserFactory, BusinessFactory, PositionFactory
+from .factories import (
+    OwnerFactory, ClientFactory, SpecialistFactory, 
+    BusinessFactory, PositionFactory
+)
 from beauty.utils import get_random_start_end_datetime
 
 User = get_user_model()
@@ -14,21 +16,12 @@ faker = Faker()
 
 class BusinessModelTest(TestCase):
     def setUp(self) -> None:
-        self.owner_group = Group.objects.get_or_create(name="Owner")[0]
-        self.specialist_group = Group.objects.get_or_create(
-            name="Specialist"
-        )[0]
+        self.owner = OwnerFactory.create()
 
-        self.owner = UserFactory.create()
-        self.owner_group.user_set.add(self.owner)
-
-        self.specialist1 = UserFactory.create()
-        self.specialist2 = UserFactory.create()
+        self.specialist1 = SpecialistFactory.create()
+        self.specialist2 = SpecialistFactory.create()
 
         self.business = BusinessFactory.create()
-
-        self.specialist_group.user_set.add(self.specialist1)
-        self.specialist_group.user_set.add(self.specialist2)
 
         self.position = PositionFactory.create()
         self.position.specialist.add(self.specialist2)
@@ -61,18 +54,8 @@ class BusinessListCreateViewTest(TestCase):
         self.business1 = BusinessFactory.create()
         self.business2 = BusinessFactory.create()
 
-        self.client_group = Group.objects.get_or_create(name="Client")[0]
-        self.owner_group = Group.objects.get_or_create(name="Owner")[0]
-        self.specialist_group = Group.objects.get_or_create(
-            name="Specialist"
-        )[0]
-
-        self.test_client = UserFactory.create()
-        self.client_group.user_set.add(self.test_client)
-        self.owner = UserFactory.create()
-        self.owner_group.user_set.add(self.owner)
-        # self.owner = UserFactory()
-        # self.owner_group.user_set.add(self.owner)
+        self.test_client = ClientFactory.create()
+        self.owner = OwnerFactory.create()
 
     def test_list_of_businesses(self) -> None:
         response = self.client.get(

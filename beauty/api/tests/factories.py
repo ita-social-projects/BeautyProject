@@ -13,7 +13,7 @@ User = get_user_model()
 faker = Faker()
 
 
-class UserFactory():
+class UserFactory:
     @classmethod
     def create(cls) -> User:
         first_name, last_name = cls.get_first_last_names()
@@ -30,6 +30,34 @@ class UserFactory():
         first_name = full_name.pop(0)
         return first_name, " ".join(full_name)
 
+    @staticmethod
+    def add_to_group(user, group_name):
+        group = Group.objects.get_or_create(name=group_name)[0]
+        group.user_set.add(user)
+
+
+class OwnerFactory(UserFactory):
+    @classmethod
+    def create(cls) -> User:
+        owner = super().create()
+        cls.add_to_group(owner, "Owner")
+        return owner
+
+
+class ClientFactory(UserFactory):
+    @classmethod
+    def create(cls) -> User:
+        client = super().create()
+        cls.add_to_group(client, "Client")
+        return client
+
+
+class SpecialistFactory(UserFactory):
+    @classmethod
+    def create(cls) -> User:
+        specialist = super().create()
+        cls.add_to_group(specialist, "Specialist")
+        return specialist
 
 
 # class UserFactory(DjangoModelFactory):
@@ -49,12 +77,10 @@ class UserFactory():
 #     password = faker.password()
 
 
-class BusinessFactory():
+class BusinessFactory:
     @classmethod
     def create(cls) -> Business:
-        owner = UserFactory.create()
-        owner_group = Group.objects.get_or_create(name="Owner")[0]
-        owner_group.user_set.add(owner)
+        owner = OwnerFactory.create()
 
         return Business.objects.create(
             name=faker.word(), type=faker.word(), 
@@ -72,7 +98,7 @@ class BusinessFactory():
 #     owner = factory.SubFactory(UserFactory)
 
 
-class PositionFactory():
+class PositionFactory:
     @classmethod
     def create(cls) -> Position:
         business = BusinessFactory.create()
