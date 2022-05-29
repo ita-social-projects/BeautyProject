@@ -1,16 +1,33 @@
 from django.contrib.auth import get_user_model
 
-from random import randint
-from datetime import datetime, timedelta
-
 import factory
 from factory.django import DjangoModelFactory
-from faker import Factory, Faker
+from faker import Faker
 
 from api.models import Business, Position
+from beauty.utils import get_random_start_end_datetime
 
 User = get_user_model()
 faker = Faker()
+
+
+# class UserFactory():
+#     @classmethod
+#     def create(cls) -> User:
+#         first_name, last_name = cls.get_first_last_names()
+
+#         return User.objects.create(
+#             first_name=first_name, last_name=last_name, 
+#             phone_number=faker.phone_number(), email=faker.email(),
+#             password=faker.password()
+#         )
+
+#     @staticmethod
+#     def get_first_last_names():
+#         full_name = faker.name().split()
+#         first_name = full_name.pop(0)
+#         return first_name, " ".join(full_name)
+
 
 
 class UserFactory(DjangoModelFactory):
@@ -19,13 +36,12 @@ class UserFactory(DjangoModelFactory):
         django_get_or_create = ('email', 'phone_number')
 
     @staticmethod
-    def get_first_and_last_names():
+    def get_first_last_names():
         full_name = faker.name().split()
         first_name = full_name.pop(0)
-        last_name = ' '.join(full_name)
-        return first_name, last_name
+        return first_name, " ".join(full_name)
 
-    first_name, last_name = get_first_and_last_names()
+    first_name, last_name = get_first_last_names()
     phone_number = faker.phone_number()
     email = faker.email()
     password = faker.password()
@@ -45,13 +61,6 @@ class PositionFactory(DjangoModelFactory):
     class Meta:
         model = Position
 
-    @staticmethod
-    def fake_start_end_datetime():
-        start_time = datetime(
-            2022, randint(1, 12), randint(1, 31), randint(1, 24)
-        )
-        return start_time, start_time + timedelta(hours=8)
-
     name = faker.word()
     business = factory.SubFactory(BusinessFactory)
-    start_time, end_time = fake_start_end_datetime()
+    start_time, end_time = get_random_start_end_datetime()

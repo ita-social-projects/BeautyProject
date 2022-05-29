@@ -1,6 +1,9 @@
 """This module provides you with all needed utility functions"""
 
 import os
+from random import randint
+from datetime import datetime, timedelta
+from typing import Tuple
 
 
 class ModelsUtils:
@@ -35,3 +38,11 @@ class ModelsUtils:
         if os.path.exists(path):
             os.remove(path)
         return new_path
+
+
+def get_random_start_end_datetime() -> Tuple[datetime, datetime]:
+    """Gives random times for start, end of the working day"""
+    start_time = datetime(
+            2022, randint(1, 12), randint(1, 28), randint(0, 23)
+        )
+    return start_time, start_time + timedelta(hours=8)

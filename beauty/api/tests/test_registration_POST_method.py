@@ -115,11 +115,11 @@ class TestCustomUserListCreateView(TestCase):
 
         # Needed for GET method testing
         self.client.post(
-                        'http://127.0.0.1:8000/api/v1/users/',
+                        'http://127.0.0.1:8000/api/v1/user/',
                         data=self.valid_for_get_test_1
                         )
         self.client.post(
-                        'http://127.0.0.1:8000/api/v1/users/',
+                        'http://127.0.0.1:8000/api/v1/user/',
                         data=self.valid_for_get_test_2
                         )
 
@@ -129,7 +129,7 @@ class TestCustomUserListCreateView(TestCase):
         # self.client.generic needed for getting data from GET method
         resp = self.client.generic(
                                     method="GET",
-                                    path="http://127.0.0.1:8000/api/v1/users/"
+                                    path="http://127.0.0.1:8000/api/v1/user/"
                                     )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.data), 2)
@@ -137,7 +137,7 @@ class TestCustomUserListCreateView(TestCase):
     def test_post_custom_user_list_create_view(self):
         """POST requests to ListCreateAPIView should create a new object."""
         response = self.client.post(
-                                    'http://127.0.0.1:8000/api/v1/users/',
+                                    'http://127.0.0.1:8000/api/v1/user/',
                                     data=self.valid_CustomUser
                                     )
         self.assertEqual(response.status_code, 201)
@@ -147,7 +147,7 @@ class TestCustomUserListCreateView(TestCase):
         should not create a new object if same object already exists.
         """
         response = self.client.post(
-                                    'http://127.0.0.1:8000/api/v1/users/',
+                                    'http://127.0.0.1:8000/api/v1/user/',
                                     data=self.valid_for_get_test_2
                                     )
         self.assertEqual(response.status_code, 400)
@@ -157,7 +157,7 @@ class TestCustomUserListCreateView(TestCase):
         should not create a new object.
         """
         response = self.client.post(
-                                    'http://127.0.0.1:8000/api/v1/users/',
+                                    'http://127.0.0.1:8000/api/v1/user/',
                                     data=self.invalid_phone
                                     )
         self.assertEqual(response.status_code, 400)
@@ -167,7 +167,7 @@ class TestCustomUserListCreateView(TestCase):
         with different password and confirm_password should not create a new object.
         """
         response = self.client.post(
-                                    'http://127.0.0.1:8000/api/v1/users/',
+                                    'http://127.0.0.1:8000/api/v1/user/',
                                     data=self.invalid_confirmation_password
                                     )
         self.assertEqual(response.status_code, 400)
@@ -175,7 +175,7 @@ class TestCustomUserListCreateView(TestCase):
     def test_post_empty_data(self):
         """POST requests to ListCreateAPIView with empty data shoul not create a new object."""
         response = self.client.post(
-                                    'http://127.0.0.1:8000/api/v1/users/',
+                                    'http://127.0.0.1:8000/api/v1/user/',
                                     data={}
                                     )
         self.assertEqual(response.status_code, 400)
