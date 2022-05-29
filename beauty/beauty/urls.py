@@ -22,7 +22,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from api.views import UserActivationView, ResetPasswordView
-
+from api.views import UserViewSet
+from rest_framework.routers import DefaultRouter
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -30,6 +31,8 @@ def api_root(request, format=None):
         {'users': reverse('api:user-list', request=request, format=format)}
     )
 
+router = DefaultRouter()
+router.register("auth/users", UserViewSet)
 
 urlpatterns = [
     path('', api_root),
@@ -44,17 +47,11 @@ urlpatterns = [
         ResetPasswordView.as_view(),
         name='reset-password'
     ),
-    # path('api/v1/auth/', include('djoser.urls')),
-    # path('api/v1/auth_token/', include('djoser.urls.authtoken')),
     path('api/v1/user/', include('api.urls', namespace="api")),
-    #path(
-    #    'api-auth/',
-    # include('rest_framework.urls', namespace='rest_framework')
-    # ),
-    path(r'auth/', include('djoser.urls')),
     path(r'auth/', include('djoser.urls.jwt'))
-
 ]
+
+urlpatterns += router.urls
 
 if settings.DEBUG:
     urlpatterns += static(

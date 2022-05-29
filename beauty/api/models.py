@@ -44,8 +44,8 @@ class MyUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        logger.info(f"User {user['first_name']} (id={user.id}) with"
-                    f" {user['email']} was created.")
+        logger.info(f"User {user.first_name} (id={user.id}) with"
+                    f" {user.email} was created.")
 
         return user
 
@@ -61,8 +61,8 @@ class MyUserManager(BaseUserManager):
         user.is_active = True
         user.save(using=self._db)
 
-        logger.info(f"Superuser {user['first_name']} with"
-                    f" {user['email']} was created.")
+        logger.info(f"Superuser {user.first_name} with"
+                    f" {user.email} was created.")
 
         return user
 

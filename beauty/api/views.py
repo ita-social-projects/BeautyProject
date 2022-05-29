@@ -8,7 +8,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.decorators import action
 
+from djoser.views import UserViewSet as DjoserUserViewSet
 from .models import CustomUser, Order
 from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
 from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
@@ -72,7 +74,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     def perform_destroy(self, instance):
         """Reimplementation of the DESTROY (DELETE) method.
-        Makes current user inactive by changing its' field
+        Makes current user inactive by changing its field
         """
         if instance.is_active:
             instance.is_active = False
@@ -107,3 +109,10 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"{obj} was got for the user {user} (id={user.id})")
 
         return obj
+
+
+class UserViewSet(DjoserUserViewSet):
+    """This class is implemented to disable djoser DELETE method"""
+    @action(["get", "put", "patch"], detail=False)
+    def me(self, request, *args, **kwargs):
+        return super().me(request, *args, **kwargs)
