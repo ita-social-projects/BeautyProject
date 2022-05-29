@@ -107,4 +107,4 @@ class BusinessListCreateViewTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["name"], self.valid_create_data["name"])
+        self.assertEqual(response.data["owner"], self.owner.get_full_name())
