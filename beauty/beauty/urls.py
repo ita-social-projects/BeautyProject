@@ -1,4 +1,5 @@
-"""beauty URL Configuration
+"""beauty URL Configuration.
+
 The `urlpatterns` list routes URLs to views. For more information please see:
 https://docs.djangoproject.com/en/4.0/topics/http/urls/
 Examples:
@@ -26,8 +27,10 @@ from api.views import UserActivationView, ResetPasswordView
 
 @api_view(['GET'])
 def api_root(request, format=None):
+    """Add urls to API Home page."""
     return Response(
-        {'users': reverse('api:user-list', request=request, format=format)}
+        {'users': reverse('api:user-list', request=request, format=format),
+         'businesses': reverse('api:businesses-list', request=request, format=format)},
     )
 
 
@@ -37,31 +40,24 @@ urlpatterns = [
     path(
         'activate/<uidb64>/<token>/',
         UserActivationView.as_view(),
-        name='user-activation'
+        name='user-activation',
     ),
     path(
         'password/reset/confirm/<uidb64>/<token>/',
         ResetPasswordView.as_view(),
-        name='reset-password'
+        name='reset-password',
     ),
-    # path('api/v1/auth/', include('djoser.urls')),
-    # path('api/v1/auth_token/', include('djoser.urls.authtoken')),
-    path('api/v1/user/', include('api.urls', namespace="api")),
-    #path(
-    #    'api-auth/',
-    # include('rest_framework.urls', namespace='rest_framework')
-    # ),
-    path(r'auth/', include('djoser.urls')),
-    path(r'auth/', include('djoser.urls.jwt'))
-
+    path('api/v1/', include('api.urls', namespace="api")),
+    path('', include('djoser.urls')),
+    path('', include('djoser.urls.jwt')),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(
         settings.STATIC_URL,
-        document_root=settings.STATIC_ROOT
+        document_root=settings.STATIC_ROOT,
     )
     urlpatterns += static(
         settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
+        document_root=settings.MEDIA_ROOT,
     )
