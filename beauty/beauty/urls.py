@@ -27,7 +27,7 @@ from api.views import UserActivationView, ResetPasswordView
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response(
-        {'users': reverse('api:user-list-create', request=request, format=format)}
+        {'users': reverse('api:user-list', request=request, format=format)}
     )
 
 

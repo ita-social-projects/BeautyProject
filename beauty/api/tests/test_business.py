@@ -2,11 +2,13 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from rest_framework.test import APIClient
+
 from faker import Faker
 
 from .factories import (
-    OwnerFactory, ClientFactory, SpecialistFactory, 
-    BusinessFactory, PositionFactory
+    OwnerFactory, ClientFactory, SpecialistFactory, BusinessFactory, 
+    PositionFactory
 )
 from beauty.utils import get_random_start_end_datetime
 
@@ -51,11 +53,22 @@ class BusinessModelTest(TestCase):
 
 class BusinessListCreateViewTest(TestCase):
     def setUp(self) -> None:
+        self.client = APIClient()
+
         self.business1 = BusinessFactory.create()
         self.business2 = BusinessFactory.create()
 
         self.test_client = ClientFactory.create()
         self.owner = OwnerFactory.create()
+
+        self.valid_create_data = {
+            "name": faker.word(), "type": faker.word(),
+            "description": faker.text(), "owner": self.owner.id
+        }
+        self.invalid_create_data = {
+            "name": faker.word(), "type": faker.word(),
+            "description": faker.text(), "owner": self.test_client.id
+        }
 
     def test_list_of_businesses(self) -> None:
         response = self.client.get(
@@ -64,3 +77,34 @@ class BusinessListCreateViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
+
+    def test_create_business_no_auth(self) -> None:
+        response = self.client.post(
+            path=reverse("api:business-list-create"),
+            data=self.valid_create_data
+        )
+
+        self.assertEqual(response.status_code, 401)
+
+    def test_create_business_invalid_owner(self):
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.test_client)
+
+        response = self.client.post(
+            path=reverse("api:business-list-create"),
+            data=self.invalid_create_data
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_business_invalid_owner(self):
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.test_client)
+
+        response = self.client.post(
+            path=reverse("api:business-list-create"),
+            data=self.valid_create_data
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data["name"], self.valid_create_data["name"])
