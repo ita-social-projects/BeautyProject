@@ -1,49 +1,44 @@
+"""This module provides all needed permissions."""
 from rest_framework import permissions
 
 
-class IsOrReadOnly(permissions.BasePermission):
-    """Object-level permission to only allow owners of an object
-    or admin to edit it.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        """Read permissions are allowed to any request,
-        so we'll always allow GET, HEAD or OPTIONS requests.
-        """
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return False
-
-
-class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
-    """Object-level permission to only allow owners of an object
-    or admin to edit it.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        """Read permissions are allowed to any request,
-        so we'll always allow GET, HEAD or OPTIONS requests.
-        """
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        if request.user.is_authenticated:
-            if request.user.is_admin or (obj.email == request.user.email):
-                return True
-        return False
-
-
 class IsAccountOwnerOrReadOnly(permissions.BasePermission):
-    """Object-level permission to only allow owners of an object to edit it."""
+    """IsAccountOwnerOrReadOnly permission class.
+
+    Object-level permission to only allow owners of an object
+    to edit it.
+    """
 
     def has_object_permission(self, request, view, obj):
-        """Read permissions are allowed to any request,
-        so we'll always allow GET, HEAD or OPTIONS requests.
-        """
-        if request.method in permissions.SAFE_METHODS:
-            return True
+        """Object permission check."""
+        return bool(request.method in permissions.SAFE_METHODS or
+                    obj == request.user)
 
-        if request.user.is_authenticated and (obj.email == request.user.email):
-            return True
-        return False
+
+class IsAdminOrAccountOwnerOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
+    """IsAdminOrAccountOwnerOrReadOnly permission class.
+
+    Object-level permission to only allow owners of an object
+    or admin to edit it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        """Object permission check."""
+        return bool(request.method in permissions.SAFE_METHODS or
+                    request.user.is_admin or (obj == request.user))
+
+
+class IsAdminOrBusinessOwner(permissions.IsAuthenticatedOrReadOnly):
+    """IsAdminOrBusinessOwner permission class.
+
+    Object-level permission to only allow owners of an object
+    or admin to review and edit it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        """Object permission check."""
+        try:
+            is_admin = request.user.is_admin
+            return bool(is_admin or (obj == request.user))
+        except AttributeError:
+            raise NotImplementedError({"code 404": 'not yet implemented content'})
