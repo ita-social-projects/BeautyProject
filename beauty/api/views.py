@@ -87,10 +87,7 @@ class ResetPasswordView(GenericAPIView):
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
-
-    RUD - Retrieve, Update, Destroy.
-    """
-
+    RUD - Retrieve, Update, Destroy"""
     permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
