@@ -1,5 +1,4 @@
 """This module provides all needed views."""
-from django.contrib.auth import get_user_model
 import logging
 
 from django.db.models import Q
@@ -15,12 +14,12 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .models import CustomUser, Order, Business
-from .permissions import (IsAdminOrIsAccountOwnerOrReadOnly, IsAdminOrBusinessOwner,
-                          IsAccountOwnerOrReadOnly, IsOrReadOnly)
+from .permissions import IsAdminOrBusinessOwner, IsAccountOwnerOrReadOnly
 from .serializers.business_serializers import (BusinessDetailSerializer, BusinessesSerializer,
                                                BusinessAllDetailSerializer)
 from .serializers.serializers_customuser import (CustomUserDetailSerializer, CustomUserSerializer,
                                                  ResetPasswordSerializer, UserOrderDetailSerializer)
+
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +48,7 @@ class UserActivationView(GenericAPIView):
 
 
 class ResetPasswordView(GenericAPIView):
-    """Generic view for reset password"""
+    """Generic view for reset password."""
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
@@ -58,7 +57,7 @@ class ResetPasswordView(GenericAPIView):
         user_id = int(force_str(urlsafe_base64_decode(uidb64)))
         user = get_object_or_404(CustomUser, id=user_id)
         self.get_serializer().validate(request.POST)
-        user.set_password(request.POST.get('password'))
+        user.set_password(request.POST.get("password"))
         user.save()
 
         logger.info(f"User {user} password was reset")
@@ -100,18 +99,18 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     queryset = Order.objects.all()
     serializer_class = UserOrderDetailSerializer
-    multiple_lookup_fields = ('user', 'id')
+    multiple_lookup_fields = ("user", "id")
 
     def get_object(self):
         """Get order objects by using both order user id and order id lookup fields."""
         queryset = self.get_queryset()
-        obj = get_object_or_404(queryset, Q(customer=self.kwargs['user']) |
-                                Q(specialist=self.kwargs['user']),
-                                id=self.kwargs['id'])
+        obj = get_object_or_404(
+            queryset,
+            Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
+            id=self.kwargs["id"])
         self.check_object_permissions(self.request, obj)
 
-        user = (obj.customer if self.kwargs['user'] ==
-                                obj.customer.id else obj.specialist)
+        user = (obj.customer if self.kwargs["user"] == obj.customer.id else obj.specialist)
 
         logger.info(f"{obj} was got for the user {user} (id={user.id})")
 
@@ -126,6 +125,8 @@ class AllBusinessesListAPIView(ListAPIView):
     queryset = Business.objects.all()
     serializer_class = BusinessesSerializer
 
+    logger.debug("A view to display all businesses has opened")
+
 
 class OwnerBusinessesListAPIView(ListAPIView):
     """List View for businesses of certain owner."""
@@ -136,7 +137,9 @@ class OwnerBusinessesListAPIView(ListAPIView):
     queryset = Business.objects.all()
     serializer_class = BusinessesSerializer
 
-    def list(self, request, owner_id):
+    logger.debug("A view to display businesses of certain owner opened")
+
+    def list(self, request, owner_id): # noqa
         """Filter businesses of certain owner."""
         self.permission_classes = (IsAdminOrBusinessOwner,)
         queryset = self.get_queryset().filter(owner=owner_id)
@@ -153,6 +156,8 @@ class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     queryset = Business.objects.all()
     serializer_class = BusinessAllDetailSerializer
 
+    logger.debug("A view to edit business has opened")
+
 
 class BusinessDetailRetrieveAPIView(RetrieveAPIView):
     """Retrieve View for business details."""
@@ -161,3 +166,5 @@ class BusinessDetailRetrieveAPIView(RetrieveAPIView):
 
     queryset = Business.objects.all()
     serializer_class = BusinessDetailSerializer
+
+    logger.debug("A view to display certain business has opened")
