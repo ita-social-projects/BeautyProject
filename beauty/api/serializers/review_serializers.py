@@ -14,7 +14,8 @@ class ReviewDisplaySerializer(serializers.ModelSerializer):
         """This is a class Meta that keeps settings for serializer"""
 
         model = Review
-        fields = ("text_body",
+        fields = ("id",
+                  "text_body",
                   "rating",
                   "from_user",
                   "to_user",
@@ -28,7 +29,12 @@ class ReviewDisplayDetailSerializer(serializers.ModelSerializer):
         """This is a class Meta that keeps settings for serializer"""
 
         model = Review
-        fields = ("text_body", "rating")
+        fields = ("id",
+                  "text_body",
+                  "rating",
+                  "from_user",
+                  "to_user",
+                  "date_of_publication")
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Update review information using dict with data.
