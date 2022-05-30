@@ -63,19 +63,25 @@ class TestOrderSerializer(TestCase):
                         'specialist': self.specialist.id}
 
         serializer = self.Serializer(data=invalid_data)
+
         self.assertFalse(serializer.is_valid())
-        self.assertEqual(serializer.validated_data, {})
         self.assertEqual(serializer.validated_data, {})
         self.assertEqual(serializer.data, invalid_data)
         self.assertEqual(serializer.errors, {
             'service': [ErrorDetail(string='This field is required.', code='required')]})
 
-# def test_invalid_datatype(self):
-#     serializer = self.Serializer(data=[{'char': 'abc'}])
-#     assert not serializer.is_valid()
-#     assert serializer.validated_data == {}
-#     assert serializer.data == {}
-#     assert serializer.errors == {'non_field_errors': ['Invalid data. Expected a dictionary, but got list.']}
+    def test_invalid_datatype(self):
+        invalid_data = [{'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+                         'specialist': self.specialist.id,
+                         'service': self.service}]
+
+        serializer = self.Serializer(data=invalid_data)
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.validated_data, {})
+        self.assertEqual(serializer.data, {})
+        self.assertEqual(serializer.errors, {'non_field_errors': [ErrorDetail(
+            string='Invalid data. Expected a dictionary, but got list.', code='invalid')]
+        })
 #
 # def test_partial_validation(self):
 #     serializer = self.Serializer(data={'char': 'abc'}, partial=True)
