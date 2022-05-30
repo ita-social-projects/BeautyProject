@@ -45,7 +45,8 @@ class ReviewDisplayDetailSerializer(serializers.ModelSerializer):
         if text_body:
             if len(text_body) > 500:
                 logger.info(
-                    f"Review with id {instance.id} was unsuccessfully updated")
+                    f"User {instance.from_user} unsuccessfully updated"
+                    f" review with id {instance.id} ")
                 raise serializers.ValidationError(
                     {"error": "Text body length must be under 500 symbols"}
                 )
