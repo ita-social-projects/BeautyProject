@@ -3,19 +3,20 @@ from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, get_object_or_404
+from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView,  get_object_or_404
 from rest_framework.generics import GenericAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import CustomUser, Order
+from .models import CustomUser, Order, Service
 from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
 from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
 from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
 from .serializers.serializers_customuser import UserOrderDetailSerializer
 from .serializers.serializers_customuser import ResetPasswordSerializer
+from .serializers.serializers_service import ServiceSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -107,3 +108,24 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"{obj} was got for the user {user} (id={user.id})")
 
         return obj
+
+
+class AllServicesListView(ListAPIView):
+    """ListView for all Services"""
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("View to display all services that can be provided")
+
+
+class ServiceUpdateView(UpdateAPIView):
+    """View for editing service info"""
+
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("A view to edit service")
+
