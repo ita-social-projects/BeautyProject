@@ -109,10 +109,15 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
 
 
 class BusinessListCreateView(ListCreateAPIView):
+    """View for business creation and displaying list of all businesses with
+    basic info about them
+    """
+
     queryset = Business.objects.all()
     serializer_class = BusinessListCreateSerializer
 
     def get_permissions(self):
+        """For business creation you need to be authentificated"""
         if self.request.method == "POST":
             self.permission_classes = (IsAccountOwnerOrReadOnly,)
         return super().get_permissions()

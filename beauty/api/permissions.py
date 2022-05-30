@@ -10,7 +10,7 @@ class ReadOnly(permissions.BasePermission):
         """Read permissions are allowed to any request,
         so we'll always allow GET, HEAD or OPTIONS requests.
         """
-        return bool(request.method in permissions.SAFE_METHODS)
+        return request.method in permissions.SAFE_METHODS
 
 
 class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
@@ -22,12 +22,11 @@ class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
         """Read permissions are allowed to any request,
         so we'll always allow GET, HEAD or OPTIONS requests.
         """
-        return bool(request.method in permissions.SAFE_METHODS)
+        return request.method in permissions.SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_authenticated:
-            if request.user.is_admin or (obj.email == request.user.email):
-                return True
+            return request.user.is_admin or (obj.email == request.user.email)
         return False
 
 
@@ -38,10 +37,10 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
         """Read permissions are allowed to any request,
         so we'll always allow GET, HEAD or OPTIONS requests.
         """
-        return bool(
-            request.method in permissions.SAFE_METHODS or
+        return (
+            request.method in permissions.SAFE_METHODS or 
             request.user.is_authenticated
         )
 
     def has_object_permission(self, request, view, obj):
-        return bool(obj.email == request.user.emai)
+        return obj.email == request.user.emai

@@ -10,7 +10,11 @@ User = get_user_model()
 
 
 class BusinessListCreateSerializer(serializers.ModelSerializer):
+    """Business serilalizer for list and create views"""
+
     class Meta:
+        """Display 4 required fields for Business creation"""
+
         model = Business
         fields = ('name', 'type', 'owner', 'description')
 

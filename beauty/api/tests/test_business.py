@@ -17,7 +17,12 @@ faker = Faker()
 
 
 class BusinessModelTest(TestCase):
+    """Tests for basic Bussiness model behavior and its methods"""
+
     def setUp(self) -> None:
+        """Preparing owner, two specialist, business and position 
+        for the tests
+        """
         self.owner = OwnerFactory.create()
 
         self.specialist1 = SpecialistFactory.create()
@@ -30,6 +35,9 @@ class BusinessModelTest(TestCase):
         self.business.position_set.add(self.position)
 
     def test_create_position_method(self) -> None:
+        """Test if create_position method creates new position and that
+        this position belongs to a correct business
+        """
         start_time, end_time = get_random_start_end_datetime()
         position = self.business.create_position(
             faker.word(), self.specialist1, start_time, end_time
@@ -40,6 +48,9 @@ class BusinessModelTest(TestCase):
         self.assertEqual(len(all_positions), 2)
 
     def test_get_all_specialist_method(self) -> None:
+        """Checks if Business model get_all_specialist method gives all
+        specilaists who belong to current business
+        """
         start_time, end_time = get_random_start_end_datetime()
         self.business.create_position(
             faker.word(), self.specialist1, start_time, end_time
@@ -52,7 +63,12 @@ class BusinessModelTest(TestCase):
 
 
 class BusinessListCreateViewTest(TestCase):
+    """Tests for business' serilaizers and BusinessListCreateView"""
+
     def setUp(self) -> None:
+        """Sets up client for authentification, creates 2 business, client, 
+        owner, valid and invalid data for business creation
+        """
         self.client = APIClient()
 
         self.business1 = BusinessFactory.create()
@@ -71,6 +87,7 @@ class BusinessListCreateViewTest(TestCase):
         }
 
     def test_list_of_businesses(self) -> None:
+        """Tests if view gives all businesses"""
         response = self.client.get(
             path=reverse("api:business-list-create")
         )
@@ -79,6 +96,9 @@ class BusinessListCreateViewTest(TestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_create_business_no_auth(self) -> None:
+        """Tests if view does not allow user to create business without 
+        authentication
+        """
         response = self.client.post(
             path=reverse("api:business-list-create"),
             data=self.valid_create_data
@@ -86,8 +106,10 @@ class BusinessListCreateViewTest(TestCase):
 
         self.assertEqual(response.status_code, 401)
 
-    def test_create_business_invalid_owner(self):
-        self.client = APIClient()
+    def test_create_business_invalid_owner(self) -> None:
+        """Tests if view does not allow to create business with 
+        user who does not belong to Owner group
+        """
         self.client.force_authenticate(user=self.test_client)
 
         response = self.client.post(
@@ -95,16 +117,20 @@ class BusinessListCreateViewTest(TestCase):
             data=self.invalid_create_data
         )
 
+        self.client.force_authenticate(user=None)
+
         self.assertEqual(response.status_code, 400)
 
-    def test_create_business_invalid_owner(self):
-        self.client = APIClient()
+    def test_create_business_valid_owner(self) -> None:
+        """Checks business creation with authenticated user and valid data"""
         self.client.force_authenticate(user=self.test_client)
 
         response = self.client.post(
             path=reverse("api:business-list-create"),
             data=self.valid_create_data
         )
+
+        self.client.force_authenticate(user=None)
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["owner"], self.owner.get_full_name())
