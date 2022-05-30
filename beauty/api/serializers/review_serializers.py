@@ -1,9 +1,8 @@
 """The module includes serializers for Review model."""
+import logging
 
 from rest_framework import serializers
 from api.models import Review
-
-import logging
 
 logger = logging.getLogger(__name__)
 
