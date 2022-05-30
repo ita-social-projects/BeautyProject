@@ -47,18 +47,9 @@ class ReviewDisplayDetailSerializer(serializers.ModelSerializer):
             review (object): instance with updated data
 
         """
-        text_body = validated_data.get("text_body", None)
-        if text_body:
-            if len(text_body) > 500:
-                logger.info(
-                    f"User {instance.from_user} unsuccessfully updated"
-                    f" review with id {instance.id} ")
-                raise serializers.ValidationError(
-                    {"error": "Text body length must be under 500 symbols"}
-                )
-        else:
-            validated_data["text_body"] = instance.text_body
-
-        logger.info(f"Data for review {instance} was updated")
-
-        return super().update(instance, validated_data)
+        try:
+            new_instance = super().update(instance, validated_data)
+            return new_instance
+        except Exception as e:
+            logger.info(e.__str__())
+            raise e
