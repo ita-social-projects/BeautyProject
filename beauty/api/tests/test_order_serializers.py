@@ -18,6 +18,8 @@ Todo:
 
 import pytz
 from django.test import TestCase
+from rest_framework.exceptions import ErrorDetail
+
 from api.serializers.order_serializers import OrderSerializer
 from .factories import *
 
@@ -40,27 +42,34 @@ class TestOrderSerializer(TestCase):
         self.position.specialist.add(self.specialist)
 
     def test_valid_serializer(self):
-        data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
-                'specialist': self.specialist.id,
-                'service': self.service.id}
-
         valid_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
-                      'specialist': self.specialist,
-                      'service': self.service}
+                      'specialist': self.specialist.id,
+                      'service': self.service.id}
 
-        serializer = self.Serializer(data=data)
+        ecxpect_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+                        'specialist': self.specialist,
+                        'service': self.service}
+
+        serializer = self.Serializer(data=valid_data)
         self.assertTrue(serializer.is_valid(raise_exception=True))
-        self.assertEqual(serializer.validated_data, valid_data)
+        self.assertEqual(serializer.validated_data, ecxpect_data)
         self.assertEqual(serializer.errors, {})
         order = serializer.save(customer=self.customer)
+        self.assertEqual(order.status, 0)
+        self.assertEqual(order.customer, self.customer)
 
-# def test_invalid_serializer(self):
-#     serializer = self.Serializer(data={'char': 'abc'})
-#     assert not serializer.is_valid()
-#     assert serializer.validated_data == {}
-#     assert serializer.data == {'char': 'abc'}
-#     assert serializer.errors == {'integer': ['This field is required.']}
-#
+    def test_invalid_serializer(self):
+        invalid_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+                        'specialist': self.specialist.id}
+
+        serializer = self.Serializer(data=invalid_data)
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.validated_data, {})
+        self.assertEqual(serializer.validated_data, {})
+        self.assertEqual(serializer.data, invalid_data)
+        self.assertEqual(serializer.errors, {
+            'service': [ErrorDetail(string='This field is required.', code='required')]})
+
 # def test_invalid_datatype(self):
 #     serializer = self.Serializer(data=[{'char': 'abc'}])
 #     assert not serializer.is_valid()
