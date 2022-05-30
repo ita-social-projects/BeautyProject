@@ -14,7 +14,7 @@ class GroupFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Group_{n}")
 
     @staticmethod
-    def get_groups():
+    def groups_for_test():
         groups_name = ['Admin', 'Customer', 'Owner', 'Specialist']
         GroupNamed = namedtuple("GroupNamed", list(map(lambda name: name.lower(), groups_name)))
         groups = GroupNamed(*[GroupFactory(name=name) for name in groups_name])

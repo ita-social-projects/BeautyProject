@@ -15,49 +15,44 @@ Todo:
     *   Migrate to the new URLs once they are available
 
 """
-import datetime
-from collections import namedtuple
 
+import pytz
 from django.test import TestCase
 from api.serializers.order_serializers import OrderSerializer
 from .factories import *
 
+CET = pytz.timezone("Europe/Kiev")
+
 
 class TestOrderSerializer(TestCase):
-    # groups_name = ['Admin', 'Customer', 'Owner', 'Specialist']
-    # GroupNamed = namedtuple("GroupNamed", list(map(lambda name: name.lower(), groups_name)))
-    # GroupNamed = namedtuple("GroupNamed", groups_name)
-    # d = [GroupFactory(name=name) for name in groups_name]
-    # for name in groups_name:
-    #     print(GroupFactory(name=name))
-    # groups_name = ['Admin', 'Customer', 'Owner', 'Specialist']
-    # GroupNamed = namedtuple("GroupNamed", list(map(lambda name: name.lower(), groups_name)))
-    # groups = GroupNamed(*[GroupFactory(name=name) for name in groups_name])
-    # d = [GroupFactory(name=name) for name in groups_name]
 
     def setUp(self):
         self.Serializer = OrderSerializer
 
-        self.groups = GroupFactory.get_groups()
+        self.groups = GroupFactory.groups_for_test()
         self.specialist = CustomUserFactory(first_name="UserSpecialist")
         self.customer = CustomUserFactory(first_name="UserCustomer")
-        self.service = ServiceFactory(name="Service_1")
+        self.position = PositionFactory(name="Position_1")
+        self.service = ServiceFactory(name="Service_1", position=self.position)
+
         self.groups.specialist.user_set.add(self.specialist)
         self.groups.customer.user_set.add(self.customer)
+        self.position.specialist.add(self.specialist)
 
     def test_valid_serializer(self):
-        data = {'status': 4,
-                'start_time': datetime.datetime(2022, 5, 30, 9, 40, 16),
+        data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
                 'specialist': self.specialist.id,
-                'customer': self.customer.id,
                 'service': self.service.id}
+
+        valid_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+                      'specialist': self.specialist,
+                      'service': self.service}
 
         serializer = self.Serializer(data=data)
         self.assertTrue(serializer.is_valid(raise_exception=True))
-        print(serializer.validated_data)
-        # self.assertEqual(serializer.validated_data, data)
-        # assert serializer.data == {'char': 'abc', 'integer': 123}
-        # assert serializer.errors == {}
+        self.assertEqual(serializer.validated_data, valid_data)
+        self.assertEqual(serializer.errors, {})
+        order = serializer.save(customer=self.customer)
 
 # def test_invalid_serializer(self):
 #     serializer = self.Serializer(data={'char': 'abc'})

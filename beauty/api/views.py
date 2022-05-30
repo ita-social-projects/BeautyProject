@@ -94,7 +94,7 @@ class OrderListCreateView(ListCreateAPIView):
 
     queryset = Order.objects.exclude(status__in=[2, 4])
     serializer_class = OrderSerializer
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     logger.info("Orders was loaded")
 
