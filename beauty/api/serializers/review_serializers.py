@@ -20,3 +20,13 @@ class ReviewDisplaySerializer(serializers.ModelSerializer):
                   "from_user",
                   "to_user",
                   "date_of_publication")
+
+
+class ReviewDisplayDetailSerializer(serializers.ModelSerializer):
+    """Serializer to receive and update specific review"""
+
+    class Meta:
+        """This is a class Meta that keeps settings for serializer"""
+
+        model = Review
+        fields = ("text_body", "rating")
