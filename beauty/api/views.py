@@ -9,9 +9,10 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import CustomUser, Order
+from .models import CustomUser, Order, Business
 from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
 from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
+from .serializers.business_serializers import BusinessGetAllInfoSerializers
 from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
 from .serializers.serializers_customuser import UserOrderDetailSerializer
@@ -107,3 +108,16 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"{obj} was got for the user {user} (id={user.id})")
 
         return obj
+
+
+class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
+    """Generic API for business GET, PUT and DELETE methods.
+    RUD - Retrieve, Update, Destroy"""
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Business.objects.all()
+    serializer_class = BusinessGetAllInfoSerializers
+
+    def get_info(self, instance):
+        """Method for getting all info about business"""
+        return get_object_or_404(self.queryset, id=instance.id)
