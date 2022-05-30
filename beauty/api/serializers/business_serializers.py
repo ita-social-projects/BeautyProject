@@ -4,9 +4,12 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
+import logging
+
 from api.models import Business
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 class BusinessListCreateSerializer(serializers.ModelSerializer):
@@ -24,9 +27,14 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
         """
         group = value.groups.filter(name="Owner").first()
         if group is None:
+
+            logger.error(f"Failed owner validation")
+
             raise ValidationError(
                 _('Only Owners can create Business'), code='invalid'
             )
+
+        logger.info(f"Sucessfully validated owner")
 
         return value
 

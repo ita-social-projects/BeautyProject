@@ -232,6 +232,9 @@ class Business(models.Model):
                                            start_time=start_time,
                                            end_time=end_time)
         position.specialist.add(specialist)
+
+        logger.info(f"New position with id={position.id} was created")
+
         return position
 
     def get_all_specialists(self):
