@@ -14,27 +14,17 @@ class ReviewDisplaySerializer(serializers.ModelSerializer):
         """This is a class Meta that keeps settings for serializer"""
 
         model = Review
-        fields = ("id",
-                  "text_body",
+        fields = ("text_body",
                   "rating",
                   "from_user",
                   "to_user",
                   "date_of_publication")
 
 
-class ReviewDisplayDetailSerializer(serializers.ModelSerializer):
-    """Serializer to receive and update specific review"""
-
-    class Meta:
-        """This is a class Meta that keeps settings for serializer"""
-
-        model = Review
-        fields = ("id",
-                  "text_body",
-                  "rating",
-                  "from_user",
-                  "to_user",
-                  "date_of_publication")
+class ReviewDisplayDetailSerializer(ReviewDisplaySerializer):
+    """This serializer receives data from
+    PUT, PATCH methods and checks whether data is valid
+    """
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Update review information using dict with data.
@@ -47,9 +37,4 @@ class ReviewDisplayDetailSerializer(serializers.ModelSerializer):
             review (object): instance with updated data
 
         """
-        try:
-            new_instance = super().update(instance, validated_data)
-            return new_instance
-        except Exception as e:
-            logger.info(e.__str__())
-            raise e
+        return super().update(instance, validated_data)
