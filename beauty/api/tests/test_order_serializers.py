@@ -82,25 +82,23 @@ class TestOrderSerializer(TestCase):
         self.assertEqual(serializer.errors, {'non_field_errors': [ErrorDetail(
             string='Invalid data. Expected a dictionary, but got list.', code='invalid')]
         })
-#
-# def test_partial_validation(self):
-#     serializer = self.Serializer(data={'char': 'abc'}, partial=True)
-#     assert serializer.is_valid()
-#     assert serializer.validated_data == {'char': 'abc'}
-#     assert serializer.errors == {}
-#
-# def test_empty_serializer(self):
-#     serializer = self.Serializer()
-#     assert serializer.data == {'char': '', 'integer': None}
-#
-# def test_missing_attribute_during_serialization(self):
-#     class MissingAttributes:
-#         pass
-#     instance = MissingAttributes()
-#     serializer = self.Serializer(instance)
-#     with pytest.raises(AttributeError):
-#         serializer.data
-#
+
+    def test_partial_validation(self):
+        invalid_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+                        'specialist': self.specialist.id}
+
+        ecxpect_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+                        'specialist': self.specialist}
+
+        serializer = self.Serializer(data=invalid_data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(serializer.validated_data, ecxpect_data)
+        self.assertEqual(serializer.errors, {})
+
+    def test_empty_serializer(self):
+        serializer = self.Serializer()
+        self.assertEqual(serializer.data, {'specialist': None, 'service': None, 'start_time': None})
+
 # def test_data_access_before_save_raises_error(self):
 #     def create(validated_data):
 #         return validated_data
