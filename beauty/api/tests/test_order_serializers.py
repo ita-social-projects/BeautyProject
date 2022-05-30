@@ -1,15 +1,15 @@
 """This module is for testing order's serializers.
 
 Tests for OrderSerializer:
-- Set up data for tests [22];
-- Check serializer with valid data [38];
-- Check serializer with valid invalid [56];
-- Check serializer with an invalid data type [71];
-- Check serializer with partial validation [86];
-- Check serializer without data [100];
-- Check serializer with data equal None [106];
-- Check serializer when a chosen specialist does not have chosen service [114];
-- Check serializer when a chosen specialist does not have chosen service [136].
+- Set up data for tests;
+- Check serializer with valid data;
+- Check serializer with invalid data;
+- Check serializer with invalid data type;
+- Check serializer with partial validation;
+- Check serializer without data;
+- Check serializer with data equal None;
+- Check serializer when a chosen specialist does not have chosen service;
+- Check serializer when customer and specialist are the same person.
 """
 
 import pytz
@@ -58,7 +58,7 @@ class TestOrderSerializer(TestCase):
         self.assertEqual(order.customer, self.customer)
 
     def test_invalid_serializer(self):
-        """Check serializer with valid invalid."""
+        """Check serializer with invalid data."""
         invalid_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
                         'specialist': self.specialist.id}
 
@@ -71,7 +71,7 @@ class TestOrderSerializer(TestCase):
             'service': [ErrorDetail(string='This field is required.', code='required')]})
 
     def test_invalid_datatype(self):
-        """Check serializer with an invalid data type."""
+        """Check serializer with invalid data type."""
         invalid_data = [{'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
                          'specialist': self.specialist.id,
                          'service': self.service}]
@@ -131,7 +131,7 @@ class TestOrderSerializer(TestCase):
         )
 
     def test_specialist_is_customer(self):
-        """Check serializer when a chosen specialist does not have chosen service."""
+        """Check serializer when customer and specialist are the same person."""
         valid_data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
                       'specialist': self.specialist.id,
                       'service': self.service.id}
