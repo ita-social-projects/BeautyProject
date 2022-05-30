@@ -419,7 +419,7 @@ class Order(models.Model):
 
     """
 
-    class StatusChoices(models.TextChoices):
+    class StatusChoices(models.IntegerChoices):
         """This class is used for status codes"""
 
         ACTIVE = 0, _('Active')
@@ -440,8 +440,7 @@ class Order(models.Model):
             ('can_view_order', 'Can view an order')
         ]
 
-    status = models.CharField(
-        max_length=2,
+    status = models.IntegerField(
         choices=StatusChoices.choices,
         default=StatusChoices.ACTIVE,
         verbose_name=_('Current status')

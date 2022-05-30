@@ -7,31 +7,27 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class SpecialistRelatedField(serializers.PrimaryKeyRelatedField):
-    """Custom PrimaryKeyRelatedField for specialist users."""
-
-    def get_queryset(self):
-        """Get all specialists."""
-        return self.queryset.filter(
-            groups__name__icontains="specialist")
-
-
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for getting all orders and creating a new order."""
 
     url = serializers.HyperlinkedIdentityField(
         view_name='api:order-detail', lookup_field='pk'
     )
-    specialist = SpecialistRelatedField(queryset=CustomUser.objects.all())
+    specialist = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.filter(
+        groups__name__icontains="specialist")
+    )
     customer = serializers.PrimaryKeyRelatedField(read_only=True)
     service = serializers.PrimaryKeyRelatedField(
-        queryset=Service.objects.all())
+        queryset=Service.objects.all()
+    )
 
     class Meta:
         """Class with a model and model fields for serialization."""
 
         model = Order
         fields = '__all__'
+
+        read_only_fields = ("customer", "status", "reason")
 
     def create(self, validated_data):
         """Check that specialist has the chosen service
@@ -43,7 +39,6 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         specialist_services = Position.objects.filter(
             specialist=specialist).values_list("service__name", flat=True)
         if not service.position.specialist.filter(id=specialist.id):
-
             logger.info(f"Specialist {specialist.get_full_name()}"
                         f"does not have such service")
 
@@ -54,7 +49,6 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             )
 
         if specialist == customer:
-
             logger.info("Customer and specialist are the same person!")
 
             raise serializers.ValidationError(
@@ -91,5 +85,3 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         logger.info(f"{Order} was canceled")
 
         return super().update(instance, validated_data)
-
-
