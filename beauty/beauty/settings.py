@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 from decouple import config, Csv
 
@@ -65,7 +66,7 @@ ROOT_URLCONF = "beauty.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -89,6 +90,8 @@ WSGI_APPLICATION = "beauty.wsgi.application"
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=20),
 }
 
 DJOSER = {
@@ -111,7 +114,7 @@ DJOSER = {
     "HIDE_USERS": True,
 
     "SERIALIZERS": {
-        "user": "api.serializers.serializers_customuser.CustomUserSerializer"
+        "user": "api.serializers.customuser_serializers.CustomUserSerializer"
     }
 }
 
@@ -184,6 +187,10 @@ FIXTURE_DIRS = "fixtures/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+GOOGLE_API_KEY = config("GOOGLE_API_KEY")
+USER_ID = "id -u"
+GROUP_ID = "id -g"
+
 REST_FRAMEWORK = {
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "TEST_REQUEST_RENDERER_CLASSES": (
@@ -254,6 +261,10 @@ LOGGING = {
             "propagate": True,
         },
         "api": {
+            "handlers": ["console", "file", "mail_admins"],
+            "level": "INFO"
+        },
+        "beauty": {
             "handlers": ["console", "file", "mail_admins"],
             "level": "INFO"
         }
