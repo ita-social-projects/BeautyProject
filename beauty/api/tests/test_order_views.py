@@ -1,9 +1,16 @@
-"""This module is for testing order's serializers.
+"""This module is for testing order's views.
 
-Tests for OrderSerializer:
-
+Tests for OrderListCreateView:
+- This method adds needed info for tests;
+- Only a logged user can create an order;
+- A logged user should be able to create an order;
+- Service should exist for specialist;
+- Service of the order should not be empty;
+- Specialist of the order should not be empty;
+- Specialist should not be able to create order for himself.
 """
 
+import pytz
 from django.test import TestCase
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -13,6 +20,8 @@ from api.views import (OrderListCreateView,
                        OrderRetrieveUpdateDestroyView,
                        OrderApprovingTokenGenerator)
 from .factories import *
+
+CET = pytz.timezone("Europe/Kiev")
 
 
 class TestOrderListCreateView(TestCase):
@@ -47,7 +56,7 @@ class TestOrderListCreateView(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_POST_method_create_order_logged_user(self):
-        """A logged user should be able to create an order"""
+        """A logged user should be able to create an order."""
         response = self.client.post(path=reverse("api:order-list-create"), data=self.data)
         self.assertEqual(response.status_code, 201)
 
