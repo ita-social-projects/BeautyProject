@@ -17,16 +17,16 @@ group_queryset = Group.objects.all()
 class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
     """Custom HyperlinkedRelatedField for user orders."""
 
-    view_name = 'api:user-order-detail'
-    url_user_id = 'specialist_id'
+    view_name = "api:specialist-order-detail"
+    url_user_id = "specialist_id"
 
     def __init__(self, **kwargs):
-        self.view_name = kwargs.pop('view_name', self.view_name)
-        self.url_user_id = kwargs.pop('url_user_id', self.url_user_id)
+        """Init for OrderUserHyperlink."""
+        self.view_name = kwargs.pop("view_name", self.view_name)
+        self.url_user_id = kwargs.pop("url_user_id", self.url_user_id)
         super().__init__(**kwargs)
 
-    def get_url(self, obj: object, view_name: str, request: dict,
-                format: str) -> str:
+    def get_url(self, obj: object, view_name: str, request: dict, format_: str) -> str:
         """Given an object, return the URL that hyperlinks to the object.
 
         May raise a `NoReverseMatch` if the `view_name` and `lookup_field`
@@ -37,11 +37,12 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
 
         """
         url_kwargs = {
-            'user': getattr(obj, self.url_user_id),
-            'pk': obj.pk
+            "user": getattr(obj, self.url_user_id),
+            "id": obj.pk,
         }
+
         url = reverse(
-            view_name, kwargs=url_kwargs, request=request, format=format
+            view_name, kwargs=url_kwargs, request=request, format=format_,
         )
 
         logger.debug(f"User order url: {url} was added to "
@@ -62,14 +63,14 @@ class PasswordsValidation(serializers.Serializer):
             data (dict): dictionary with validated data for user creation
 
         """
-        password = data.get('password')
-        confirm_password = data.get('confirm_password')
+        password = data.get("password")
+        confirm_password = data.get("confirm_password")
         if password and confirm_password:
             if password != confirm_password:
                 logger.info(f"Password: Password confirmation does not match")
 
                 raise serializers.ValidationError(
-                    {"password": "Password confirmation does not match."}
+                    {"password": "Password confirmation does not match."},
                 )
         elif any([password, confirm_password]):
 
@@ -124,41 +125,41 @@ class CustomUserSerializer(PasswordsValidation,
     """Serializer for getting all users and creating a new user."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name='api:user-detail', lookup_field='pk'
+        view_name="api:user-detail", lookup_field="pk",
     )
     password = serializers.CharField(
         write_only=True,
         required=True,
-        style={'input_type': 'password', 'placeholder': 'Password'},
-        validators=[validate_password]
+        style={"input_type": "password", "placeholder": "Password"},
+        validators=[validate_password],
     )
     confirm_password = serializers.CharField(
         write_only=True,
         required=True,
-        style={'input_type': 'password',
-               'placeholder': 'Confirmation Password'
-               }
+        style={"input_type": "password",
+               "placeholder": "Confirmation Password",
+               },
     )
     groups = GroupListingField(
         many=True,
         required=False,
-        queryset=group_queryset
+        queryset=group_queryset,
     )
     specialist_orders = OrderUserHyperlink(many=True, read_only=True)
     customer_orders = OrderUserHyperlink(
         many=True,
         read_only=True,
-        url_user_id='customer_id'
+        url_user_id="customer_id",
     )
 
     class Meta:
         """Class with a model and model fields for serialization."""
 
         model = CustomUser
-        fields = ['url', 'id', 'email', 'first_name', 'patronymic',
-                  'last_name', 'phone_number', 'bio', 'rating', 'avatar',
-                  'is_active', 'groups', 'specialist_orders',
-                  'customer_orders', 'password', 'confirm_password']
+        fields = ["url", "id", "email", "first_name", "patronymic",
+                  "last_name", "phone_number", "bio", "rating", "avatar",
+                  "is_active", "groups", "specialist_orders",
+                  "customer_orders", "password", "confirm_password"]
 
     def create(self, validated_data: dict) -> object:
         """Create a new user using dict with data.
@@ -170,8 +171,8 @@ class CustomUserSerializer(PasswordsValidation,
             user (object): new user
 
         """
-        confirm_password = validated_data.pop('confirm_password')
-        validated_data['password'] = make_password(confirm_password)
+        confirm_password = validated_data.pop("confirm_password")
+        validated_data["password"] = make_password(confirm_password)
 
         logger.info(f"User {validated_data['first_name']} with"
                     f" {validated_data['email']} was created.")
@@ -188,32 +189,32 @@ class CustomUserDetailSerializer(PasswordsValidation,
         write_only=True,
         allow_blank=True,
         validators=[validate_password],
-        style={'input_type': 'password', 'placeholder': 'New Password'}
+        style={"input_type": "password", "placeholder": "New Password"},
     )
     confirm_password = serializers.CharField(
         write_only=True,
         allow_blank=True,
-        help_text='Leave empty if no change needed',
+        help_text="Leave empty if no change needed",
         style={
-            'input_type': 'password',
-            'placeholder': 'Confirmation Password'
-        }
+            "input_type": "password",
+            "placeholder": "Confirmation Password",
+        },
     )
     specialist_orders = OrderUserHyperlink(many=True, read_only=True)
     customer_orders = OrderUserHyperlink(
         many=True,
         read_only=True,
-        url_user_id='customer_id'
+        url_user_id="customer_id",
     )
 
     class Meta:
         """Class with a model and model fields for serialization."""
 
         model = CustomUser
-        fields = ['id', 'email', 'first_name', 'patronymic', 'last_name',
-                  'phone_number', 'bio', 'rating', 'avatar', 'is_active',
-                  'groups', 'specialist_orders', 'customer_orders',
-                  'password', 'confirm_password']
+        fields = ["id", "email", "first_name", "patronymic", "last_name",
+                  "phone_number", "bio", "rating", "avatar", "is_active",
+                  "groups", "specialist_orders", "customer_orders",
+                  "password", "confirm_password"]
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Update user information using dict with data.
@@ -226,11 +227,12 @@ class CustomUserDetailSerializer(PasswordsValidation,
             user (object): instance with updated data
 
         """
-        confirm_password = validated_data.get('confirm_password', None)
+        confirm_password = validated_data.get("confirm_password", None)
         if confirm_password:
-            validated_data['password'] = make_password(confirm_password)
+            validated_data["password"] = make_password(confirm_password)
         else:
-            validated_data['password'] = instance.password
+
+            validated_data["password"] = instance.password
 
         logger.info(f"Data for user {instance} was updated")
 
@@ -238,26 +240,30 @@ class CustomUserDetailSerializer(PasswordsValidation,
 
 
 class ResetPasswordSerializer(PasswordsValidation):
-    """"""
+    """Serilizer for reseting password."""
+
     password = serializers.CharField(
         write_only=True,
         validators=[validate_password],
-        style={'input_type': 'password', 'placeholder': 'New Password'}
+        style={"input_type": "password", "placeholder": "New Password"},
     )
     confirm_password = serializers.CharField(
         write_only=True,
         style={
-            'input_type': 'password',
-            'placeholder': 'Confirmation Password'
-        }
+            "input_type": "password",
+            "placeholder": "Confirmation Password",
+        },
     )
 
     class Meta:
+        """Meta class for ResetPasswordSerializer."""
+
         model = CustomUser
-        fields = ('password', 'confirm_password')
+        fields = ("password", "confirm_password")
 
     def validate(self, data: dict) -> dict:
-        if all([data.get('password'), data.get('confirm_password')]):
+        """Password validation."""
+        if all([data.get("password"), data.get("confirm_password")]):
 
             logger.info(f"Password was reset")
 
@@ -266,5 +272,4 @@ class ResetPasswordSerializer(PasswordsValidation):
 
             logger.info("Password: Fields should be valid")
 
-            raise serializers.ValidationError(
-                {'password': 'Fields should be valid'})
+            raise serializers.ValidationError({"password": "Fields should be valid"})
