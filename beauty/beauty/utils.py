@@ -1,4 +1,4 @@
-"""This module provides you with all needed utility functions"""
+"""This module provides you with all needed utility functions."""
 
 import os
 from rest_framework.reverse import reverse
@@ -7,11 +7,11 @@ from beauty.tokens import OrderApprovingTokenGenerator
 
 
 class ModelsUtils:
-    """This class provides utility functions for models"""
+    """This class provides utility functions for models."""
 
     @staticmethod
     def upload_location(instance, filename: str) -> str:
-        """This method purpose is to generate path for saving medial files
+        """This method purpose is to generate path for saving medial files.
 
         Args:
             instance: Instance of a model
@@ -35,7 +35,9 @@ class ModelsUtils:
 
 
 class ApprovingOrderEmail(BaseEmailMessage):
-    """Send email message to the specialist for change order status with two links:
+    """Send approving order email.
+
+    Send email message to the specialist for change order status with two links:
     - for approve order;
     - for decline order.
     """
