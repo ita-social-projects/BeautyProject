@@ -21,7 +21,7 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
         """Display 4 required fields for Business creation."""
 
         model = Business
-        fields = ("name", "type", "owner", "description")
+        fields = ("name", "business_type", "owner", "description")
 
     def validate_owner(self, value):
         """Validates owner.

@@ -9,8 +9,10 @@ from rest_framework.test import APIClient
 from faker import Faker
 
 from .factories import (
-    OwnerFactory, ClientFactory, SpecialistFactory, BusinessFactory,
+    CustomUserFactory,
+    BusinessFactory,
     PositionFactory,
+    GroupFactory,
 )
 from beauty.utils import get_random_start_end_datetime
 
@@ -26,10 +28,15 @@ class BusinessModelTest(TestCase):
 
         Preparing owner, two specialist, business and position for the tests
         """
-        self.owner = OwnerFactory.create()
+        self.groups = GroupFactory.groups_for_test()
 
-        self.specialist1 = SpecialistFactory.create()
-        self.specialist2 = SpecialistFactory.create()
+        self.owner = CustomUserFactory.create()
+        self.groups.owner.user_set.add(self.owner)
+
+        self.specialist1 = CustomUserFactory.create()
+        self.specialist2 = CustomUserFactory.create()
+        self.groups.specialist.user_set.add(self.specialist1)
+        self.groups.specialist.user_set.add(self.specialist2)
 
         self.business = BusinessFactory.create()
 
@@ -80,19 +87,23 @@ class BusinessListCreateViewTest(TestCase):
         """
         self.client = APIClient()
 
+        self.groups = GroupFactory.groups_for_test()
+
         self.business1 = BusinessFactory.create()
         self.business2 = BusinessFactory.create()
 
-        self.test_client = ClientFactory.create()
-        self.owner = OwnerFactory.create()
+        self.customer = CustomUserFactory.create()
+        self.owner = CustomUserFactory.create()
+        self.groups.customer.user_set.add(self.customer)
+        self.groups.owner.user_set.add(self.owner)
 
         self.valid_create_data = {
-            "name": faker.word(), "type": faker.word(),
+            "name": faker.word(), "business_type": faker.word(),
             "description": faker.text(), "owner": self.owner.id,
         }
         self.invalid_create_data = {
-            "name": faker.word(), "type": faker.word(),
-            "description": faker.text(), "owner": self.test_client.id,
+            "name": faker.word(), "business_type": faker.word(),
+            "description": faker.text(), "owner": self.customer.id,
         }
 
     def test_list_of_businesses(self) -> None:
@@ -123,7 +134,7 @@ class BusinessListCreateViewTest(TestCase):
         Tests if view does not allow to create business with
         user who does not belong to Owner group
         """
-        self.client.force_authenticate(user=self.test_client)
+        self.client.force_authenticate(user=self.customer)
 
         response = self.client.post(
             path=reverse("api:business-list-create"),
@@ -136,7 +147,7 @@ class BusinessListCreateViewTest(TestCase):
 
     def test_create_business_valid_owner(self) -> None:
         """Checks business creation with authenticated user and valid data."""
-        self.client.force_authenticate(user=self.test_client)
+        self.client.force_authenticate(user=self.customer)
 
         response = self.client.post(
             path=reverse("api:business-list-create"),
