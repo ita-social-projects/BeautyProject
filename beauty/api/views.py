@@ -39,16 +39,23 @@ class CustomUserListCreateView(ListCreateAPIView):
 class UserActivationView(GenericAPIView):
     """Generic view for user account activation."""
 
-    def get(self, request, uidb64, token):
-        id = int(force_str(urlsafe_base64_decode(uidb64)))
+    def get(self, request: object, uidb64: str, token: str):
+        """Activate use account.
 
-        user = get_object_or_404(CustomUser, id=id)
+        Args:
+            request (object): request data.
+            uidb64 (str): coded user id.
+            token (str): user token.
+        """
+        user_id = int(force_str(urlsafe_base64_decode(uidb64)))
+
+        user = get_object_or_404(CustomUser, id=user_id)
         user.is_active = True
         user.save()
 
         logger.info(f"User {user} was activated")
 
-        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
+        return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
 
 
 class ResetPasswordView(GenericAPIView):
@@ -56,16 +63,23 @@ class ResetPasswordView(GenericAPIView):
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
-    def post(self, request, uidb64, token):
-        id = int(force_str(urlsafe_base64_decode(uidb64)))
-        user = get_object_or_404(CustomUser, id=id)
+    def post(self, request: object, uidb64: str, token: str):
+        """Reset use password.
+
+        Args:
+            request (object): request data.
+            uidb64 (str): coded user id.
+            token (str): user token.
+        """
+        user_id = int(force_str(urlsafe_base64_decode(uidb64)))
+        user = get_object_or_404(CustomUser, id=user_id)
         self.get_serializer().validate(request.POST)
         user.set_password(request.POST.get("password"))
         user.save()
 
         logger.info(f"User {user} password was reset")
 
-        return redirect(reverse("api:user-detail", kwargs={"pk": id}))
+        return redirect(reverse("api:user-detail", kwargs={"pk": user_id}))
 
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
@@ -140,7 +154,7 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
             obj = get_object_or_404(
                 self.get_queryset(),
                 Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
-                id=self.kwargs["id"],
+                id=self.kwargs["pk"],
             )
             self.check_object_permissions(self.request, obj)
 
@@ -161,10 +175,8 @@ class OrderApprovingView(ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         """Get an answer from a specialist according to order and implement it."""
-        token = kwargs["token"]
-        order_id = int(force_str(urlsafe_base64_decode(kwargs["uid"])))
-        order_status = force_str(urlsafe_base64_decode(kwargs["status"]))
-        order = self.get_queryset().get(id=order_id)
+        token, order_id, order_status = self.decode_params(kwargs).values()
+        order = get_object_or_404(self.get_queryset(), id=order_id)
         if OrderApprovingTokenGenerator().check_token(order, token):
             if order_status == "approved":
                 order.mark_as_approved()
@@ -175,7 +187,7 @@ class OrderApprovingView(ListCreateAPIView):
                 self.send_signal(order, request)
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
-                                                "pk": order_id}))
+                                                "pk": order.id}))
             elif order_status == "declined":
                 order.mark_as_declined()
 
@@ -187,6 +199,18 @@ class OrderApprovingView(ListCreateAPIView):
 
         return redirect(
             reverse("api:user-detail", args=[order.specialist.id]))
+
+    def decode_params(self, kwargs: dict) -> dict:
+        """Decode params from url.
+
+        Args:
+            kwargs(dict): coded params from URL
+
+        Returns(dict): decoded params from URL
+        """
+        return {"token": kwargs["token"],
+                "order_id": int(force_str(urlsafe_base64_decode(kwargs["uid"]))),
+                "order_status": force_str(urlsafe_base64_decode(kwargs["status"]))}
 
     def send_signal(self, order: object, request: dict) -> None:
         """Send signal.
