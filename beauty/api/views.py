@@ -74,6 +74,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         """Reimplementation of the DESTROY (DELETE) method.
+
         Makes current user inactive by changing its field
         """
         instance = self.get_object()
