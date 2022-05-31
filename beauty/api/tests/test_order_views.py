@@ -1,4 +1,4 @@
-"""This module is for testing order's views.
+"""This module is for testing order"s views.
 
 Tests for OrderListCreateView:
 - SetUp method adds needed info for tests;
@@ -14,10 +14,11 @@ Tests for OrderApprovingView:
 - The specialist is redirected to the order detail page if he approved the order;
 - The specialist is redirected to the own page if he declined the order;
 - The specialist is redirected to the own page if the order token expired;
-- The specialist is redirected to the order detail page if he approved the order.
+- The user is redirected to the order specialist detail page if he is not logged.
 """
 
 import pytz
+from django.utils import timezone
 from django.test import TestCase
 from djoser.utils import encode_uid
 from rest_framework.reverse import reverse
@@ -25,9 +26,12 @@ from rest_framework.test import APIClient
 
 from api.serializers.order_serializers import OrderSerializer
 from api.views import (OrderListCreateView,
-                       OrderRetrieveUpdateDestroyView,
                        OrderApprovingTokenGenerator)
-from .factories import *
+from .factories import (GroupFactory,
+                        CustomUserFactory,
+                        PositionFactory,
+                        ServiceFactory,
+                        OrderFactory)
 
 CET = pytz.timezone("Europe/Kiev")
 
@@ -53,40 +57,40 @@ class TestOrderListCreateView(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.customer)
 
-        self.data = {'start_time': timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
-                     'specialist': self.specialist.id,
-                     'service': self.service.id}
+        self.data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+                     "specialist": self.specialist.id,
+                     "service": self.service.id}
 
-    def test_POST_method_create_order_not_logged_user(self):
+    def test_post_method_create_order_not_logged_user(self):
         """Only a logged user can create an order."""
         self.client.force_authenticate(user=None)
         response = self.client.post(path=reverse("api:order-list-create"), data=self.data)
         self.assertEqual(response.status_code, 401)
 
-    def test_POST_method_create_order_logged_user(self):
+    def test_post_method_create_order_logged_user(self):
         """A logged user should be able to create an order."""
         response = self.client.post(path=reverse("api:order-list-create"), data=self.data)
         self.assertEqual(response.status_code, 201)
 
-    def test_POST_method_create_order_service_not_exist_for_specialist(self):
+    def test_post_method_create_order_service_not_exist_for_specialist(self):
         """Service should exist for specialist."""
         self.position.specialist.remove(self.specialist)
         response = self.client.post(path=reverse("api:order-list-create"), data=self.data)
         self.assertEqual(response.status_code, 400)
 
-    def test_POST_method_create_order_wrong_service_empty(self):
+    def test_post_method_create_order_wrong_service_empty(self):
         """Service of the order should not be empty."""
         self.data["service"] = ""
         response = self.client.post(path=reverse("api:order-list-create"), data=self.data)
         self.assertEqual(response.status_code, 400)
 
-    def test_POST_method_create_order_wrong_specialist_empty(self):
+    def test_post_method_create_order_wrong_specialist_empty(self):
         """Specialist of the order should not be empty."""
         self.data["specialist"] = ""
         response = self.client.post(path=reverse("api:order-list-create"), data=self.data)
         self.assertEqual(response.status_code, 400)
 
-    def test_POST_method_create_order_cant_specialist_to_himself(self):
+    def test_post_method_create_order_cant_specialist_to_himself(self):
         """Specialist should not be able to create order for himself."""
         self.client.force_authenticate(user=self.specialist)
         response = self.client.post(path=reverse("api:order-list-create"), data=self.data)
@@ -118,7 +122,7 @@ class TestOrderApprovingView(TestCase):
                            "token": self.token,
                            "status": self.status_approved}
 
-    def test_GET_method_get_status_approved(self):
+    def test_get_method_get_status_approved(self):
         """The specialist is redirected to the order detail page if he approved the order."""
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
         self.assertEqual(response.status_code, 302)
@@ -126,24 +130,24 @@ class TestOrderApprovingView(TestCase):
                                                kwargs={"user": self.order.specialist.id,
                                                        "pk": self.order.id}))
 
-    def test_GET_method_get_status_declined(self):
+    def test_get_method_get_status_declined(self):
         """The specialist is redirected to the own page if he declined the order."""
         self.url_kwargs["status"] = self.status_declined
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("api:user-detail",
-                                               args=[self.order.specialist.id, ]))
+                                               args=[self.order.specialist.id]))
 
-    def test_GET_method_get_status_invalid_token(self):
+    def test_get_method_get_status_invalid_token(self):
         """The specialist is redirected to the own page if the order token expired."""
         self.url_kwargs["token"] = "invalid"
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("api:user-detail",
-                                               args=[self.order.specialist.id, ]))
+                                               args=[self.order.specialist.id]))
 
-    def test_GET_method_get_status_approved(self):
-        """The specialist is redirected to the order detail page if he approved the order."""
+    def test_get_method_not_logged_user_redirect_to_specialist(self):
+        """The user is redirected to the order specialist detail page if he is not logged."""
         self.client.force_authenticate(user=None)
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
         self.assertEqual(response.status_code, 302)
