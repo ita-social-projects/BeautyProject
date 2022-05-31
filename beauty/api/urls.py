@@ -10,4 +10,6 @@ urlpatterns = [
     path('<int:user>/order/<int:id>/',
          CustomUserOrderDetailRUDView.as_view(),
          name='specialist-order-detail'),
+    path('<int:pk>/reviews/get/', ReviewDisplayView.as_view(),
+         name='review-get'),
 ]
