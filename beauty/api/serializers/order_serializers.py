@@ -11,28 +11,30 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for getting all orders and creating a new order."""
 
     url = serializers.HyperlinkedIdentityField(
-        view_name='api:order-detail', lookup_field='pk'
+        view_name="api:order-detail", lookup_field="pk",
     )
     specialist = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.filter(
-        groups__name__icontains="specialist")
+        groups__name__icontains="specialist"),
     )
     customer = serializers.PrimaryKeyRelatedField(read_only=True)
     service = serializers.PrimaryKeyRelatedField(
-        queryset=Service.objects.all()
+        queryset=Service.objects.all(),
     )
 
     class Meta:
         """Class with a model and model fields for serialization."""
 
         model = Order
-        fields = '__all__'
+        fields = "__all__"
 
         read_only_fields = ("customer", "status", "reason")
 
     def create(self, validated_data):
-        """Check that specialist has the chosen service
-         before creating an order.
-         """
+        """Create.
+
+        Check that specialist has the chosen service
+        before creating an order.
+        """
         service = validated_data.get("service")
         specialist = validated_data.get("specialist")
         customer = validated_data.get("customer")
@@ -45,7 +47,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError(
                 {"service": "Specialist does not have such service.",
                  "help_text": f"Specialist has such services "
-                              f"{list(specialist_services)}."}
+                              f"{list(specialist_services)}."},
             )
 
         if specialist == customer:
@@ -65,7 +67,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         """Class with a model and model fields for serialization."""
 
         model = Order
-        fields = '__all__'
+        fields = "__all__"
         read_only_fields = ("customer", "start_time",
                             "specialist", "service", "status")
 
