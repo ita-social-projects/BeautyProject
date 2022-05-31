@@ -8,7 +8,7 @@ urlpatterns = [
          name='user-list-create'),
     path('user/<int:pk>/', CustomUserDetailRUDView.as_view(),
          name='user-detail'),
-    path('user/<int:user>/order/<int:id>/',
+    path('user/<int:user>/order/<int:pk>/',
          OrderRetrieveUpdateDestroyView.as_view(),
          name='user-order-detail'),
 

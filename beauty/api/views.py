@@ -167,7 +167,7 @@ class OrderApprovingView(ListCreateAPIView):
                 self.send_signal(order, request)
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
-                                                "id": order_id}))
+                                                "pk": order_id}))
             elif order_status == 'declined':
                 order.mark_as_declined()
 

@@ -88,7 +88,7 @@ class OrderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Order
 
-    status = fuzzy.FuzzyChoice(Order.StatusChoices, getter=lambda c: c[0])
+    status = fuzzy.FuzzyChoice(Order.StatusChoices, getter=lambda c: c.ACTIVE)
     specialist = factory.SubFactory(CustomUserFactory)
     customer = factory.SubFactory(CustomUserFactory)
     service = factory.SubFactory(ServiceFactory)
