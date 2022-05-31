@@ -72,10 +72,11 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
 
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
         """Reimplementation of the DESTROY (DELETE) method.
         Makes current user inactive by changing its field
         """
+        instance = self.get_object()
         if instance.is_active:
             instance.is_active = False
             instance.save()
@@ -83,7 +84,9 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
             logger.info(f"User {instance} was deactivated")
 
             return Response(status=status.HTTP_200_OK)
+        logger.info(f"User {instance} is deactivated, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
