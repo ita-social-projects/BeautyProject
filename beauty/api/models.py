@@ -188,7 +188,7 @@ class Business(models.Model):
         verbose_name=_('Name'),
         max_length=20
     )
-    type = models.CharField(
+    btype = models.CharField(
         verbose_name=_('Type'),
         max_length=100
     )
