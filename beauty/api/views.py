@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-"""Module with views for api application."""
-=======
 """All views for the BeatyProject."""
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -17,20 +13,14 @@ from rest_framework.reverse import reverse
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
 
-<<<<<<< HEAD
 import logging
 
 from .models import CustomUser, Order, Business
-from .permissions import IsAccountOwnerOrReadOnly
+from .permissions import (IsAccountOwnerOrReadOnly,
+                          IsOrderUserOrReadOnly)
 
-from .serializers.serializers_customuser import CustomUserDetailSerializer, \
-    CustomUserSerializer, \
-    UserOrderDetailSerializer, ResetPasswordSerializer
 from .serializers.serializers_business import BusinessListCreateSerializer
-=======
 from beauty.tokens import OrderApprovingTokenGenerator
-from .models import CustomUser, Order
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUserOrReadOnly)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -39,8 +29,6 @@ from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDetailSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
-import logging
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500
 
 logger = logging.getLogger(__name__)
 
@@ -55,16 +43,6 @@ class CustomUserListCreateView(ListCreateAPIView):
 class UserActivationView(GenericAPIView):
     """Generic view for user account activation."""
 
-<<<<<<< HEAD
-    def get(self, request, uidb64, token):
-        """Get method for user activation via email.
-
-        Parses id from token and changes is_active = True
-        """
-        user_id = int(force_str(urlsafe_base64_decode(uidb64)))
-
-        user = get_object_or_404(CustomUser, id=id)
-=======
     def get(self, request: object, uidb64: str, token: str):
         """Activate use account.
 
@@ -76,7 +54,6 @@ class UserActivationView(GenericAPIView):
         user_id = int(force_str(urlsafe_base64_decode(uidb64)))
 
         user = get_object_or_404(CustomUser, id=user_id)
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500
         user.is_active = True
         user.save()
 
@@ -90,12 +67,6 @@ class ResetPasswordView(GenericAPIView):
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
-<<<<<<< HEAD
-    def post(self, request, uidb64, token):
-        """Post method for password reset.
-
-        Parses user id from token and changes user password
-=======
     def post(self, request: object, uidb64: str, token: str):
         """Reset use password.
 
@@ -103,7 +74,6 @@ class ResetPasswordView(GenericAPIView):
             request (object): request data.
             uidb64 (str): coded user id.
             token (str): user token.
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500
         """
         user_id = int(force_str(urlsafe_base64_decode(uidb64)))
         user = get_object_or_404(CustomUser, id=user_id)
@@ -119,11 +89,7 @@ class ResetPasswordView(GenericAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
 
-<<<<<<< HEAD
-    RUD - Retrieve, Update, Destroy
-=======
     RUD - Retrieve, Update, Destroy.
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500
     """
     permission_classes = [IsAccountOwnerOrReadOnly]
 
@@ -133,11 +99,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         """Reimplementation of the DESTROY (DELETE) method.
 
-<<<<<<< HEAD
-        Makes current user inactive by changing its" field
-=======
         Makes current user inactive by changing its field.
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500
         """
         if instance.is_active:
             instance.is_active = False
@@ -147,6 +109,22 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class BusinessListCreateView(ListCreateAPIView):
+    """View for business creation and displaying list of all businesses.
+
+    Gives basic info about all businesses
+    """
+
+    queryset = Business.objects.all()
+    serializer_class = BusinessListCreateSerializer
+
+    def get_permissions(self):
+        """For business creation you need to be authentificated."""
+        if self.request.method == "POST":
+            self.permission_classes = (IsAccountOwnerOrReadOnly,)
+        return super().get_permissions()
 
 
 class OrderListCreateView(ListCreateAPIView):
@@ -179,33 +157,6 @@ class OrderListCreateView(ListCreateAPIView):
 class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """Generic API for orders custom GET, PUT and DELETE methods.
 
-<<<<<<< HEAD
-    RUD - Retrieve, Update, Destroy
-    """
-
-    queryset = Order.objects.all()
-    serializer_class = UserOrderDetailSerializer
-    multiple_lookup_fields = ("user", "id")
-
-    def get_object(self):
-        """Method for getting order objects from user.
-
-        Uses both order user id and order id lookup fields
-        """
-        queryset = self.get_queryset()
-        user = self.kwargs["user"]
-        obj = get_object_or_404(
-            queryset,
-            Q(customer=user) | Q(specialist=user),
-            id=self.kwargs["id"],
-        )
-        self.check_object_permissions(self.request, obj)
-
-        user = (
-            obj.customer if self.kwargs["user"] == obj.customer.id else
-            obj.specialist
-        )
-=======
     RUD - Retrieve, Update, Destroy.
     """
 
@@ -219,10 +170,11 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         Method for getting order objects by using both order user id
         and order id lookup fields.
         """
+        user = self.kwargs["user"]
         if len(self.kwargs) > 1:
             obj = get_object_or_404(
                 self.get_queryset(),
-                Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
+                Q(customer=user) | Q(specialist=user),
                 id=self.kwargs["pk"],
             )
             self.check_object_permissions(self.request, obj)
@@ -249,30 +201,10 @@ class OrderApprovingView(ListCreateAPIView):
         if OrderApprovingTokenGenerator().check_token(order, token):
             if order_status == "approved":
                 order.mark_as_approved()
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500
 
                 logger.info(f"{order} was approved by the specialist "
                             f"{order.specialist.get_full_name()}")
 
-<<<<<<< HEAD
-        return obj
-
-
-class BusinessListCreateView(ListCreateAPIView):
-    """View for business creation and displaying list of all businesses.
-
-    Gives basic info about all businesses
-    """
-
-    queryset = Business.objects.all()
-    serializer_class = BusinessListCreateSerializer
-
-    def get_permissions(self):
-        """For business creation you need to be authentificated."""
-        if self.request.method == "POST":
-            self.permission_classes = (IsAccountOwnerOrReadOnly,)
-        return super().get_permissions()
-=======
                 self.send_signal(order, request)
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
@@ -316,4 +248,3 @@ class BusinessListCreateView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500

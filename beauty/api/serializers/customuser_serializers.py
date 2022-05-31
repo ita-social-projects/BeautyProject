@@ -263,21 +263,13 @@ class ResetPasswordSerializer(PasswordsValidation):
         """Password validation."""
         if all([data.get("password"), data.get("confirm_password")]):
 
-<<<<<<< HEAD:beauty/api/serializers/serializers_customuser.py
             logger.info("Password was reset")
-=======
-            logger.info(f"Password was reset")
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500:beauty/api/serializers/customuser_serializers.py
 
             return super().validate(data)
         else:
 
             logger.info("Password: Fields should be valid")
 
-<<<<<<< HEAD:beauty/api/serializers/serializers_customuser.py
             raise serializers.ValidationError(
                 {"password": "Fields should be valid"},
             )
-=======
-            raise serializers.ValidationError({"password": "Fields should be valid"})
->>>>>>> 5410e2a0ddf326628e0a678a13662adb63338500:beauty/api/serializers/customuser_serializers.py
