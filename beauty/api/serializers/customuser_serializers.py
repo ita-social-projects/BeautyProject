@@ -6,7 +6,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from api.models import (CustomUser, Order)
+from api.models import CustomUser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
         """
         url_kwargs = {
             'user': getattr(obj, self.url_user_id),
-            'id': obj.pk
+            'pk': obj.pk
         }
         url = reverse(
             view_name, kwargs=url_kwargs, request=request, format=format

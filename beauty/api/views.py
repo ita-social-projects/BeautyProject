@@ -10,7 +10,8 @@ from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
                                      RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
+                                        IsAuthenticated)
 
 from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order
@@ -122,7 +123,7 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Order.objects.all()
     serializer_class = OrderDetailSerializer
-    permission_classes = (IsOrderUserOrReadOnly,)
+    permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
 
     def get_object(self):
         """Method for getting order objects by using both order user id
