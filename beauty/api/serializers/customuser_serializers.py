@@ -17,7 +17,7 @@ group_queryset = Group.objects.all()
 class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
     """Custom HyperlinkedRelatedField for user orders."""
 
-    view_name = "api:specialist-order-detail"
+    view_name = "api:user-order-detail"
     url_user_id = "specialist_id"
 
     def __init__(self, **kwargs):
@@ -38,7 +38,7 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
         """
         url_kwargs = {
             "user": getattr(obj, self.url_user_id),
-            "id": obj.pk,
+            "pk": obj.pk,
         }
 
         url = reverse(
