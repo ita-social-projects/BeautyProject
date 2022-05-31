@@ -4,7 +4,7 @@ from .views import *
 app_name = "api"
 
 urlpatterns = [
-    path('user/', CustomUserListCreateView.as_view(),
+    path('users/', CustomUserListCreateView.as_view(),
          name='user-list-create'),
     path('user/<int:pk>/', CustomUserDetailRUDView.as_view(),
          name='user-detail'),
@@ -12,7 +12,7 @@ urlpatterns = [
          OrderRetrieveUpdateDestroyView.as_view(),
          name='user-order-detail'),
 
-    path('order/', OrderListCreateView.as_view(),
+    path('orders/', OrderListCreateView.as_view(),
          name='order-list-create'),
     path('order/<int:pk>/', OrderRetrieveUpdateDestroyView.as_view(),
          name='order-detail'),

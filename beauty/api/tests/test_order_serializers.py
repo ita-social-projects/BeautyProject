@@ -1,7 +1,7 @@
 """This module is for testing order's serializers.
 
 Tests for OrderSerializer:
-- Set up data for tests;
+- This method adds needed info for tests;
 - Check serializer with valid data;
 - Check serializer with invalid data;
 - Check serializer with invalid data type;
@@ -23,10 +23,10 @@ CET = pytz.timezone("Europe/Kiev")
 
 
 class TestOrderSerializer(TestCase):
-    """Tests for OrderSerializer."""
+    """This class represents a Test case and has all the tests for OrderSerializer."""
 
     def setUp(self):
-        """Set up data for tests."""
+        """This method adds needed info for tests."""
         self.Serializer = OrderSerializer
 
         self.groups = GroupFactory.groups_for_test()
