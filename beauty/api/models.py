@@ -220,7 +220,7 @@ class Business(models.Model):
     class Meta:
         """This meta class stores verbose names"""
 
-        ordering = ['type']
+        ordering = ['business_type']
         verbose_name = _('Business')
         verbose_name_plural = _('Businesses')
 

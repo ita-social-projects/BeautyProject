@@ -980,7 +980,7 @@
     "pk": 1,
     "fields": {
         "name": "B1",
-        "type": "B1 type",
+        "business_type": "B1 type",
         "logo": "",
         "owner": 1,
         "address": 1,
