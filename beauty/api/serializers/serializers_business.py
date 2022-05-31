@@ -1,3 +1,5 @@
+"""Module which contains serializers for Business model."""
+
 from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
@@ -13,33 +15,35 @@ logger = logging.getLogger(__name__)
 
 
 class BusinessListCreateSerializer(serializers.ModelSerializer):
-    """Business serilalizer for list and create views"""
+    """Business serilalizer for list and create views."""
 
     class Meta:
-        """Display 4 required fields for Business creation"""
+        """Display 4 required fields for Business creation."""
 
         model = Business
-        fields = ('name', 'type', 'owner', 'description')
+        fields = ("name", "type", "owner", "description")
 
     def validate_owner(self, value):
-        """Checks if such user exists and validates if user belongs to
+        """Validates owner.
+
+        Checks if such user exists, validates if user belongs to
         Specialist group
         """
         group = value.groups.filter(name="Owner").first()
         if group is None:
 
-            logger.error(f"Failed owner validation")
+            logger.error("Failed owner validation")
 
             raise ValidationError(
-                _('Only Owners can create Business'), code='invalid'
+                _("Only Owners can create Business"), code="invalid",
             )
 
-        logger.info(f"Sucessfully validated owner")
+        logger.info("Sucessfully validated owner")
 
         return value
 
     def to_representation(self, instance):
-        """Display owner full name"""
+        """Display owner full name."""
         data = super().to_representation(instance)
         owner = User.objects.filter(id=data["owner"]).first()
         data["owner"] = owner.get_full_name()
