@@ -7,12 +7,16 @@ logger = logging.getLogger(__name__)
 
 
 class OrderApprovingTokenGenerator(PasswordResetTokenGenerator):
-    """The class creates an order token for sending an email
-     message to the specialist to approve.
-     """
+    """Order Approving TokenGenerator.
+
+    The class creates an order token for sending an email
+    message to the specialist to approve.
+    """
 
     def _make_hash_value(self, order: object, timestamp: int) -> str:
-        """Hash the order's primary key, status, and some order
+        """Make a hash value.
+
+        Hash the order's primary key, status, and some order
         state(update_at) that's sure to change after a status reset
         to produce a token that is invalidated when it's used.
 
@@ -24,8 +28,6 @@ class OrderApprovingTokenGenerator(PasswordResetTokenGenerator):
             timestamp (int): token creation timestamp
         Returns (str): hash value
         """
-        # Truncate microseconds so that tokens are consistent even if the
-        # database doesn't support microseconds.
         update_at_timestamp = order.update_at.replace(
             microsecond=0, tzinfo=None).timestamp()
 
