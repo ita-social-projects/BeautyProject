@@ -25,6 +25,7 @@ Content
   - [Before entering](#Before-entering)
   - [Git flow](#Git-flow)
   - [Issue flow](#Issue-flow)
+  - [Using flake8](#Using-flake8)
 - [FAQ](#faq)
 - [Teams](#Teams)
 - [Support](#support)
@@ -176,6 +177,40 @@ git clone https://github.com/ita-social-projects/BeautyProject.git
 #### Step 3
 
 - If issue is in work it should be placed in proper column on dashboard according to its status.
+
+---
+
+## Using flake8
+
+- Install flake8 according to python version:
+
+```
+python3.9 -m pip install flake8
+```
+
+- Install flake8 extensions:
+
+```
+pip instll -r requirements-flake8.txt
+```
+
+- Install pre-commit:
+
+``` 
+pip install pre-commit
+```
+
+- Make sure there are files `.flake8` & `.pre-commit-config.yaml` in the project 
+directory
+
+- Create hook:
+
+```
+pre-commit install
+```
+
+- Settings are ready to use. Before committing, the hook will run 
+a flake8 check. If the check does not pass the commit will not take place.
 
 ---
 

@@ -13,17 +13,18 @@ from rest_framework.reverse import reverse
 
 from .models import CustomUser, Order, Business, Position
 
-from .permissions import (IsAdminOrIsAccountOwnerOrReadOnly,
-                          IsAccountOwnerOrReadOnly, 
-                          IsOrReadOnly)
-
-from .serializers.serializers_customuser import (CustomUserDetailSerializer, 
-                                                 CustomUserSerializer, 
-                                                 UserOrderDetailSerializer,
-                                                 ResetPasswordSerializer)
-
 from .serializers.business_serializers import BusinessListCreateSerializer
 from .serializers.serializers_position import PositionSerializer
+
+from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
+from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
+from .serializers.serializers_customuser import CustomUserDetailSerializer
+from .serializers.serializers_customuser import CustomUserSerializer
+from .serializers.serializers_customuser import UserOrderDetailSerializer
+from .serializers.serializers_customuser import ResetPasswordSerializer
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CustomUserListCreateView(ListCreateAPIView):
@@ -37,12 +38,14 @@ class UserActivationView(GenericAPIView):
     """Generic view for user account activation"""
 
     def get(self, request, uidb64, token):
-
         id = int(force_str(urlsafe_base64_decode(uidb64)))
 
         user = get_object_or_404(CustomUser, id=id)
         user.is_active = True
         user.save()
+
+        logger.info(f"User {user} was activated")
+
         return redirect(reverse("api:user-detail", kwargs={"pk": id}))
 
 
@@ -57,6 +60,9 @@ class ResetPasswordView(GenericAPIView):
         self.get_serializer().validate(request.POST)
         user.set_password(request.POST.get('password'))
         user.save()
+
+        logger.info(f"User {user} password was reset")
+
         return redirect(reverse("api:user-detail", kwargs={"pk": id}))
 
 
@@ -75,6 +81,9 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         if instance.is_active:
             instance.is_active = False
             instance.save()
+
+            logger.info(f"User {instance} was deactivated")
+
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
