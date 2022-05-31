@@ -1,4 +1,4 @@
-from datetime import datetime
+"""All views for the BeatyProject."""
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -30,14 +30,14 @@ logger = logging.getLogger(__name__)
 
 
 class CustomUserListCreateView(ListCreateAPIView):
-    """Generic API for users custom POST methods"""
+    """Generic API for users custom POST methods."""
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
 
 class UserActivationView(GenericAPIView):
-    """Generic view for user account activation"""
+    """Generic view for user account activation."""
 
     def get(self, request, uidb64, token):
         id = int(force_str(urlsafe_base64_decode(uidb64)))
@@ -52,7 +52,7 @@ class UserActivationView(GenericAPIView):
 
 
 class ResetPasswordView(GenericAPIView):
-    """Generic view for reset password"""
+    """Generic view for reset password."""
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
@@ -60,7 +60,7 @@ class ResetPasswordView(GenericAPIView):
         id = int(force_str(urlsafe_base64_decode(uidb64)))
         user = get_object_or_404(CustomUser, id=id)
         self.get_serializer().validate(request.POST)
-        user.set_password(request.POST.get('password'))
+        user.set_password(request.POST.get("password"))
         user.save()
 
         logger.info(f"User {user} password was reset")
@@ -70,7 +70,9 @@ class ResetPasswordView(GenericAPIView):
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
-    RUD - Retrieve, Update, Destroy"""
+
+    RUD - Retrieve, Update, Destroy.
+    """
     permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
@@ -78,7 +80,8 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     def perform_destroy(self, instance):
         """Reimplementation of the DESTROY (DELETE) method.
-        Makes current user inactive by changing its' field
+
+        Makes current user inactive by changing its field.
         """
         if instance.is_active:
             instance.is_active = False
@@ -91,7 +94,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
 
 class OrderListCreateView(ListCreateAPIView):
-    """Generic API for orders custom POST method"""
+    """Generic API for orders custom POST method."""
 
     queryset = Order.objects.exclude(status__in=[2, 4])
     serializer_class = OrderSerializer
@@ -108,7 +111,7 @@ class OrderListCreateView(ListCreateAPIView):
         logger.info(f"{order} with {order.service.name} was created")
 
         context = {"order": order}
-        to = [order.specialist.email, ]
+        to = [order.specialist.email]
         ApprovingOrderEmail(request, context).send(to)
 
         logger.info(f"{order}: approving email was sent to the specialist "
@@ -119,20 +122,26 @@ class OrderListCreateView(ListCreateAPIView):
 
 class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """Generic API for orders custom GET, PUT and DELETE methods.
-       RUD - Retrieve, Update, Destroy"""
+
+    RUD - Retrieve, Update, Destroy.
+    """
 
     queryset = Order.objects.all()
     serializer_class = OrderDetailSerializer
     permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
 
     def get_object(self):
-        """Method for getting order objects by using both order user id
-         and order id lookup fields."""
+        """Get object.
+
+        Method for getting order objects by using both order user id
+        and order id lookup fields.
+        """
         if len(self.kwargs) > 1:
-            obj = get_object_or_404(self.get_queryset(),
-                                    Q(customer=self.kwargs['user']) |
-                                    Q(specialist=self.kwargs['user']),
-                                    id=self.kwargs['id'])
+            obj = get_object_or_404(
+                self.get_queryset(),
+                Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
+                id=self.kwargs["id"],
+            )
             self.check_object_permissions(self.request, obj)
 
             logger.info(f"{obj} was got from user page")
@@ -151,15 +160,13 @@ class OrderApprovingView(ListCreateAPIView):
     serializer_class = OrderSerializer
 
     def get(self, request, *args, **kwargs):
-        """Get an answer from a specialist according to
-        order and implement it.
-        """
+        """Get an answer from a specialist according to order and implement it."""
         token = kwargs["token"]
         order_id = int(force_str(urlsafe_base64_decode(kwargs["uid"])))
         order_status = force_str(urlsafe_base64_decode(kwargs["status"]))
         order = self.get_queryset().get(id=order_id)
         if OrderApprovingTokenGenerator().check_token(order, token):
-            if order_status == 'approved':
+            if order_status == "approved":
                 order.mark_as_approved()
 
                 logger.info(f"{order} was approved by the specialist "
@@ -169,7 +176,7 @@ class OrderApprovingView(ListCreateAPIView):
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
                                                 "pk": order_id}))
-            elif order_status == 'declined':
+            elif order_status == "declined":
                 order.mark_as_declined()
 
                 logger.info(f"{order} was declined by specialist "
@@ -179,19 +186,20 @@ class OrderApprovingView(ListCreateAPIView):
         logger.info(f"Token for {order} is not valid")
 
         return redirect(
-            reverse("api:user-detail", args=[order.specialist.id, ]))
+            reverse("api:user-detail", args=[order.specialist.id]))
 
     def send_signal(self, order: object, request: dict) -> None:
-        """Send signal for sending an email message to the customer
-         with the specialist's order status decision
+        """Send signal.
+
+        Send signal for sending an email message to the customer
+        with the specialist's order status decision.
 
         Args:
             order: instance order
             request: metadata about the request
         """
-
         logger.info(f"Signal was sent with {order}")
 
         signals.order_status_changed.send(
-            sender=self.__class__, order=order, request=request
+            sender=self.__class__, order=order, request=request,
         )
