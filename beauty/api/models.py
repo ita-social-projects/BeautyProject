@@ -373,13 +373,13 @@ class Review(models.Model):
         CustomUser,
         on_delete=models.CASCADE,
         null=True,
-        related_name=_("Customer")
+        related_name="customer_reviews"
     )
     to_user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         null=True,
-        related_name=_("Specialist")
+        related_name="specialist_reviews"
     )
 
     def __str__(self):

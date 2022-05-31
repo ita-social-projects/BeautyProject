@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import GenericAPIView
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -107,3 +108,10 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"{obj} was got for the user {user} (id={user.id})")
 
         return obj
+
+
+class SpecialistInformationView(RetrieveAPIView):
+    """Generic API for specialist information custom GET methods."""
+
+    queryset = CustomUser.objects.filter(groups__name__icontains="specialist")
+    serializer_class = CustomUserDetailSerializer

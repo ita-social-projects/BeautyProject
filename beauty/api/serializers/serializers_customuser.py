@@ -206,6 +206,8 @@ class CustomUserDetailSerializer(PasswordsValidation,
         read_only=True,
         url_user_id="customer_id",
     )
+    specialist_reviews = serializers.HyperlinkedRelatedField(
+        many=True, view_name="api:review-get", read_only=True)
 
     class Meta:
         """Class with a model and model fields for serialization."""
