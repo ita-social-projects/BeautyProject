@@ -63,7 +63,7 @@ class BusinessFactory(factory.django.DjangoModelFactory):
         model = Business
 
     name = factory.Sequence(lambda n: f"Business_{n}")
-    btype = factory.Sequence(lambda n: f"Business_type_#{n}")
+    business_type = factory.Sequence(lambda n: f"Business_type_#{n}")
     owner = factory.SubFactory(CustomUserFactory)
     address = factory.Faker("address")
     description = factory.Faker("sentence", nb_words=4)
