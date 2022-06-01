@@ -205,6 +205,9 @@ class CustomUserDetailSerializer(PasswordsValidation,
     specialist_reviews = serializers.HyperlinkedRelatedField(
         many=True, view_name="api:review-get", read_only=True)
 
+    customer_reviews = serializers.HyperlinkedRelatedField(
+        many=True, view_name="api:review-get", read_only=True)
+
     class Meta:
         """Class with a model and model fields for serialization."""
 
@@ -212,7 +215,18 @@ class CustomUserDetailSerializer(PasswordsValidation,
         fields = ["id", "email", "first_name", "patronymic", "last_name",
                   "phone_number", "bio", "rating", "avatar", "is_active",
                   "groups", "specialist_exist_orders", "customer_exist_orders",
-                  "password", "confirm_password"]
+                  "password", "confirm_password", "specialist_reviews", "customer_reviews"]
+
+    def to_representation(self, instance):
+        """Represent specialist_reviews field when instance is in specialist group."""
+        obj = super().to_representation(instance)
+        
+        if "Specialist" in instance.groups.all().values_list('name', flat=True):
+            return obj
+
+        del obj["specialist_reviews"]
+
+        return obj
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Update user information using dict with data.
