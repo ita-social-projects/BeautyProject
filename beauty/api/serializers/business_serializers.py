@@ -6,10 +6,44 @@ from django.utils.translation import gettext as _
 
 from rest_framework import serializers
 
-from api.models import Business
+from api.models import Business, CustomUser
 
 
-class BusinessesSerializer(serializers.ModelSerializer):
+logger = logging.getLogger(__name__)
+
+
+class BusinessListCreateSerializer(serializers.ModelSerializer):
+    """Serializer for business creation."""
+
+    class Meta:
+        """Meta for BusinessListCreateSerializer class."""
+
+        model = Business
+        fields = ("name", "type", "owner", "description")
+
+    def validate_owner(self, value):
+        """User validation.
+
+        Checks if such user exists and validates if user belongs to
+        Specialist group
+        """
+        group = value.groups.filter(name="Owner").first()
+        if group is None:
+            raise ValidationError(
+                _("Only Owners can create Business"), code="invalid",
+            )
+
+        return value
+
+    def to_representation(self, instance):
+        """Display owner full name."""
+        data = super().to_representation(instance)
+        owner = CustomUser.objects.filter(id=data["owner"]).first()
+        data["owner"] = owner.get_full_name()
+        return data
+
+
+class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for business base fields."""
 
     name = serializers.CharField(max_length=20)
