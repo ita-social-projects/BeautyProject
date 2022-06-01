@@ -19,6 +19,7 @@ from .models import CustomUser, Order, Business
 
 from .serializers.business_serializers import BusinessListCreateSerializer
 from beauty.tokens import OrderApprovingTokenGenerator
+
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
