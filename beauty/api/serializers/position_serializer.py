@@ -1,11 +1,7 @@
 """The module includes serializers for Position model."""
 
 from rest_framework import serializers
-
 from api.models import Position
-from api.serializers.customuser_serializers import CustomUserSerializer
-from api.serializers.business_serializers import BusinessListCreateSerializer
-from datetime import datetime
 import logging
 logger = logging.getLogger(__name__)
 

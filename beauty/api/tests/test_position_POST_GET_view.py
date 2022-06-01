@@ -12,13 +12,11 @@ Tests for PositionListCreateView:
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
-from api.serializers.position_serializer import PositionSerializer
-                                                    
+from api.serializers.position_serializer import PositionSerializer                         
 from api.models import Position
 from api.views import PositionListCreateView
 from .factories import BusinessFactory, CustomUserFactory, GroupFactory
 
-from datetime import datetime, timedelta
 
 class TestPositionListCreateView(TestCase):
     """TestCase to test PositionListCreateView"""

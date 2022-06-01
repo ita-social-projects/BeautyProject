@@ -63,6 +63,7 @@ class UserActivationView(GenericAPIView):
 
 class ResetPasswordView(GenericAPIView):
     """Generic view for reset password."""
+    
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
@@ -90,6 +91,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     RUD - Retrieve, Update, Destroy.
     """
+
     permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()

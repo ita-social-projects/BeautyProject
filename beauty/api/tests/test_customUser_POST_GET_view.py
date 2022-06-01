@@ -13,8 +13,7 @@ Tests for CustomUserListCreateView:
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
-from api.serializers.customuser_serializers import CustomUserSerializer
-                                                    
+from api.serializers.customuser_serializers import CustomUserSerializer                                      
 from api.models import CustomUser
 from api.views import CustomUserListCreateView
 
@@ -64,7 +63,6 @@ class TestCustomUserListCreateView(TestCase):
 
     def test_get_custom_user_list_create_view(self):
         """GET requests to ListCreateAPIView should return list of objects."""
-        # self.client.generic needed for getting data from GET method
         resp = self.client.generic(
                                     method="GET",
                                     path=reverse("api:user-list-create")
