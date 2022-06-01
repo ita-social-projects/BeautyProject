@@ -23,7 +23,7 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
 from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDetailSerializer)
 from .serializers.business_serializers import BusinessListCreateSerializer
-from .serializers.serializers_position import PositionSerializer
+from .serializers.position_serializer import PositionSerializer
 
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
@@ -174,7 +174,7 @@ class PositionListCreateView(ListCreateAPIView):
     
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = [IsAccountOwnerOrReadOnly]
+    permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
 
 
 class BusinessListCreateView(ListCreateAPIView):

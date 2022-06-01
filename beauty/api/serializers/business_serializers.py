@@ -5,7 +5,7 @@ from api.models import Business, CustomUser
 class BusinessListCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
-        fields = ('name', 'type', 'owner', 'description')
+        fields = ('name', 'business_type', 'owner', 'description')
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
