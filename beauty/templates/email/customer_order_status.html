@@ -1,0 +1,50 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}Order status on {{ site_name }}{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}
+You're receiving this email because you made order on {{ site_name }} and specialist {{ order.specialist.get_full_name }} {{order.status}} it.
+{% endblocktrans %}
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}The {{ site_name }} team{% endblocktrans %}
+{% endblock text_body %}
+
+{% block html_body %}
+
+<h3>
+    You're receiving this email because you made an order on {{ site_name }} and
+    specialist {{ order.specialist.get_full_name }} <i style="color: red">{{ order.get_status_display|lower }}</i> it.
+</h3>
+
+<h3>{% trans "Order details:" %}</h3>
+<hr>
+<p><b>Start time:</b> {{order.start_time}}</p>
+<p><b>End time:</b> {{order.end_time}}</p>
+<p><b>Specialist:</b> {{order.specialist.get_full_name}}</p>
+<p><b>Customer:</b> {{order.customer.get_full_name}}</p>
+<p><b>Service:</b> {{order.service.name}}</p>
+<hr>
+
+{% if order.get_status_display|lower == 'approved' %}
+<p>
+    <i><b>
+        {% trans "Please go to the following page to see order details:" %}
+    </b></i>
+</p>
+<p>
+    <a href="{{ protocol }}://{{ domain }}{{ redirect_url|safe }}">
+        {{ protocol }}://{{ domain }}{{ redirect_url|safe }}
+    </a>
+</p>
+{% endif %}
+
+<p>{% trans "Thanks for using our site!" %}</p>
+
+<p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>
+
+{% endblock html_body %}

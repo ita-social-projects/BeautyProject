@@ -1,18 +1,15 @@
 """The module includes tests for CustomUser serializers."""
 
 import json
-from django.test import TestCase, override_settings
-from django.urls import path
+from django.test import TestCase
 
 from api.models import CustomUser
-from api.serializers.serializers_customuser import (CustomUserSerializer,
+from api.serializers.customuser_serializers import (CustomUserSerializer,
                                                     CustomUserDetailSerializer,
                                                     PasswordsValidation)
 from rest_framework.test import APIRequestFactory
 from rest_framework.serializers import ValidationError
 
-from api.views import CustomUserListCreateView, CustomUserDetailRUDView, \
-    CustomUserOrderDetailRUDView
 
 factory = APIRequestFactory()
 
