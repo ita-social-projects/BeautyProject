@@ -28,7 +28,10 @@ from api.views import UserActivationView, ResetPasswordView
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response(
-        {'users': reverse('api:user-list', request=request, format=format)}
+        {'users': reverse('api:user-list-create', request=request,
+                          format=format),
+         'orders': reverse('api:order-list-create', request=request,
+                           format=format)},
     )
 
 
@@ -48,7 +51,7 @@ urlpatterns = [
     # path('api/v1/auth/', include('djoser.urls')),
     # path('api/v1/auth_token/', include('djoser.urls.authtoken')),
     path('api/v1/', include('api.urls', namespace="api")),
-    #path(
+    # path(
     #    'api-auth/',
     # include('rest_framework.urls', namespace='rest_framework')
     # ),

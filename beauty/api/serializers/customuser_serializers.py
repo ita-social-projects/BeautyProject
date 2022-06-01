@@ -1,12 +1,12 @@
 """The module includes serializers for CustomUser model."""
+
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
-
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from api.models import (CustomUser, Order)
+from api.models import CustomUser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ group_queryset = Group.objects.all()
 class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
     """Custom HyperlinkedRelatedField for user orders."""
 
-    view_name = "api:specialist-order-detail"
+    view_name = "api:user-order-detail"
     url_user_id = "specialist_id"
 
     def __init__(self, **kwargs):
@@ -38,7 +38,7 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
         """
         url_kwargs = {
             "user": getattr(obj, self.url_user_id),
-            "id": obj.pk,
+            "pk": obj.pk,
         }
 
         url = reverse(
@@ -239,16 +239,6 @@ class CustomUserDetailSerializer(PasswordsValidation,
         return super().update(instance, validated_data)
 
 
-class UserOrderDetailSerializer(serializers.ModelSerializer):
-    """Serializer to receive and update a specific order."""
-
-    class Meta:
-        """Class with a model and model fields for serialization."""
-
-        model = Order
-        fields = ["id", "customer_id", "specialist_id"]
-
-
 class ResetPasswordSerializer(PasswordsValidation):
     """Serilizer for reseting password."""
 
@@ -274,12 +264,12 @@ class ResetPasswordSerializer(PasswordsValidation):
     def validate(self, data: dict) -> dict:
         """Password validation."""
         if all([data.get("password"), data.get("confirm_password")]):
-          
+
             logger.info(f"Password was reset")
-          
+
             return super().validate(data)
         else:
-          
+
             logger.info("Password: Fields should be valid")
-          
+
             raise serializers.ValidationError({"password": "Fields should be valid"})

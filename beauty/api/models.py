@@ -2,7 +2,6 @@
 
 from datetime import timedelta
 from address.models import AddressField
-from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import validate_email, MinValueValidator,\
@@ -29,7 +28,7 @@ class MyUserManager(BaseUserManager):
         """
         if not email:
 
-            logger.error("Users must have an email address")
+            logger.info("Users must have an email address")
 
             raise ValueError('Users must have an email address')
 
@@ -44,7 +43,7 @@ class MyUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        logger.info(f"User {user['first_name']} (id={user.id}) with"
+        logger.info(f"User {user.first_name} (id={user.id}) with"
                     f" {user['email']} was created.")
 
         return user
@@ -61,8 +60,8 @@ class MyUserManager(BaseUserManager):
         user.is_active = True
         user.save(using=self._db)
 
-        logger.info(f"Superuser {user['first_name']} with"
-                    f" {user['email']} was created.")
+        logger.info(f"Superuser {user.first_name} with"
+                    f" {user.email} was created.")
 
         return user
 
@@ -111,10 +110,12 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         validators=(validate_email,)
     )
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
+        editable=False
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
+        editable=False
     )
     bio = models.TextField(
         max_length=255,
@@ -187,7 +188,7 @@ class Business(models.Model):
         verbose_name=_('Name'),
         max_length=20
     )
-    type = models.CharField(
+    business_type = models.CharField(
         verbose_name=_('Type'),
         max_length=100
     )
@@ -196,13 +197,13 @@ class Business(models.Model):
         blank=True
     )
     owner = models.ForeignKey(
-        'CustomUser', 
+        'CustomUser',
         verbose_name=_('Owner'),
-        on_delete=models.PROTECT, 
+        on_delete=models.PROTECT,
         related_name='businesses'
     )
     address = AddressField(
-        verbose_name=_("Location"), 
+        verbose_name=_("Location"),
         max_length=500,
         blank=True,
         null=True
@@ -217,9 +218,9 @@ class Business(models.Model):
     )
 
     class Meta:
-        """This metaclass stores verbose names"""
-        
-        ordering = ['type']
+        """This meta class stores verbose names"""
+
+        ordering = ['business_type']
         verbose_name = _('Business')
         verbose_name_plural = _('Businesses')
 
@@ -314,15 +315,15 @@ class Position(models.Model):
         verbose_name=_("Specialist"),
     )
     business = models.ForeignKey(
-        "Business", 
+        "Business",
         on_delete=models.CASCADE,
         verbose_name=_("Business")
     )
-    start_time = models.DateTimeField(
+    start_time = models.TimeField(
         editable=True,
         verbose_name=_("Start time")
     )
-    end_time = models.DateTimeField(
+    end_time = models.TimeField(
         editable=True,
         verbose_name=_("End time")
     )
@@ -332,8 +333,8 @@ class Position(models.Model):
         return self.name
 
     class Meta:
-        """This metaclass stores verbose names and ordering data"""
-        
+        """This meta class stores verbose names and ordering data"""
+
         ordering = ['name']
         verbose_name = _("Position")
         verbose_name_plural = _("Positions")
@@ -418,7 +419,7 @@ class Order(models.Model):
 
     """
 
-    class StatusChoices(models.TextChoices):
+    class StatusChoices(models.IntegerChoices):
         """This class is used for status codes"""
 
         ACTIVE = 0, _('Active')
@@ -431,7 +432,6 @@ class Order(models.Model):
         """This metaclass stores ordering and permissions data"""
 
         ordering = ['id']
-        unique_together = ['specialist', 'customer']
         get_latest_by = "created_at"
         permissions = [
             ('can_add_order', 'Can add an order'),
@@ -440,8 +440,7 @@ class Order(models.Model):
             ('can_view_order', 'Can view an order')
         ]
 
-    status = models.CharField(
-        max_length=2,
+    status = models.IntegerField(
         choices=StatusChoices.choices,
         default=StatusChoices.ACTIVE,
         verbose_name=_('Current status')
@@ -455,9 +454,14 @@ class Order(models.Model):
         verbose_name=_('End time')
     )
     created_at = models.DateTimeField(
-        auto_now=True,
+        auto_now_add=True,
         editable=False,
         verbose_name=_('Created at')
+    )
+    update_at = models.DateTimeField(
+        auto_now=True,
+        editable=False,
+        verbose_name=_('Updated at')
     )
     specialist = models.ForeignKey(
         'CustomUser',
@@ -586,8 +590,8 @@ class Service(models.Model):
         return self.name
 
     class Meta:
-
-        """This metaclass stores ordering and verbose name"""
+        """This meta class stores ordering and verbose name"""
+        
         ordering = ['id']
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
