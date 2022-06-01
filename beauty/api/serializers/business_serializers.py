@@ -20,7 +20,7 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
         """Meta for BusinessListCreateSerializer class."""
 
         model = Business
-        fields = ("name", "type", "owner", "description")
+        fields = ("name", "business_type", "owner", "description")
 
     def validate_owner(self, value):
         """User validation.
@@ -52,15 +52,13 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     owner_url = serializers.HyperlinkedIdentityField(
         view_name="api:certain-owners-businesses-list", lookup_field="owner_id",
     )
-    name = serializers.CharField(max_length=20)
-    type = serializers.CharField(max_length=100) # noqa
     address = serializers.CharField(max_length=500)
 
     class Meta:
         """Meta for OwnerBusinessesSerializer class."""
 
         model = Business
-        fields = ("business_url", "owner_url", "name", "type", "address")
+        fields = ("business_url", "owner_url", "name", "business_type", "address")
 
 
 class BusinessAllDetailSerializer(serializers.ModelSerializer):
@@ -80,7 +78,8 @@ class BusinessAllDetailSerializer(serializers.ModelSerializer):
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        fields = ("owner_name", "created_at", "logo", "name", "type", "address", "description")
+        fields = ("owner_name", "created_at", "logo", "name", "business_type", "address",
+                  "description")
 
 
 class BusinessDetailSerializer(serializers.ModelSerializer):
@@ -92,4 +91,4 @@ class BusinessDetailSerializer(serializers.ModelSerializer):
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        fields = ("logo", "name", "type", "address", "description")
+        fields = ("logo", "name", "business_type", "address", "description")
