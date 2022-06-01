@@ -10,9 +10,13 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView, RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView, get_object_or_404)
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly, IsAuthenticated)
+from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+
+from beauty import signals
+from beauty.tokens import OrderApprovingTokenGenerator
+from beauty.utils import ApprovingOrderEmail
 
 from .models import Business, CustomUser, Order
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
@@ -23,11 +27,7 @@ from .serializers.business_serializers import (BusinessAllDetailSerializer,
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
-from api.serializers.order_serializers import (OrderSerializer,
-                                               OrderDeleteSerializer)
-from beauty.tokens import OrderApprovingTokenGenerator
-from beauty import signals
-from beauty.utils import ApprovingOrderEmail
+from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
 
 logger = logging.getLogger(__name__)

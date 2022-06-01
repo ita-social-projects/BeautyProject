@@ -1,22 +1,11 @@
 """This module provides all needed permissions."""
+
 import logging
 
 from rest_framework import permissions
 
 
 logger = logging.getLogger(__name__)
-
-
-class ReadOnly(permissions.BasePermission):
-    """Object-level permission to only allow owners of an object
-    or admin to edit it.
-    """
-
-    def has_permission(self, request, view):
-        """Read permissions are allowed to any request,
-        so we'll always allow GET, HEAD or OPTIONS requests.
-        """
-        return bool(request.method in permissions.SAFE_METHODS)
 
 
 class IsAccountOwnerOrReadOnly(permissions.BasePermission):
@@ -32,15 +21,14 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
         Read permissions are allowed to any request,
         so we'll always allow GET, HEAD or OPTIONS requests.
         """
-        return bool(request.method in permissions.SAFE_METHODS)
+        return request.method in permissions.SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
         """Object permission check."""
         logger.debug(f"Object {obj.id} permission check")
 
         if request.user.is_authenticated:
-            if request.user.is_admin or (obj == request.user):
-                return True
+            return request.user.is_admin or (obj == request.user)
 
 
 class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
@@ -55,7 +43,7 @@ class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
         logger.debug(f"Object {obj.id} permission check")
 
         is_admin = request.user.is_admin
-        return bool(request.method in permissions.SAFE_METHODS or is_admin or (obj == request.user))
+        return request.method in permissions.SAFE_METHODS or is_admin or (obj == request.user)
 
 
 class IsAdminOrBusinessOwner(permissions.IsAuthenticatedOrReadOnly):
@@ -69,17 +57,15 @@ class IsAdminOrBusinessOwner(permissions.IsAuthenticatedOrReadOnly):
         """Object permission check."""
         logger.debug(f"Object {obj.id} permission check")
 
-        try:
-            is_admin = request.user.is_admin
-            return bool(is_admin or (obj == request.user))
-        except AttributeError:
-            logger.warning(f"User {request.user} has no permission to visit this page")
-            raise PermissionError("Cannot obtain object")
+        if request.user.is_authenticated:
+            return request.user.is_admin or (obj == request.user)
 
 
 class IsOrderUser(permissions.BasePermission):
     """Object-level permission to only allow users of an object to edit it."""
 
     def has_object_permission(self, request, view, obj):
-        return bool(obj.specialist == request.user or
-                    obj.customer == request.user)
+        """Object permission check."""
+        logger.debug(f"Object {obj.id} permission check")
+
+        return obj.specialist == request.user or obj.customer == request.user
