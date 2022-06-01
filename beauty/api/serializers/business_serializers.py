@@ -10,6 +10,7 @@ import logging
 
 from api.models import Business
 
+
 User = get_user_model()
 logger = logging.getLogger(__name__)
 

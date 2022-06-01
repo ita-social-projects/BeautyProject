@@ -4,8 +4,8 @@ from .views import *
 app_name = "api"     
 
 urlpatterns = [
-    path('user/', CustomUserListCreateView.as_view(),
-         name='user-list'),
+    path('users/', CustomUserListCreateView.as_view(),
+         name='user-list-create'),
     path('user/<int:pk>/', CustomUserDetailRUDView.as_view(),
          name='user-detail'),
 

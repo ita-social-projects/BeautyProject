@@ -121,13 +121,15 @@ class BusinessListCreateView(ListCreateAPIView):
 
     queryset = Business.objects.all()
     serializer_class = BusinessListCreateSerializer
-    permission_classes = (IsAccountOwnerOrReadOnly,)
 
-    # def get_permissions(self):
-    #     """For business creation you need to be authentificated."""
-    #     if self.request.method == "POST":
-    #         self.permission_classes = (IsAccountOwnerOrReadOnly,)
-    #     return super().get_permissions()
+    def get_permissions(self):
+        """For business creation you need to be authentificated."""
+        if self.request.method == "POST":
+            self.permission_classes = (
+                IsAccountOwnerOrReadOnly,
+                IsAuthenticated,
+            )
+        return super().get_permissions()
 
 
 class OrderListCreateView(ListCreateAPIView):

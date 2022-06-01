@@ -357,7 +357,6 @@ class Review(models.Model):
     that stores all the required information.
 
     Attributes:
-
         text_body (str): body of the review
         rating (int): Rating of review(natural number from 1 to 5)
         date_of_publication (datetime): Date and time of review publication
@@ -369,36 +368,36 @@ class Review(models.Model):
 
     text_body = models.CharField(
         max_length=500,
-        verbose_name=_("Review text")
+        verbose_name=_("Review text"),
     )
     rating = models.IntegerField(
         blank=False,
         validators=(MinValueValidator(0), MaxValueValidator(5)),
-        verbose_name=_("Review rating")
+        verbose_name=_("Review rating"),
     )
     date_of_publication = models.DateTimeField(
         auto_now_add=True,
-        verbose_name=_("Time of review publication")
+        verbose_name=_("Time of review publication"),
     )
     from_user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         null=True,
-        related_name=_("Customer")
+        related_name=_("Customer"),
     )
     to_user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         null=True,
-        related_name=_("Specialist")
+        related_name=_("Specialist"),
     )
 
     def __str__(self):
-        """str: Returns a verbose title of the review"""
+        """str: Returns a verbose title of the review."""
         return self.text_body
 
     class Meta:
-        """This meta class stores verbose names and permissions data"""
+        """This meta class stores verbose names and permissions data."""
 
         ordering = ["date_of_publication"]
         verbose_name = _("Review")
@@ -414,7 +413,6 @@ class Order(models.Model):
         end_time is autocalculated during creation, no need to put it
 
     Attributes:
-
         status (TextChoices): Status of the order
         start_time (datetime): Appointment time and date of the order
         end_time (datetime): Time that is calculated according to the duration of service
@@ -432,7 +430,7 @@ class Order(models.Model):
     """
 
     class StatusChoices(models.IntegerChoices):
-        """This class is used for status codes"""
+        """This class is used for status codes."""
 
         ACTIVE = 0, _("Active")
         COMPLETED = 1, _("Completed")
@@ -441,7 +439,7 @@ class Order(models.Model):
         DECLINED = 4, _("Declined")
 
     class Meta:
-        """This meta class stores ordering and permissions data"""
+        """This meta class stores ordering and permissions data."""
 
         ordering = ["id"]
         get_latest_by = "created_at"
@@ -449,57 +447,57 @@ class Order(models.Model):
             ("can_add_order", "Can add an order"),
             ("can_change_order", "Can change an order"),
             ("can_set_status", "Can set a status of the order"),
-            ("can_view_order", "Can view an order")
+            ("can_view_order", "Can view an order"),
         ]
 
     status = models.IntegerField(
         choices=StatusChoices.choices,
         default=StatusChoices.ACTIVE,
-        verbose_name=_("Current status")
+        verbose_name=_("Current status"),
     )
     start_time = models.DateTimeField(
         editable=True,
-        verbose_name=_("Appointment time")
+        verbose_name=_("Appointment time"),
     )
     end_time = models.DateTimeField(
         editable=False,
-        verbose_name=_("End time")
+        verbose_name=_("End time"),
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        verbose_name=_('Created at')
+        verbose_name=_("Created at"),
     )
     update_at = models.DateTimeField(
         auto_now=True,
-        verbose_name=_('Updated at')
+        verbose_name=_("Updated at"),
     )
     specialist = models.ForeignKey(
         "CustomUser",
         related_name="specialist_orders",
         on_delete=models.CASCADE,
-        verbose_name=_("Specialist")
+        verbose_name=_("Specialist"),
     )
     customer = models.ForeignKey(
         "CustomUser",
         related_name="customer_orders",
         on_delete=models.CASCADE,
-        verbose_name=_("Customer")
+        verbose_name=_("Customer"),
     )
     service = models.ForeignKey(
         "Service",
         on_delete=models.CASCADE,
-        verbose_name=_("Service")
+        verbose_name=_("Service"),
     )
     reason = models.TextField(
         blank=True,
         null=True,
-        verbose_name=_("Reason for cancellation")
+        verbose_name=_("Reason for cancellation"),
     )
 
     def save(self, *args, **kwargs):
-        """Reimplemented save method for end_time calculation"""
+        """Reimplemented save method for end_time calculation."""
         self.end_time = self.start_time + timedelta(
-            minutes=self.service.duration
+            minutes=self.service.duration,
         )
 
         logger.info(f"Added end time({self.end_time}) for order")
@@ -509,36 +507,36 @@ class Order(models.Model):
 
     @property
     def is_active(self) -> bool:
-        """bool: Returns true if order"s status is active"""
+        """bool: Returns true if order"s status is active."""
         return self.status == self.StatusChoices.ACTIVE
 
     @property
     def is_approved(self) -> bool:
-        """bool: Returns true if order"s status is approved"""
+        """bool: Returns true if order"s status is approved."""
         return self.status == self.StatusChoices.APPROVED
 
     @property
     def is_declined(self) -> bool:
-        """bool: Returns true if order"s status is declined"""
+        """bool: Returns true if order"s status is declined."""
         return self.status == self.StatusChoices.DECLINED
 
     def mark_as_approved(self):
-        """Marks order as approved"""
+        """Marks order as approved."""
         self.status = self.StatusChoices.APPROVED
         self.save(update_fields=["status"])
 
     def mark_as_cancelled(self):
-        """Marks order as cancelled"""
+        """Marks order as cancelled."""
         self.status = self.StatusChoices.CANCELLED
         self.save(update_fields=["status"])
 
     def mark_as_completed(self):
-        """Marks order as completed"""
+        """Marks order as completed."""
         self.status = self.StatusChoices.COMPLETED
         self.save(update_fields=["status"])
 
     def mark_as_declined(self):
-        """Marks order as declined"""
+        """Marks order as declined."""
         self.status = self.StatusChoices.DECLINED
         self.save(update_fields=["status"])
 
@@ -548,7 +546,7 @@ class Order(models.Model):
         self.save(update_fields=["reason"])
 
     def get_reason(self) -> str:
-        """str: Returns a reason"""
+        """str: Returns a reason."""
         return self.reason
 
     def __str__(self) -> str:
@@ -556,7 +554,7 @@ class Order(models.Model):
         return f"Order #{self.id}"
 
     def __repr__(self) -> str:
-        """str: Returns a string representation of the order"""
+        """str: Returns a string representation of the order."""
         return f"Order #{self.id} ({self.status})"
 
 
@@ -564,7 +562,6 @@ class Service(models.Model):
     """This class represents a Service that can be provided by Specialist.
 
     Attributes:
-
         position (Position): Position that provides a service
         name (str): Name of the service
         price (decimal): Price of the service
@@ -576,25 +573,25 @@ class Service(models.Model):
     position = models.ForeignKey(
         "Position",
         on_delete=models.CASCADE,
-        verbose_name=_("Position",)
+        verbose_name=_("Position"),
     )
     name = models.CharField(
         max_length=50,
-        verbose_name=_("Service name",)
+        verbose_name=_("Service name"),
     )
     price = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name=_("Service price",)
+        verbose_name=_("Service price"),
     )
     description = models.CharField(
         max_length=250,
         blank=True,
-        verbose_name=_("Service description")
+        verbose_name=_("Service description"),
     )
     duration = models.IntegerField(
         blank=False,
-        verbose_name=_("Service duration")
+        verbose_name=_("Service duration"),
     )
 
     def __str__(self):
