@@ -20,7 +20,6 @@ from django.urls import include, path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from beauty.yasg import urlpatterns as doc_urls
 
 from api.views import UserActivationView, ResetPasswordView
 
@@ -28,13 +27,15 @@ from api.views import UserActivationView, ResetPasswordView
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response(
-        {'users': reverse('api:user-list', request=request, format=format)}
+        {'users': reverse('api:user-list-create', request=request,
+                          format=format),
+         'orders': reverse('api:order-list-create', request=request,
+                           format=format)},
     )
 
 
 urlpatterns = [
     path('', api_root),
-    path('api/v1/user/', include('api.urls', namespace="api")),
     path('admin/', admin.site.urls),
     path(
         'activate/<uidb64>/<token>/',
@@ -48,6 +49,7 @@ urlpatterns = [
     ),
     # path('api/v1/auth/', include('djoser.urls')),
     # path('api/v1/auth_token/', include('djoser.urls.authtoken')),
+    path('api/v1/', include('api.urls', namespace="api")),
     # path(
     #    'api-auth/',
     # include('rest_framework.urls', namespace='rest_framework')

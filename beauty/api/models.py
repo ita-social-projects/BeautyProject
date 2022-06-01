@@ -2,7 +2,6 @@
 
 from datetime import timedelta
 from address.models import AddressField
-from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import validate_email, MinValueValidator,\
@@ -12,6 +11,9 @@ from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
 from beauty.utils import ModelsUtils
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MyUserManager(BaseUserManager):
@@ -25,6 +27,9 @@ class MyUserManager(BaseUserManager):
         Creates and saves CustomUser user instance with given fields values
         """
         if not email:
+
+            logger.info("Users must have an email address")
+
             raise ValueError('Users must have an email address')
 
         user = self.model(
@@ -37,6 +42,10 @@ class MyUserManager(BaseUserManager):
 
         user.set_password(password)
         user.save(using=self._db)
+
+        logger.info(f"User {user.first_name} (id={user.id}) with"
+                    f" {user['email']} was created.")
+
         return user
 
     def create_superuser(self, email: str, first_name: str,
@@ -50,6 +59,10 @@ class MyUserManager(BaseUserManager):
         user.is_superuser = True
         user.is_active = True
         user.save(using=self._db)
+
+        logger.info(f"Superuser {user.first_name} with"
+                    f" {user.email} was created.")
+
         return user
 
 
@@ -97,7 +110,8 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         validators=(validate_email,)
     )
     updated_at = models.DateTimeField(
-        auto_now=True
+        auto_now=True,
+        editable=False
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -142,6 +156,16 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         """Determines whether user is admin"""
         return self.is_admin
 
+    @property
+    def specialist_exist_orders(self):
+        """Show only existing orders for the user where he is specialist."""
+        return self.specialist_orders.exclude(status__in=[2, 4])
+
+    @property
+    def customer_exist_orders(self):
+        """Show only existing orders for the user where he is customer."""
+        return self.customer_orders.exclude(status__in=[2, 4])
+
     def get_full_name(self):
         """Shows full name of the user"""
         return f"{self.first_name} {self.last_name}"
@@ -174,7 +198,7 @@ class Business(models.Model):
         verbose_name=_('Name'),
         max_length=20
     )
-    type = models.CharField(
+    business_type = models.CharField(
         verbose_name=_('Type'),
         max_length=100
     )
@@ -183,31 +207,30 @@ class Business(models.Model):
         blank=True
     )
     owner = models.ForeignKey(
-        'CustomUser', 
+        'CustomUser',
         verbose_name=_('Owner'),
-        on_delete=models.PROTECT, 
+        on_delete=models.PROTECT,
         related_name='businesses'
     )
     address = AddressField(
-        verbose_name=_("Location"), 
+        verbose_name=_("Location"),
         max_length=500,
         blank=True,
         null=True
     )
     description = models.CharField(
-        verbose_name=_('Created at'),
+        verbose_name=_('Description'),
         max_length=255
     )
     created_at = models.DateTimeField(
         verbose_name=_('Created at'),
-        blank=True,
         auto_now_add=True
     )
 
     class Meta:
         """This meta class stores verbose names"""
-        
-        ordering = ['type']
+
+        ordering = ['business_type']
         verbose_name = _('Business')
         verbose_name_plural = _('Businesses')
 
@@ -215,7 +238,7 @@ class Business(models.Model):
         """str: Returns a verbose title of the business"""
         return str(self.name)
 
-    #TODO: methods: get_all_specialist & create_position
+    # TODO: methods: get_all_specialist & create_position
     # def create_position(self, name, type, logo, owner, description):
     #     pos = Position(name=name)
     #     pos.save()
@@ -223,6 +246,9 @@ class Business(models.Model):
     def get_all_specialist(self):
         """"""
         specialists = [position.specialists.all() for position in self.positions.all()]
+
+        logger.info(f"Got all specialists from business positions")
+
         return specialists
 
 
@@ -261,7 +287,7 @@ class WorkingTime(DbView):
     @classmethod
     def view(cls):
         """Return string of our request"""
-        #TODO: add request when all class will be realized
+        # TODO: add request when all class will be realized
         req = ()
         return str(req.query)
 
@@ -292,24 +318,24 @@ class Position(models.Model):
 
     name = models.CharField(
         max_length=40,
-        verbose_name= _("Name")
+        verbose_name=_("Name")
     )
     specialist = models.ManyToManyField(
         "CustomUser",
-        verbose_name= _("Specialist"),
+        verbose_name=_("Specialist"),
     )
     business = models.ForeignKey(
-        "Business", 
+        "Business",
         on_delete=models.CASCADE,
-        verbose_name= _("Business")
+        verbose_name=_("Business")
     )
     start_time = models.DateTimeField(
         editable=True,
-        verbose_name= _("Start time")
+        verbose_name=_("Start time")
     )
     end_time = models.DateTimeField(
         editable=True,
-        verbose_name= _("End time")
+        verbose_name=_("End time")
     )
 
     def __str__(self):
@@ -318,7 +344,7 @@ class Position(models.Model):
 
     class Meta:
         """This meta class stores verbose names and ordering data"""
-        
+
         ordering = ['name']
         verbose_name = _("Position")
         verbose_name_plural = _("Positions")
@@ -403,7 +429,7 @@ class Order(models.Model):
 
     """
 
-    class StatusChoices(models.TextChoices):
+    class StatusChoices(models.IntegerChoices):
         """This class is used for status codes"""
 
         ACTIVE = 0, _('Active')
@@ -416,17 +442,15 @@ class Order(models.Model):
         """This meta class stores ordering and permissions data"""
 
         ordering = ['id']
-        unique_together = ['specialist', 'customer']
         get_latest_by = "created_at"
         permissions = [
-        ('can_add_order', 'Can add an order'),
-        ('can_change_order', 'Can change an order'),
-        ('can_set_status', 'Can set a status of the order'),
-        ('can_view_order', 'Can view an order')
+            ('can_add_order', 'Can add an order'),
+            ('can_change_order', 'Can change an order'),
+            ('can_set_status', 'Can set a status of the order'),
+            ('can_view_order', 'Can view an order')
         ]
 
-    status = models.CharField(
-        max_length=2,
+    status = models.IntegerField(
         choices=StatusChoices.choices,
         default=StatusChoices.ACTIVE,
         verbose_name=_('Current status')
@@ -440,19 +464,22 @@ class Order(models.Model):
         verbose_name=_('End time')
     )
     created_at = models.DateTimeField(
-        auto_now=True,
-        editable=False,
+        auto_now_add=True,
         verbose_name=_('Created at')
+    )
+    update_at = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_('Updated at')
     )
     specialist = models.ForeignKey(
         'CustomUser',
-        related_name = 'specialist_orders',
+        related_name='specialist_orders',
         on_delete=models.CASCADE,
         verbose_name=_('Specialist')
     )
     customer = models.ForeignKey(
         'CustomUser',
-        related_name = 'customer_orders',
+        related_name='customer_orders',
         on_delete=models.CASCADE,
         verbose_name=_('Customer')
     )
@@ -470,6 +497,9 @@ class Order(models.Model):
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation"""
         self.end_time = self.start_time + timedelta(minutes=self.service.duration)
+
+        logger.info(f"Added end time({self.end_time}) for order")
+
         super(Order, self).save(*args, **kwargs)
         return self
 
@@ -506,10 +536,10 @@ class Order(models.Model):
     def mark_as_declined(self):
         """Marks order as declined"""
         self.status = self.StatusChoices.DECLINED
-        self.save(update_fields=['status'])
+        self.save(update_fields=["status"])
 
     def add_reason(self, reason: str):
-        """Add a reason for an order"""
+        """Add a reason for an order."""
         self.reason = reason
         self.save(update_fields=['reason'])
 
@@ -518,7 +548,7 @@ class Order(models.Model):
         return self.reason
 
     def __str__(self) -> str:
-        """str: Returns a verbose title of the order"""
+        """str: Returns a verbose title of the order."""
         return f"Order #{self.id}"
 
     def __repr__(self) -> str:
@@ -542,16 +572,16 @@ class Service(models.Model):
     position = models.ForeignKey(
         "Position",
         on_delete=models.CASCADE,
-        verbose_name= _("Position")
+        verbose_name=_("Position",)
     )
     name = models.CharField(
         max_length=50,
-        verbose_name=_("Service name")
+        verbose_name=_("Service name",)
     )
     price = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name=_("Service price")
+        verbose_name=_("Service price",)
     )
     description = models.CharField(
         max_length=250,
@@ -564,12 +594,12 @@ class Service(models.Model):
     )
 
     def __str__(self):
-        """str: Returns a verbose name of the service"""
+        """str: Returns a verbose name of the service."""
         return self.name
 
     class Meta:
+        """This meta class stores ordering and verbose name."""
 
-        """This meta class stores ordering and verbose name"""
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
