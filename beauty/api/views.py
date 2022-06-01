@@ -15,7 +15,7 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
 
 from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUserOrReadOnly)
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -140,9 +140,9 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy.
     """
 
-    queryset = Order.objects.all()
+    queryset = Order.objects.exclude(status__in=[2, 4])
     serializer_class = OrderDetailSerializer
-    permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
+    permission_classes = (IsAuthenticated, IsOrderUser)
 
     def get_object(self):
         """Get object.

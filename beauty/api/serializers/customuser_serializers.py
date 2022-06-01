@@ -67,7 +67,7 @@ class PasswordsValidation(serializers.Serializer):
         confirm_password = data.get("confirm_password")
         if password and confirm_password:
             if password != confirm_password:
-                logger.info(f"Password: Password confirmation does not match")
+                logger.info("Password: Password confirmation does not match")
 
                 raise serializers.ValidationError(
                     {"password": "Password confirmation does not match."},
@@ -77,7 +77,7 @@ class PasswordsValidation(serializers.Serializer):
             logger.info("Password: One of the password fields is empty")
 
             raise serializers.ValidationError(
-                {"confirm_password": "Didn`t enter the password confirmation."}
+                {"confirm_password": "Didn`t enter the password confirmation."},
             )
 
         logger.info("Password and Confirm password is checked")
@@ -96,9 +96,7 @@ class GroupListingField(serializers.RelatedField):
 
         Returns:
             object.name (str): attribute-name of an instance
-
         """
-
         logger.debug(f"Changed group representation from id={value.id}"
                      f" to name={value.name}")
 
@@ -112,9 +110,7 @@ class GroupListingField(serializers.RelatedField):
 
         Returns:
             id (int): instance id
-
         """
-
         logger.debug(f"Changed group lookup from name={data} to id")
 
         return self.get_queryset().get(name=data).id
@@ -200,8 +196,8 @@ class CustomUserDetailSerializer(PasswordsValidation,
             "placeholder": "Confirmation Password",
         },
     )
-    specialist_orders = OrderUserHyperlink(many=True, read_only=True)
-    customer_orders = OrderUserHyperlink(
+    specialist_exist_orders = OrderUserHyperlink(many=True, read_only=True)
+    customer_exist_orders = OrderUserHyperlink(
         many=True,
         read_only=True,
         url_user_id="customer_id",
@@ -213,7 +209,7 @@ class CustomUserDetailSerializer(PasswordsValidation,
         model = CustomUser
         fields = ["id", "email", "first_name", "patronymic", "last_name",
                   "phone_number", "bio", "rating", "avatar", "is_active",
-                  "groups", "specialist_orders", "customer_orders",
+                  "groups", "specialist_exist_orders", "customer_exist_orders",
                   "password", "confirm_password"]
 
     def update(self, instance: object, validated_data: dict) -> object:
@@ -265,7 +261,7 @@ class ResetPasswordSerializer(PasswordsValidation):
         """Password validation."""
         if all([data.get("password"), data.get("confirm_password")]):
 
-            logger.info(f"Password was reset")
+            logger.info("Password was reset")
 
             return super().validate(data)
         else:
