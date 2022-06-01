@@ -21,10 +21,11 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
 from api.serializers.order_serializers import (OrderSerializer,
-                                               OrderDetailSerializer)
+                                               OrderDeleteSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,7 @@ class UserActivationView(GenericAPIView):
 
 class ResetPasswordView(GenericAPIView):
     """Generic view for reset password."""
+
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
@@ -87,6 +89,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     RUD - Retrieve, Update, Destroy.
     """
+
     permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
@@ -114,8 +117,6 @@ class OrderListCreateView(ListCreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    logger.info("Orders was loaded")
-
     def post(self, request, *args, **kwargs):
         """Create an order and add an authenticated customer to it."""
         serializer = self.get_serializer(data=request.data)
@@ -141,7 +142,7 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """
 
     queryset = Order.objects.exclude(status__in=[2, 4])
-    serializer_class = OrderDetailSerializer
+    serializer_class = OrderDeleteSerializer
     permission_classes = (IsAuthenticated, IsOrderUser)
 
     def get_object(self):

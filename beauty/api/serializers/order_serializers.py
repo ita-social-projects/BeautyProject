@@ -58,7 +58,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
 
 
-class OrderDetailSerializer(serializers.ModelSerializer):
+class OrderDeleteSerializer(serializers.ModelSerializer):
     """Serializer for order cancellation."""
 
     reason = serializers.CharField(required=True)
