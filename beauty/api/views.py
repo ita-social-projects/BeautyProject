@@ -13,6 +13,11 @@ from rest_framework.reverse import reverse
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
 
+from .models import CustomUser, Order, Business
+from .permissions import (IsAccountOwnerOrReadOnly,
+                          IsOrderUserOrReadOnly)
+
+from .serializers.business_serializers import BusinessListCreateSerializer
 from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order, Business, Position
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUserOrReadOnly)
@@ -24,10 +29,10 @@ from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDetailSerializer)
 from .serializers.business_serializers import BusinessListCreateSerializer
 from .serializers.position_serializer import PositionSerializer
-
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +117,23 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class BusinessListCreateView(ListCreateAPIView):
+    """View for business creation and displaying list of all businesses.
+
+    Gives basic info about all businesses
+    """
+
+    queryset = Business.objects.all()
+    serializer_class = BusinessListCreateSerializer
+    permission_classes = (IsAccountOwnerOrReadOnly,)
+
+    # def get_permissions(self):
+    #     """For business creation you need to be authentificated."""
+    #     if self.request.method == "POST":
+    #         self.permission_classes = (IsAccountOwnerOrReadOnly,)
+    #     return super().get_permissions()
+
+
 class OrderListCreateView(ListCreateAPIView):
     """Generic API for orders custom POST method."""
 
@@ -154,10 +176,11 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         Method for getting order objects by using both order user id
         and order id lookup fields.
         """
+        user = self.kwargs["user"]
         if len(self.kwargs) > 1:
             obj = get_object_or_404(
                 self.get_queryset(),
-                Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
+                Q(customer=user) | Q(specialist=user),
                 id=self.kwargs["pk"],
             )
             self.check_object_permissions(self.request, obj)
@@ -180,6 +203,8 @@ class PositionListCreateView(ListCreateAPIView):
 
 
 class BusinessListCreateView(ListCreateAPIView):
+    """Generic ListCreateViewAPI for business"""
+
     queryset = Business.objects.all()
     serializer_class = BusinessListCreateSerializer
     permission_classes = [IsAccountOwnerOrReadOnly, ]

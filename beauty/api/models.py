@@ -1,4 +1,4 @@
-"""This module provides all needed models"""
+"""This module provides all needed models."""
 
 from datetime import timedelta
 from address.models import AddressField
@@ -17,20 +17,17 @@ logger = logging.getLogger(__name__)
 
 
 class MyUserManager(BaseUserManager):
-    """This class provides tools for
-     creating and managing CustomUser model
-    """
+    """This class provides tools for creating and managing CustomUser model."""
 
     def create_user(self, email: str, first_name: str, password=None,
                     is_active=True, bio=None, **additional_fields):
-        """
-        Creates and saves CustomUser user instance with given fields values
+        """Creates and saves CustomUser user instance with given fields values.
         """
         if not email:
 
             logger.info("Users must have an email address")
 
-            raise ValueError('Users must have an email address')
+            raise ValueError("Users must have an email address")
 
         user = self.model(
             email=self.normalize_email(email),
@@ -44,7 +41,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
 
         logger.info(f"User {user.first_name} (id={user.id}) with"
-                    f" {user['email']} was created.")
+                    f" {user.email} was created.")
 
         return user
 
@@ -67,7 +64,7 @@ class MyUserManager(BaseUserManager):
 
 
 class CustomUser(PermissionsMixin, AbstractBaseUser):
-    """This class represents a custom User model
+    """This class represents a custom User model.
 
     Notes:
         Rating field could be negative, works like a rating system
@@ -123,7 +120,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         null=True
     )
     phone_number = PhoneNumberField(
-        unique=True
+        unique=True,
     )
     rating = models.IntegerField(
         blank=True,
@@ -131,7 +128,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     )
     avatar = models.ImageField(
         blank=True,
-        default='default_avatar.jpeg',
+        default="default_avatar.jpeg",
         upload_to=ModelsUtils.upload_location
     )
 
@@ -141,13 +138,14 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     objects = MyUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
-    REQUIRED_FIELDS = ('password', 'first_name', 'phone_number')
+    REQUIRED_FIELDS = ("password", "first_name", "phone_number")
 
     class Meta:
-        """This metaclass stores verbose names ordering data"""
-        ordering = ['id']
+        """This meta class stores verbose names ordering data"""
+        
+        ordering = ["id"]
         verbose_name = "User"
         verbose_name_plural = "Users"
 
@@ -166,7 +164,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     def __repr__(self):
         """str: Returns CustomUser name and its id"""
-        return f'{self.__class__.__name__}(id={self.id})'
+        return f"{self.__class__.__name__}(id={self.id})"
 
 
 class Business(models.Model):
@@ -185,11 +183,11 @@ class Business(models.Model):
     """
 
     name = models.CharField(
-        verbose_name=_('Name'),
+        verbose_name=_("Name"),
         max_length=20
     )
     business_type = models.CharField(
-        verbose_name=_('Type'),
+        verbose_name=_("Type"),
         max_length=100
     )
     logo = models.ImageField(
@@ -197,10 +195,10 @@ class Business(models.Model):
         blank=True
     )
     owner = models.ForeignKey(
-        'CustomUser',
-        verbose_name=_('Owner'),
+        "CustomUser",
+        verbose_name=_("Owner"),
         on_delete=models.PROTECT,
-        related_name='businesses'
+        related_name="businesses"
     )
     address = AddressField(
         verbose_name=_("Location"),
@@ -209,35 +207,42 @@ class Business(models.Model):
         null=True
     )
     description = models.CharField(
-        verbose_name=_('Description'),
+        verbose_name=_("Description"),
         max_length=255
     )
     created_at = models.DateTimeField(
-        verbose_name=_('Created at'),
+        verbose_name=_("Created at"),
         auto_now_add=True
     )
 
     class Meta:
         """This meta class stores verbose names"""
 
-        ordering = ['business_type']
-        verbose_name = _('Business')
-        verbose_name_plural = _('Businesses')
+        ordering = ["business_type"]
+        verbose_name = _("Business")
+        verbose_name_plural = _("Businesses")
 
     def __str__(self) -> str:
         """str: Returns a verbose title of the business"""
         return str(self.name)
 
-    # TODO: methods: get_all_specialist & create_position
-    # def create_position(self, name, type, logo, owner, description):
-    #     pos = Position(name=name)
-    #     pos.save()
+    def create_position(self, name, specialist, start_time, end_time):
+        """Creates Position for specific Business"""
+        position = Position.objects.create(name=name, business=self,
+                                           start_time=start_time,
+                                           end_time=end_time)
+        position.specialist.add(specialist)
 
-    def get_all_specialist(self):
-        """"""
-        specialists = [position.specialists.all() for position in self.positions.all()]
+        logger.info(f"New position with id={position.id} was created")
 
-        logger.info(f"Got all specialists from business positions")
+        return position
+
+    def get_all_specialists(self):
+        """Gets all Specialists who belong to this Business """
+        positions = self.position_set.all().values_list("id", flat=True)
+        specialists = CustomUser.objects.filter(position__in=positions)
+
+        logger.info("Got all specialists from business positions")
 
         return specialists
 
@@ -335,7 +340,7 @@ class Position(models.Model):
     class Meta:
         """This meta class stores verbose names and ordering data"""
 
-        ordering = ['name']
+        ordering = ["name"]
         verbose_name = _("Position")
         verbose_name_plural = _("Positions")
 
@@ -398,8 +403,8 @@ class Order(models.Model):
     that stores all the required information.
 
     Note:
-        reason attribute is only needed if order's status is cancelled
-        end_time is auto calculated during creation, no need to put it
+        reason attribute is only neaded if order"s status is cancelled
+        end_time is autocalculated during creation, no need to put it
 
     Attributes:
 
@@ -413,82 +418,84 @@ class Order(models.Model):
         reason (str, optional): Reason for cancellation
 
     Properties:
-        is_active: Returns true if order's status is active
-        is_approved: Returns true if order's status is approved
-        is_declined: Returns true if order's status is declined
+        is_active: Returns true if order"s status is active
+        is_approved: Returns true if order"s status is approved
+        is_declined: Returns true if order"s status is declined
 
     """
 
     class StatusChoices(models.IntegerChoices):
         """This class is used for status codes"""
 
-        ACTIVE = 0, _('Active')
-        COMPLETED = 1, _('Completed')
-        CANCELLED = 2, _('Cancelled')
-        APPROVED = 3, _('Approved')
-        DECLINED = 4, _('Declined')
+        ACTIVE = 0, _("Active")
+        COMPLETED = 1, _("Completed")
+        CANCELLED = 2, _("Cancelled")
+        APPROVED = 3, _("Approved")
+        DECLINED = 4, _("Declined")
 
     class Meta:
         """This metaclass stores ordering and permissions data"""
 
-        ordering = ['id']
+        ordering = ["id"]
         get_latest_by = "created_at"
         permissions = [
-            ('can_add_order', 'Can add an order'),
-            ('can_change_order', 'Can change an order'),
-            ('can_set_status', 'Can set a status of the order'),
-            ('can_view_order', 'Can view an order')
+            ("can_add_order", "Can add an order"),
+            ("can_change_order", "Can change an order"),
+            ("can_set_status", "Can set a status of the order"),
+            ("can_view_order", "Can view an order")
         ]
 
     status = models.IntegerField(
         choices=StatusChoices.choices,
         default=StatusChoices.ACTIVE,
-        verbose_name=_('Current status')
+        verbose_name=_("Current status")
     )
     start_time = models.DateTimeField(
         editable=True,
-        verbose_name=_('Appointment time')
+        verbose_name=_("Appointment time")
     )
     end_time = models.DateTimeField(
         editable=False,
-        verbose_name=_('End time')
+        verbose_name=_("End time")
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
         editable=False,
-        verbose_name=_('Created at')
+        verbose_name=_("Created at")
     )
     update_at = models.DateTimeField(
         auto_now=True,
         editable=False,
-        verbose_name=_('Updated at')
+        verbose_name=_("Updated at")
     )
     specialist = models.ForeignKey(
-        'CustomUser',
-        related_name='specialist_orders',
+        "CustomUser",
+        related_name="specialist_orders",
         on_delete=models.CASCADE,
-        verbose_name=_('Specialist')
+        verbose_name=_("Specialist")
     )
     customer = models.ForeignKey(
-        'CustomUser',
-        related_name='customer_orders',
+        "CustomUser",
+        related_name="customer_orders",
         on_delete=models.CASCADE,
-        verbose_name=_('Customer')
+        verbose_name=_("Customer")
     )
     service = models.ForeignKey(
-        'Service',
+        "Service",
         on_delete=models.CASCADE,
-        verbose_name=_('Service')
+        verbose_name=_("Service")
     )
     reason = models.TextField(
         blank=True,
         null=True,
-        verbose_name=_('Reason for cancellation')
+        verbose_name=_("Reason for cancellation")
     )
 
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation"""
-        self.end_time = self.start_time + timedelta(minutes=self.service.duration)
+        self.end_time = self.start_time + timedelta(
+            minutes=self.service.duration
+        )
 
         logger.info(f"Added end time({self.end_time}) for order")
 
@@ -497,43 +504,43 @@ class Order(models.Model):
 
     @property
     def is_active(self) -> bool:
-        """bool: Returns true if order's status is active"""
+        """bool: Returns true if order"s status is active"""
         return self.status == self.StatusChoices.ACTIVE
 
     @property
     def is_approved(self) -> bool:
-        """bool: Returns true if order's status is approved"""
+        """bool: Returns true if order"s status is approved"""
         return self.status == self.StatusChoices.APPROVED
 
     @property
     def is_declined(self) -> bool:
-        """bool: Returns true if order's status is declined"""
+        """bool: Returns true if order"s status is declined"""
         return self.status == self.StatusChoices.DECLINED
 
     def mark_as_approved(self):
         """Marks order as approved"""
         self.status = self.StatusChoices.APPROVED
-        self.save(update_fields=['status'])
+        self.save(update_fields=["status"])
 
     def mark_as_cancelled(self):
         """Marks order as cancelled"""
         self.status = self.StatusChoices.CANCELLED
-        self.save(update_fields=['status'])
+        self.save(update_fields=["status"])
 
     def mark_as_completed(self):
         """Marks order as completed"""
         self.status = self.StatusChoices.COMPLETED
-        self.save(update_fields=['status'])
+        self.save(update_fields=["status"])
 
     def mark_as_declined(self):
         """Marks order as declined"""
         self.status = self.StatusChoices.DECLINED
-        self.save(update_fields=['status'])
+        self.save(update_fields=["status"])
 
     def add_reason(self, reason: str):
         """Add a reason for an order"""
         self.reason = reason
-        self.save(update_fields=['reason'])
+        self.save(update_fields=["reason"])
 
     def get_reason(self) -> str:
         """str: Returns a reason"""
@@ -592,6 +599,6 @@ class Service(models.Model):
     class Meta:
         """This meta class stores ordering and verbose name"""
         
-        ordering = ['id']
+        ordering = ["id"]
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
