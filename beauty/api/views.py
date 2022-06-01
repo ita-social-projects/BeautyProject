@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .models import Business, CustomUser, Order
-from .permissions import IsAccountOwnerOrReadOnly, IsAdminOrBusinessOwner
+from .permissions import IsAccountOwnerOrReadOnly
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
@@ -121,7 +121,6 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
 
 class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
     """List View for all businesses or businesses of certain owner."""
-    queryset = Business.objects.all()
 
     def get_serializer_class(self):
         """Return specific Serializer for businesses creation."""
@@ -130,17 +129,14 @@ class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
         else:
             return BusinessesSerializer
 
-    def list(self, request, owner_id=None): # noqa
-        """Filter businesses of certain owner."""
-        self.permission_classes = (IsAdminOrBusinessOwner,)
-        queryset = self.get_queryset()
-        if owner_id:
-            queryset = queryset.filter(owner=owner_id)
-        serializer = BusinessesSerializer(queryset, many=True)
-
-        logger.debug("A view to display list of businesses has opened")
-
-        return Response(serializer.data)
+    def get_queryset(self, owner_id=None):
+        """Filter businesses for owner."""
+        if self.kwargs.get("owner_id"):
+            logger.debug("A view to display list of businesses of certain owner has opened")
+            return Business.objects.filter(owner=self.kwargs["owner_id"])
+        else:
+            logger.debug("A view to display list of all businesses has opened")
+            return Business.objects.all()
 
     def get_permissions(self):
         """Get specific permission for businesses creation."""
