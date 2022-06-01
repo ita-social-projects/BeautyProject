@@ -1,13 +1,16 @@
 """This module provides you with all needed utility functions."""
 
 import os
-from random import randint
-from datetime import datetime, timedelta
+from datetime import timedelta, datetime
 from typing import Tuple
 import pytz
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
 from beauty.tokens import OrderApprovingTokenGenerator
+from faker import Faker
+
+
+faker = Faker()
 
 
 class ModelsUtils:
@@ -48,17 +51,15 @@ class ModelsUtils:
 
 def get_random_start_end_datetime() -> Tuple[datetime, datetime]:
     """Gives random times for start, end of the working day."""
-    start_time = datetime(
-        2022, randint(1, 12), randint(1, 28), randint(0, 23),
-        tzinfo=pytz.UTC,
-    )
+    start_time = faker.date_time_this_century(tzinfo=pytz.UTC)
     return start_time, start_time + timedelta(hours=8)
 
 
 class ApprovingOrderEmail(BaseEmailMessage):
     """Send approving order email.
 
-    Send email message to the specialist for change order status with two links:
+    Send email message to the specialist for
+    change order status with two links:
     - for approve order;
     - for decline order.
     """
