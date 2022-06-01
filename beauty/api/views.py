@@ -110,7 +110,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 class OrderListCreateView(ListCreateAPIView):
     """Generic API for orders custom POST method."""
 
-    queryset = Order.objects.exclude(status__in=[2, 4])
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
