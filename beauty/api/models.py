@@ -153,6 +153,16 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         """Determines whether user is admin"""
         return self.is_admin
 
+    @property
+    def specialist_exist_orders(self):
+        """Show only existing orders for the user where he is specialist."""
+        return self.specialist_orders.exclude(status__in=[2, 4])
+
+    @property
+    def customer_exist_orders(self):
+        """Show only existing orders for the user where he is customer."""
+        return self.customer_orders.exclude(status__in=[2, 4])
+
     def get_full_name(self):
         """Shows full name of the user"""
         return f"{self.first_name} {self.last_name}"
@@ -459,13 +469,11 @@ class Order(models.Model):
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        editable=False,
-        verbose_name=_("Created at")
+        verbose_name=_('Created at')
     )
     update_at = models.DateTimeField(
         auto_now=True,
-        editable=False,
-        verbose_name=_("Updated at")
+        verbose_name=_('Updated at')
     )
     specialist = models.ForeignKey(
         "CustomUser",
@@ -537,7 +545,7 @@ class Order(models.Model):
         self.save(update_fields=["status"])
 
     def add_reason(self, reason: str):
-        """Add a reason for an order"""
+        """Add a reason for an order."""
         self.reason = reason
         self.save(update_fields=["reason"])
 
@@ -546,7 +554,7 @@ class Order(models.Model):
         return self.reason
 
     def __str__(self) -> str:
-        """str: Returns a verbose title of the order"""
+        """str: Returns a verbose title of the order."""
         return f"Order #{self.id}"
 
     def __repr__(self) -> str:
@@ -570,16 +578,16 @@ class Service(models.Model):
     position = models.ForeignKey(
         "Position",
         on_delete=models.CASCADE,
-        verbose_name=_("Position")
+        verbose_name=_("Position",)
     )
     name = models.CharField(
         max_length=50,
-        verbose_name=_("Service name")
+        verbose_name=_("Service name",)
     )
     price = models.DecimalField(
         max_digits=5,
         decimal_places=2,
-        verbose_name=_("Service price")
+        verbose_name=_("Service price",)
     )
     description = models.CharField(
         max_length=250,
@@ -592,11 +600,12 @@ class Service(models.Model):
     )
 
     def __str__(self):
-        """str: Returns a verbose name of the service"""
+        """str: Returns a verbose name of the service."""
         return self.name
 
     class Meta:
-        """This meta class stores ordering and verbose name"""
+        """This meta class stores ordering and verbose name."""
+
         ordering = ["id"]
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
