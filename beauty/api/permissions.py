@@ -43,7 +43,7 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
         return obj.email == request.user.emai
 
 
-class IsOrderUserOrReadOnly(permissions.BasePermission):
+class IsOrderUser(permissions.BasePermission):
     """Object-level permission to only allow users of an object to edit it."""
 
     def has_object_permission(self, request, view, obj):

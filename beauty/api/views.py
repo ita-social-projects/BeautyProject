@@ -16,19 +16,19 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
 import logging
 
 from .models import CustomUser, Order, Business
-from .permissions import (IsAccountOwnerOrReadOnly,
-                          IsOrderUserOrReadOnly)
 
 from .serializers.business_serializers import BusinessListCreateSerializer
 from beauty.tokens import OrderApprovingTokenGenerator
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
 from api.serializers.order_serializers import (OrderSerializer,
-                                               OrderDetailSerializer)
+                                               OrderDeleteSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
+
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,7 @@ class UserActivationView(GenericAPIView):
 
 class ResetPasswordView(GenericAPIView):
     """Generic view for reset password."""
+
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
@@ -91,6 +92,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     RUD - Retrieve, Update, Destroy.
     """
+
     permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
@@ -131,11 +133,9 @@ class BusinessListCreateView(ListCreateAPIView):
 class OrderListCreateView(ListCreateAPIView):
     """Generic API for orders custom POST method."""
 
-    queryset = Order.objects.exclude(status__in=[2, 4])
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    logger.info("Orders was loaded")
 
     def post(self, request, *args, **kwargs):
         """Create an order and add an authenticated customer to it."""
@@ -161,9 +161,9 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy.
     """
 
-    queryset = Order.objects.all()
-    serializer_class = OrderDetailSerializer
-    permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
+    queryset = Order.objects.exclude(status__in=[2, 4])
+    serializer_class = OrderDeleteSerializer
+    permission_classes = (IsAuthenticated, IsOrderUser)
 
     def get_object(self):
         """Get object.
