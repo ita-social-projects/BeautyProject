@@ -465,7 +465,6 @@ class Order(models.Model):
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        editable=False,
         verbose_name=_('Created at')
     )
     update_at = models.DateTimeField(
