@@ -146,11 +146,12 @@ class OwnerBusinessesListAPIView(ListAPIView):
 class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     """RUD View for business editing."""
 
-    permission_classes = [IsAdminOrBusinessOwner]
-    # permission_classes = [AllowAny]
+    permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = Business.objects.all()
     serializer_class = BusinessAllDetailSerializer
+
+    logger.debug("A view to edit business has opened")
 
 
 class BusinessDetailRetrieveAPIView(RetrieveAPIView):
@@ -160,3 +161,5 @@ class BusinessDetailRetrieveAPIView(RetrieveAPIView):
 
     queryset = Business.objects.all()
     serializer_class = BusinessDetailSerializer
+
+    logger.debug("A view to display certain business has opened")
