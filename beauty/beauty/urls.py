@@ -31,8 +31,9 @@ from api.views import ResetPasswordView, UserActivationView
 def api_root(request, format=None): # noqa
     """Add urls to API Home page."""
     return Response(
-        {"users": reverse("api:user-list", request=request, format=format),
-         "businesses": reverse("api:businesses-list", request=request, format=format)},
+        {"users": reverse("api:user-list-create", request=request, format=format),
+         "businesses": reverse("api:businesses-list", request=request, format=format),
+         "orders": reverse("api:order-list-create", request=request, format=format)},
     )
 
 
