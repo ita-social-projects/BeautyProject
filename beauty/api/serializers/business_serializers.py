@@ -1,4 +1,5 @@
 """The module includes serializers for Business model."""
+
 import logging
 
 from django.core.exceptions import ValidationError
@@ -45,7 +46,12 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
 
 class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for business base fields."""
-
+    business_url = serializers.HyperlinkedIdentityField(
+        view_name="api:business-detail", lookup_field="pk",
+    )
+    owner_url = serializers.HyperlinkedIdentityField(
+        view_name="api:certain-owners-businesses-list", lookup_field="owner_id",
+    )
     name = serializers.CharField(max_length=20)
     type = serializers.CharField(max_length=100) # noqa
     address = serializers.CharField(max_length=500)
@@ -54,7 +60,7 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
         """Meta for OwnerBusinessesSerializer class."""
 
         model = Business
-        fields = ("name", "type", "address")
+        fields = ("business_url", "owner_url", "name", "type", "address")
 
 
 class BusinessAllDetailSerializer(serializers.ModelSerializer):
