@@ -25,14 +25,14 @@ urlpatterns = [
         name="specialist-order-detail",
     ),
     path(
-        'businesses/',
-        AllBusinessesListAPIView.as_view(),
-        name='businesses-list',
+        "businesses/",
+        AllOrOwnerBusinessesListCreateAPIView.as_view(),
+        name="businesses-list",
     ),
     path(
-        'businesses/<int:owner_id>/',
-        OwnerBusinessesListAPIView.as_view(),
-        name='certain-owners-businesses-list',
+        "businesses/<int:owner_id>/",
+        AllOrOwnerBusinessesListCreateAPIView.as_view(),
+        name="certain-owners-businesses-list",
     ),
     path(
         "businesses/<int:owner_id>/<int:pk>/",

@@ -119,28 +119,34 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         return obj
 
 
-class AllBusinessesListAPIView(ListAPIView):
-    """List View for all businesses."""
-
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
+class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
+    """List View for all businesses or businesses of certain owner."""
     queryset = Business.objects.all()
 
-class OwnerBusinessesListAPIView(ListAPIView):
-    """List View for businesses of certain owner."""
+    def get_serializer_class(self):
+        """Return specific Serializer for businesses creation."""
+        if self.request.method == "POST":
+            return BusinessListCreateSerializer
+        else:
+            return BusinessesSerializer
 
-    permission_classes = [IsAdminOrBusinessOwner]
-    # permission_classes = [AllowAny]
-
-    queryset = Business.objects.all()
-    serializer_class = BusinessesSerializer
-
-    def list(self, request, owner_id):
+    def list(self, request, owner_id=None): # noqa
         """Filter businesses of certain owner."""
         self.permission_classes = (IsAdminOrBusinessOwner,)
-        queryset = self.get_queryset().filter(owner=owner_id)
+        queryset = self.get_queryset()
+        if owner_id:
+            queryset = queryset.filter(owner=owner_id)
         serializer = BusinessesSerializer(queryset, many=True)
+
+        logger.debug("A view to display list of businesses has opened")
+
         return Response(serializer.data)
+
+    def get_permissions(self):
+        """Get specific permission for businesses creation."""
+        if self.request.method == "POST":
+            self.permission_classes = (IsAccountOwnerOrReadOnly,)
+        return super().get_permissions()
 
 
 class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
