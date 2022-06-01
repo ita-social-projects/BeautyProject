@@ -1,0 +1,1058 @@
+[INFO: 2022-05-29 22:31:18,022] models | get_all_specialists:242 - Got all specialists from business positions
+[INFO: 2022-05-29 22:31:18,063] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:18,279] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-29 22:31:18,288] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:18,494] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-29 22:31:18,509] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:18,725] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-29 22:31:18,736] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:18,935] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-29 22:31:18,942] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:19,213] serializers_customuser | create:177 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-05-29 22:31:19,229] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:19,451] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-29 22:31:19,458] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:19,669] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-29 22:31:19,682] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:19,895] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-29 22:31:19,904] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:20,113] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-29 22:31:20,126] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:20,383] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-29 22:31:20,392] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:20,601] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-29 22:31:20,612] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-29 22:31:20,617] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:20,843] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-29 22:31:20,851] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:21,061] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-29 22:31:21,179] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:21,405] serializers_customuser | create:177 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-29 22:31:21,430] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-29 22:31:21,431] serializers_customuser | update:237 - Data for user M  was updated
+[INFO: 2022-05-29 22:31:21,521] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-29 22:31:21,522] serializers_customuser | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-29 22:31:21,523] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:15,223] models | get_all_specialists:242 - Got all specialists from business positions
+[INFO: 2022-05-30 19:34:15,263] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:15,461] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 19:34:15,461] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:15,713] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 19:34:15,733] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:15,967] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 19:34:15,967] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:16,180] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 19:34:16,180] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:16,384] serializers_customuser | create:177 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-05-30 19:34:16,394] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:16,600] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 19:34:16,600] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:16,795] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 19:34:16,816] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:17,040] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 19:34:17,040] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:17,244] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 19:34:17,265] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:17,487] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 19:34:17,487] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:17,691] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 19:34:17,707] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-30 19:34:17,716] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:17,905] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 19:34:17,921] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:18,108] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 19:34:18,229] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:18,437] serializers_customuser | create:177 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-30 19:34:18,470] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 19:34:18,470] serializers_customuser | update:237 - Data for user M  was updated
+[INFO: 2022-05-30 19:34:18,549] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-30 19:34:18,549] serializers_customuser | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-30 19:34:18,549] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:08,908] models | get_all_specialists:242 - Got all specialists from business positions
+[INFO: 2022-05-30 20:08:08,943] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:09,172] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 20:08:09,184] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:09,470] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 20:08:09,491] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:09,705] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 20:08:09,721] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:09,946] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 20:08:09,946] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:10,176] serializers_customuser | create:177 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-05-30 20:08:10,189] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:10,483] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 20:08:10,483] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:10,701] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 20:08:10,715] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:10,944] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 20:08:10,945] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:11,160] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 20:08:11,177] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:11,499] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 20:08:11,508] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:11,759] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 20:08:11,777] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-30 20:08:11,788] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:12,012] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-30 20:08:12,014] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:12,229] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-30 20:08:12,326] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:12,543] serializers_customuser | create:177 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-30 20:08:12,567] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-30 20:08:12,567] serializers_customuser | update:237 - Data for user M  was updated
+[INFO: 2022-05-30 20:08:12,638] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-30 20:08:12,640] serializers_customuser | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-30 20:08:12,641] serializers_customuser | validate:83 - Password and Confirm password is checked
+[ERROR: 2022-05-31 12:49:53,362] serializers_business | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 12:49:53,409] serializers_business | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 12:49:53,482] models | create_position:236 - New position with id=2 was created
+[INFO: 2022-05-31 12:49:53,513] models | create_position:236 - New position with id=2 was created
+[INFO: 2022-05-31 12:49:53,515] models | get_all_specialists:245 - Got all specialists from business positions
+[INFO: 2022-05-31 12:49:53,555] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:53,788] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 12:49:53,799] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:54,060] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 12:49:54,078] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:54,306] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 12:49:54,316] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:54,542] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 12:49:54,549] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:54,767] serializers_customuser | create:177 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-05-31 12:49:54,778] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:55,004] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 12:49:55,013] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:55,233] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 12:49:55,248] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:55,470] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 12:49:55,481] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:55,702] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 12:49:55,714] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:55,938] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 12:49:55,945] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:56,147] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 12:49:56,154] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 12:49:56,160] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:56,382] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 12:49:56,389] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:56,598] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 12:49:56,727] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:56,934] serializers_customuser | create:177 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-31 12:49:56,963] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 12:49:56,963] serializers_customuser | update:237 - Data for user M  was updated
+[INFO: 2022-05-31 12:49:57,039] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 12:49:57,040] serializers_customuser | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-31 12:49:57,041] serializers_customuser | validate:83 - Password and Confirm password is checked
+[ERROR: 2022-05-31 13:03:25,332] serializers_business | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 13:03:25,468] serializers_business | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 13:03:25,572] models | create_position:236 - New position with id=2 was created
+[INFO: 2022-05-31 13:03:25,617] models | create_position:236 - New position with id=2 was created
+[INFO: 2022-05-31 13:03:25,619] models | get_all_specialists:245 - Got all specialists from business positions
+[INFO: 2022-05-31 13:03:25,681] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:25,937] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:03:25,951] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:26,163] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:03:26,187] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:26,416] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:03:26,427] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:26,638] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:03:26,648] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:26,858] serializers_customuser | create:177 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-05-31 13:03:26,873] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:27,123] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:03:27,135] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:27,359] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:03:27,381] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:27,611] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:03:27,622] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:27,834] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:03:27,858] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:28,084] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:03:28,095] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:28,304] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:03:28,316] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 13:03:28,323] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:28,545] serializers_customuser | create:177 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:03:28,557] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:28,768] serializers_customuser | create:177 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:03:28,925] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:29,149] serializers_customuser | create:177 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-31 13:03:29,190] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:03:29,191] serializers_customuser | update:237 - Data for user M  was updated
+[INFO: 2022-05-31 13:03:29,303] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 13:03:29,305] serializers_customuser | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-31 13:03:29,307] serializers_customuser | validate:83 - Password and Confirm password is checked
+[ERROR: 2022-05-31 13:14:11,862] serializers_business | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 13:14:12,048] serializers_business | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 13:14:12,205] models | create_position:236 - New position with id=2 was created
+[INFO: 2022-05-31 13:14:12,289] models | create_position:236 - New position with id=2 was created
+[INFO: 2022-05-31 13:14:12,292] models | get_all_specialists:245 - Got all specialists from business positions
+[INFO: 2022-05-31 13:14:12,370] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:12,751] serializers_customuser | create:175 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:14:12,799] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:13,134] serializers_customuser | create:175 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:14:13,294] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:13,596] serializers_customuser | create:175 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:14:13,608] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:13,845] serializers_customuser | create:175 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:14:13,857] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:14,107] serializers_customuser | create:175 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-05-31 13:14:14,122] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:14,357] serializers_customuser | create:175 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:14:14,371] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:14,609] serializers_customuser | create:175 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:14:14,634] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:14,882] serializers_customuser | create:175 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:14:14,896] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:15,125] serializers_customuser | create:175 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:14:15,153] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:15,399] serializers_customuser | create:175 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:14:15,412] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:15,675] serializers_customuser | create:175 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:14:15,734] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 13:14:15,775] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:16,057] serializers_customuser | create:175 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-05-31 13:14:16,083] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:16,332] serializers_customuser | create:175 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-05-31 13:14:16,555] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:16,767] serializers_customuser | create:175 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-31 13:14:16,807] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 13:14:16,807] serializers_customuser | update:235 - Data for user M  was updated
+[INFO: 2022-05-31 13:14:16,917] serializers_customuser | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 13:14:16,920] serializers_customuser | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-31 13:14:16,921] serializers_customuser | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:43:58,397] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:44:10,903] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:44:50,134] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:44:50,966] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 21:44:50,967] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-31 21:44:50,968] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:48:46,650] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:48:48,135] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 21:48:48,137] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-31 21:48:48,138] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:50:09,292] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:50:33,556] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:50:37,903] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:50:38,815] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 21:50:38,848] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 21:50:38,886] models | save:499 - Added end time(2022-05-30 08:07:16+00:00) for order
+[INFO: 2022-05-31 21:50:38,933] models | save:499 - Added end time(2022-05-31 19:25:38.933988+00:00) for order
+[INFO: 2022-05-31 21:50:38,934] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:38,968] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:38,971] models | save:499 - Added end time(2022-05-31 19:25:38.933988+00:00) for order
+[INFO: 2022-05-31 21:50:38,973] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 21:50:38,973] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:50:38,973] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:50:38,975] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 21:50:39,899] models | save:499 - Added end time(2022-05-31 19:20:39.899958+00:00) for order
+[INFO: 2022-05-31 21:50:39,900] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:39,904] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:39,905] models | save:499 - Added end time(2022-05-31 19:20:39.899958+00:00) for order
+[INFO: 2022-05-31 21:50:39,912] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 21:50:39,912] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:50:39,912] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:50:39,915] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 21:50:39,919] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 21:50:39,937] models | save:499 - Added end time(2022-05-31 19:10:39.937308+00:00) for order
+[INFO: 2022-05-31 21:50:39,938] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:39,941] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 21:50:39,966] models | save:499 - Added end time(2022-05-31 19:38:39.965487+00:00) for order
+[INFO: 2022-05-31 21:50:39,967] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:39,974] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:39,976] models | save:499 - Added end time(2022-05-31 19:38:39.965487+00:00) for order
+[INFO: 2022-05-31 21:50:39,979] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 21:50:39,980] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:50:39,980] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:50:39,984] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 21:50:40,026] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 21:50:40,068] models | save:499 - Added end time(2022-05-30 08:14:16+00:00) for order
+[INFO: 2022-05-31 21:50:40,070] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 21:50:40,070] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:50:40,076] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 21:50:40,137] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 21:50:40,434] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:50:40,651] customuser_serializers | create:175 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-31 21:50:40,682] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:50:40,683] customuser_serializers | update:235 - Data for user M  was updated
+[INFO: 2022-05-31 21:50:40,777] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 21:50:40,778] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-31 21:50:40,780] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:52:14,434] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:52:16,063] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 21:52:16,113] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 21:52:16,116] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 21:52:16,287] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 21:52:16,341] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 21:52:16,405] models | save:499 - Added end time(2022-05-30 08:29:16+00:00) for order
+[INFO: 2022-05-31 21:52:16,471] models | save:499 - Added end time(2022-05-31 19:18:16.469635+00:00) for order
+[INFO: 2022-05-31 21:52:16,474] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:16,499] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:16,504] models | save:499 - Added end time(2022-05-31 19:18:16.469635+00:00) for order
+[INFO: 2022-05-31 21:52:16,507] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:16,508] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:52:16,508] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:52:16,511] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 21:52:17,416] models | save:499 - Added end time(2022-05-31 19:41:17.415124+00:00) for order
+[INFO: 2022-05-31 21:52:17,419] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:17,426] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:17,429] models | save:499 - Added end time(2022-05-31 19:41:17.415124+00:00) for order
+[INFO: 2022-05-31 21:52:17,432] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:17,433] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:52:17,433] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:52:17,434] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 21:52:17,435] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 21:52:17,446] models | save:499 - Added end time(2022-05-31 19:18:17.446146+00:00) for order
+[INFO: 2022-05-31 21:52:17,446] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:17,450] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 21:52:17,477] models | save:499 - Added end time(2022-05-31 19:29:17.476199+00:00) for order
+[INFO: 2022-05-31 21:52:17,479] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:17,491] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:17,493] models | save:499 - Added end time(2022-05-31 19:29:17.476199+00:00) for order
+[INFO: 2022-05-31 21:52:17,495] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:17,497] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:52:17,498] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:52:17,502] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 21:52:17,547] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 21:52:17,586] models | save:499 - Added end time(2022-05-30 08:22:16+00:00) for order
+[INFO: 2022-05-31 21:52:17,587] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 21:52:17,588] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:17,592] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:17,660] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 21:52:17,959] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:52:18,173] customuser_serializers | create:175 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-05-31 21:52:18,199] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:52:18,199] customuser_serializers | update:235 - Data for user M  was updated
+[INFO: 2022-05-31 21:52:18,295] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-05-31 21:52:18,296] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-05-31 21:52:18,297] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-05-31 21:52:55,462] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 21:52:56,342] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 21:52:56,379] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 21:52:56,380] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 21:52:56,513] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 21:52:56,545] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 21:52:56,580] models | save:499 - Added end time(2022-05-30 08:17:16+00:00) for order
+[INFO: 2022-05-31 21:52:56,623] models | save:499 - Added end time(2022-05-31 19:14:56.623394+00:00) for order
+[INFO: 2022-05-31 21:52:56,626] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:56,640] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:56,642] models | save:499 - Added end time(2022-05-31 19:14:56.623394+00:00) for order
+[INFO: 2022-05-31 21:52:56,647] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:56,647] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:52:56,647] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:52:56,649] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 21:52:57,543] models | save:499 - Added end time(2022-05-31 19:26:57.543119+00:00) for order
+[INFO: 2022-05-31 21:52:57,544] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:57,549] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:57,551] models | save:499 - Added end time(2022-05-31 19:26:57.543119+00:00) for order
+[INFO: 2022-05-31 21:52:57,553] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:57,553] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:52:57,554] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:52:57,555] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 21:52:57,556] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 21:52:57,576] models | save:499 - Added end time(2022-05-31 19:36:57.575121+00:00) for order
+[INFO: 2022-05-31 21:52:57,576] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:57,579] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 21:52:57,603] models | save:499 - Added end time(2022-05-31 19:32:57.603119+00:00) for order
+[INFO: 2022-05-31 21:52:57,604] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:57,613] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:57,614] models | save:499 - Added end time(2022-05-31 19:32:57.603119+00:00) for order
+[INFO: 2022-05-31 21:52:57,616] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:57,616] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 21:52:57,616] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 21:52:57,618] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 21:52:57,662] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 21:52:57,707] models | save:499 - Added end time(2022-05-30 08:37:16+00:00) for order
+[INFO: 2022-05-31 21:52:57,708] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 21:52:57,710] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 21:52:57,716] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 21:52:57,789] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:00:40,842] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 22:00:41,701] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:00:41,725] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:00:41,726] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:00:41,827] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:00:41,848] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:00:41,873] models | save:499 - Added end time(2022-05-30 08:09:16+00:00) for order
+[INFO: 2022-05-31 22:00:41,897] models | save:499 - Added end time(2022-05-31 19:53:41.897525+00:00) for order
+[INFO: 2022-05-31 22:00:41,900] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:41,903] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:41,904] models | save:499 - Added end time(2022-05-31 19:53:41.897525+00:00) for order
+[INFO: 2022-05-31 22:00:41,908] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:00:41,908] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:00:41,908] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:00:41,909] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:00:42,803] models | save:499 - Added end time(2022-05-31 19:31:42.803945+00:00) for order
+[INFO: 2022-05-31 22:00:42,804] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:42,807] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:42,808] models | save:499 - Added end time(2022-05-31 19:31:42.803945+00:00) for order
+[INFO: 2022-05-31 22:00:42,810] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:00:42,810] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:00:42,810] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:00:42,812] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:00:42,814] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:00:42,827] models | save:499 - Added end time(2022-05-31 19:54:42.827866+00:00) for order
+[INFO: 2022-05-31 22:00:42,828] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:42,831] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:00:42,847] models | save:499 - Added end time(2022-05-31 19:41:42.847862+00:00) for order
+[INFO: 2022-05-31 22:00:42,848] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:42,854] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:42,855] models | save:499 - Added end time(2022-05-31 19:41:42.847862+00:00) for order
+[INFO: 2022-05-31 22:00:42,856] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:00:42,856] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:00:42,857] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:00:42,858] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:00:42,885] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:00:42,908] models | save:499 - Added end time(2022-05-30 08:25:16+00:00) for order
+[INFO: 2022-05-31 22:00:42,909] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:00:42,910] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:00:42,914] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:00:42,959] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:01:32,749] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 22:01:33,766] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:01:33,816] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:01:33,822] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:01:33,976] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:01:34,016] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:01:34,060] models | save:499 - Added end time(2022-05-30 08:08:16+00:00) for order
+[INFO: 2022-05-31 22:01:34,119] models | save:499 - Added end time(2022-05-31 19:23:34.119431+00:00) for order
+[INFO: 2022-05-31 22:01:34,120] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:34,123] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:34,124] models | save:499 - Added end time(2022-05-31 19:23:34.119431+00:00) for order
+[INFO: 2022-05-31 22:01:34,126] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:01:34,126] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:01:34,126] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:01:34,130] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:01:35,038] models | save:499 - Added end time(2022-05-31 19:18:35.038892+00:00) for order
+[INFO: 2022-05-31 22:01:35,039] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:35,044] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:35,050] models | save:499 - Added end time(2022-05-31 19:18:35.038892+00:00) for order
+[INFO: 2022-05-31 22:01:35,053] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:01:35,055] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:01:35,055] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:01:35,058] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:01:35,061] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:01:35,070] models | save:499 - Added end time(2022-05-31 19:54:35.070926+00:00) for order
+[INFO: 2022-05-31 22:01:35,071] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:35,075] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:01:35,102] models | save:499 - Added end time(2022-05-31 19:29:35.102906+00:00) for order
+[INFO: 2022-05-31 22:01:35,104] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:35,114] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:35,115] models | save:499 - Added end time(2022-05-31 19:29:35.102906+00:00) for order
+[INFO: 2022-05-31 22:01:35,117] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:01:35,117] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:01:35,117] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:01:35,118] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:01:35,162] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:01:35,206] models | save:499 - Added end time(2022-05-30 08:03:16+00:00) for order
+[INFO: 2022-05-31 22:01:35,208] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:01:35,208] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:01:35,213] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:01:35,291] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:02:41,136] views | OrderListCreateView:137 - Orders was loaded
+[INFO: 2022-05-31 22:02:42,034] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:02:42,063] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:02:42,064] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:02:42,218] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:02:42,262] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:02:42,284] models | save:499 - Added end time(2022-05-30 07:59:16+00:00) for order
+[INFO: 2022-05-31 22:02:42,341] models | save:499 - Added end time(2022-05-31 19:46:42.340718+00:00) for order
+[INFO: 2022-05-31 22:02:42,341] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:42,344] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:42,345] models | save:499 - Added end time(2022-05-31 19:46:42.340718+00:00) for order
+[INFO: 2022-05-31 22:02:42,347] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:02:42,347] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:02:42,347] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:02:42,348] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:02:43,247] models | save:499 - Added end time(2022-05-31 19:35:43.247742+00:00) for order
+[INFO: 2022-05-31 22:02:43,248] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:43,257] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:43,259] models | save:499 - Added end time(2022-05-31 19:35:43.247742+00:00) for order
+[INFO: 2022-05-31 22:02:43,262] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:02:43,262] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:02:43,263] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:02:43,265] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:02:43,267] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:02:43,288] models | save:499 - Added end time(2022-05-31 19:31:43.288774+00:00) for order
+[INFO: 2022-05-31 22:02:43,290] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:43,294] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:02:43,311] models | save:499 - Added end time(2022-05-31 19:50:43.311886+00:00) for order
+[INFO: 2022-05-31 22:02:43,312] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:43,327] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:43,329] models | save:499 - Added end time(2022-05-31 19:50:43.311886+00:00) for order
+[INFO: 2022-05-31 22:02:43,333] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:02:43,334] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:02:43,334] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:02:43,336] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:02:43,367] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:02:43,394] models | save:499 - Added end time(2022-05-30 08:03:16+00:00) for order
+[INFO: 2022-05-31 22:02:43,398] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:02:43,399] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:02:43,406] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:02:43,478] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:03:54,627] views | OrderListCreateView:137 - Orders was loaded
+[ERROR: 2022-05-31 22:03:55,452] business_serializers | validate_owner:35 - Failed owner validation
+[ERROR: 2022-05-31 22:03:55,480] business_serializers | validate_owner:35 - Failed owner validation
+[ERROR: 2022-05-31 22:03:55,510] business_serializers | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 22:03:55,597] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:03:55,619] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:03:55,621] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:03:55,767] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:03:55,817] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:03:55,858] models | save:499 - Added end time(2022-05-30 08:05:16+00:00) for order
+[INFO: 2022-05-31 22:03:55,907] models | save:499 - Added end time(2022-05-31 19:22:55.907639+00:00) for order
+[INFO: 2022-05-31 22:03:55,909] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:55,913] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:55,915] models | save:499 - Added end time(2022-05-31 19:22:55.907639+00:00) for order
+[INFO: 2022-05-31 22:03:55,925] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:03:55,926] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:03:55,926] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:03:55,930] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:03:56,823] models | save:499 - Added end time(2022-05-31 19:54:56.823309+00:00) for order
+[INFO: 2022-05-31 22:03:56,824] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:56,827] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:56,832] models | save:499 - Added end time(2022-05-31 19:54:56.823309+00:00) for order
+[INFO: 2022-05-31 22:03:56,836] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:03:56,836] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:03:56,837] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:03:56,838] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:03:56,839] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:03:56,854] models | save:499 - Added end time(2022-05-31 19:32:56.854315+00:00) for order
+[INFO: 2022-05-31 22:03:56,855] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:56,858] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:03:56,881] models | save:499 - Added end time(2022-05-31 19:46:56.881314+00:00) for order
+[INFO: 2022-05-31 22:03:56,882] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:56,890] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:56,892] models | save:499 - Added end time(2022-05-31 19:46:56.881314+00:00) for order
+[INFO: 2022-05-31 22:03:56,896] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:03:56,896] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:03:56,896] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:03:56,899] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:03:56,934] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:03:56,963] models | save:499 - Added end time(2022-05-30 08:03:16+00:00) for order
+[INFO: 2022-05-31 22:03:56,964] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:03:56,965] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:03:56,970] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:03:57,034] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:14:48,336] views | OrderListCreateView:137 - Orders was loaded
+[ERROR: 2022-05-31 22:14:49,153] business_serializers | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 22:14:49,192] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:14:49,239] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:14:49,355] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:14:49,408] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:14:49,409] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:14:49,572] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:14:49,617] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:14:49,646] models | save:499 - Added end time(2022-05-30 08:24:16+00:00) for order
+[INFO: 2022-05-31 22:14:49,712] models | save:499 - Added end time(2022-05-31 19:32:49.711658+00:00) for order
+[INFO: 2022-05-31 22:14:49,714] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:49,730] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:49,734] models | save:499 - Added end time(2022-05-31 19:32:49.711658+00:00) for order
+[INFO: 2022-05-31 22:14:49,735] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:14:49,735] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:14:49,736] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:14:49,737] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:14:50,644] models | save:499 - Added end time(2022-05-31 19:45:50.644220+00:00) for order
+[INFO: 2022-05-31 22:14:50,645] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:50,648] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:50,654] models | save:499 - Added end time(2022-05-31 19:45:50.644220+00:00) for order
+[INFO: 2022-05-31 22:14:50,657] views | get:215 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:14:50,657] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:14:50,657] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:14:50,660] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:14:50,662] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:14:50,678] models | save:499 - Added end time(2022-05-31 19:41:50.678256+00:00) for order
+[INFO: 2022-05-31 22:14:50,679] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:50,683] views | get:219 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:14:50,705] models | save:499 - Added end time(2022-05-31 19:35:50.705254+00:00) for order
+[INFO: 2022-05-31 22:14:50,705] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:50,710] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:50,711] models | save:499 - Added end time(2022-05-31 19:35:50.705254+00:00) for order
+[INFO: 2022-05-31 22:14:50,716] views | get:205 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:14:50,717] views | send_signal:246 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:14:50,717] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:14:50,721] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:14:50,768] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:14:50,803] models | save:499 - Added end time(2022-05-30 08:30:16+00:00) for order
+[INFO: 2022-05-31 22:14:50,804] views | post:145 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:14:50,804] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:14:50,809] views | post:151 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:14:50,882] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:16:39,833] views | OrderListCreateView:138 - Orders was loaded
+[ERROR: 2022-05-31 22:16:40,761] business_serializers | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 22:16:40,794] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:16:40,822] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:16:40,916] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:16:40,961] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:16:40,962] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:16:41,109] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:16:41,148] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:16:41,197] models | save:499 - Added end time(2022-05-30 08:34:16+00:00) for order
+[INFO: 2022-05-31 22:16:41,243] models | save:499 - Added end time(2022-05-31 19:37:41.243375+00:00) for order
+[INFO: 2022-05-31 22:16:41,245] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:41,253] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:41,256] models | save:499 - Added end time(2022-05-31 19:37:41.243375+00:00) for order
+[INFO: 2022-05-31 22:16:41,259] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:16:41,260] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:16:41,260] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:16:41,264] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:16:42,157] models | save:499 - Added end time(2022-05-31 20:14:42.157205+00:00) for order
+[INFO: 2022-05-31 22:16:42,158] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:42,161] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:42,165] models | save:499 - Added end time(2022-05-31 20:14:42.157205+00:00) for order
+[INFO: 2022-05-31 22:16:42,167] views | get:216 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:16:42,167] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:16:42,167] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:16:42,169] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:16:42,171] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:16:42,188] models | save:499 - Added end time(2022-05-31 20:12:42.187228+00:00) for order
+[INFO: 2022-05-31 22:16:42,189] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:42,191] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:16:42,211] models | save:499 - Added end time(2022-05-31 20:10:42.211240+00:00) for order
+[INFO: 2022-05-31 22:16:42,212] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:42,223] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:42,228] models | save:499 - Added end time(2022-05-31 20:10:42.211240+00:00) for order
+[INFO: 2022-05-31 22:16:42,232] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:16:42,232] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:16:42,232] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:16:42,237] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:16:42,281] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:16:42,326] models | save:499 - Added end time(2022-05-30 08:36:16+00:00) for order
+[INFO: 2022-05-31 22:16:42,327] views | post:146 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:16:42,327] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:16:42,333] views | post:152 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:16:42,391] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:21:05,514] views | OrderListCreateView:138 - Orders was loaded
+[ERROR: 2022-05-31 22:21:06,395] business_serializers | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 22:21:06,413] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:21:06,437] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:21:06,493] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:21:06,517] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:21:06,525] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:21:06,637] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:21:06,669] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:21:06,701] models | save:499 - Added end time(2022-05-30 08:31:16+00:00) for order
+[INFO: 2022-05-31 22:21:06,733] models | save:499 - Added end time(2022-05-31 19:51:06.733458+00:00) for order
+[INFO: 2022-05-31 22:21:06,733] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:06,733] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:06,733] models | save:499 - Added end time(2022-05-31 19:51:06.733458+00:00) for order
+[INFO: 2022-05-31 22:21:06,733] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:21:06,733] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:21:06,733] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:21:06,741] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:21:07,615] models | save:499 - Added end time(2022-05-31 19:55:07.615334+00:00) for order
+[INFO: 2022-05-31 22:21:07,615] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:07,624] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:07,624] models | save:499 - Added end time(2022-05-31 19:55:07.615334+00:00) for order
+[INFO: 2022-05-31 22:21:07,632] views | get:216 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:21:07,632] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:21:07,632] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:21:07,632] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:21:07,632] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:21:07,648] models | save:499 - Added end time(2022-05-31 19:54:07.648093+00:00) for order
+[INFO: 2022-05-31 22:21:07,648] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:07,648] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:21:07,664] models | save:499 - Added end time(2022-05-31 20:16:07.664138+00:00) for order
+[INFO: 2022-05-31 22:21:07,664] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:07,672] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:07,680] models | save:499 - Added end time(2022-05-31 20:16:07.664138+00:00) for order
+[INFO: 2022-05-31 22:21:07,680] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:21:07,680] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:21:07,680] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:21:07,680] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:21:07,712] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:21:07,736] models | save:499 - Added end time(2022-05-30 08:03:16+00:00) for order
+[INFO: 2022-05-31 22:21:07,736] views | post:146 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:21:07,736] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:21:07,744] views | post:152 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:21:07,792] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:24:12,872] views | OrderListCreateView:138 - Orders was loaded
+[ERROR: 2022-05-31 22:24:13,669] business_serializers | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 22:24:13,718] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:24:13,774] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:24:13,798] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:24:13,798] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:24:13,902] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:24:13,918] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:24:13,942] models | save:499 - Added end time(2022-05-30 08:31:16+00:00) for order
+[INFO: 2022-05-31 22:24:13,974] models | save:499 - Added end time(2022-05-31 20:00:13.974744+00:00) for order
+[INFO: 2022-05-31 22:24:13,974] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:13,982] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:13,982] models | save:499 - Added end time(2022-05-31 20:00:13.974744+00:00) for order
+[INFO: 2022-05-31 22:24:13,982] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:24:13,982] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:24:13,982] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:24:13,982] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:24:14,907] models | save:499 - Added end time(2022-05-31 20:22:14.907854+00:00) for order
+[INFO: 2022-05-31 22:24:14,907] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:14,907] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:14,915] models | save:499 - Added end time(2022-05-31 20:22:14.907854+00:00) for order
+[INFO: 2022-05-31 22:24:14,915] views | get:216 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:24:14,915] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:24:14,915] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:24:14,915] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:24:14,915] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:24:14,931] models | save:499 - Added end time(2022-05-31 20:09:14.931856+00:00) for order
+[INFO: 2022-05-31 22:24:14,931] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:14,931] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:24:14,947] models | save:499 - Added end time(2022-05-31 20:20:14.947822+00:00) for order
+[INFO: 2022-05-31 22:24:14,947] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:14,955] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:14,955] models | save:499 - Added end time(2022-05-31 20:20:14.947822+00:00) for order
+[INFO: 2022-05-31 22:24:14,955] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:24:14,963] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:24:14,963] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:24:14,963] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:24:14,987] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:24:15,003] models | save:499 - Added end time(2022-05-30 08:02:16+00:00) for order
+[INFO: 2022-05-31 22:24:15,011] views | post:146 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:24:15,011] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:24:15,011] views | post:152 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:24:15,059] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:28:13,279] views | OrderListCreateView:138 - Orders was loaded
+[ERROR: 2022-05-31 22:28:14,028] business_serializers | validate_owner:35 - Failed owner validation
+[INFO: 2022-05-31 22:28:14,087] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-05-31 22:28:14,167] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:28:14,199] models | create_position:235 - New position with id=2 was created
+[INFO: 2022-05-31 22:28:14,199] models | get_all_specialists:244 - Got all specialists from business positions
+[INFO: 2022-05-31 22:28:14,343] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:28:14,375] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:28:14,407] models | save:499 - Added end time(2022-05-30 08:26:16+00:00) for order
+[INFO: 2022-05-31 22:28:14,439] models | save:499 - Added end time(2022-05-31 20:00:14.439944+00:00) for order
+[INFO: 2022-05-31 22:28:14,447] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:14,447] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:14,447] models | save:499 - Added end time(2022-05-31 20:00:14.439944+00:00) for order
+[INFO: 2022-05-31 22:28:14,455] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:28:14,455] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:28:14,455] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:28:14,455] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:28:15,375] models | save:499 - Added end time(2022-05-31 19:51:15.375182+00:00) for order
+[INFO: 2022-05-31 22:28:15,375] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:15,383] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:15,383] models | save:499 - Added end time(2022-05-31 19:51:15.375182+00:00) for order
+[INFO: 2022-05-31 22:28:15,383] views | get:216 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-05-31 22:28:15,383] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:28:15,383] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:28:15,383] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-05-31 22:28:15,391] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:28:15,399] models | save:499 - Added end time(2022-05-31 19:59:15.399213+00:00) for order
+[INFO: 2022-05-31 22:28:15,399] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:15,407] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-05-31 22:28:15,423] models | save:499 - Added end time(2022-05-31 20:09:15.423216+00:00) for order
+[INFO: 2022-05-31 22:28:15,423] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:15,431] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:15,439] models | save:499 - Added end time(2022-05-31 20:09:15.423216+00:00) for order
+[INFO: 2022-05-31 22:28:15,439] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-05-31 22:28:15,439] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-05-31 22:28:15,439] signals | send_order_status_for_customer:24 - Signal was received from OrderApprovingView
+[INFO: 2022-05-31 22:28:15,447] signals | send_order_status_for_customer:32 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-05-31 22:28:15,487] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-05-31 22:28:15,519] models | save:499 - Added end time(2022-05-30 08:33:16+00:00) for order
+[INFO: 2022-05-31 22:28:15,519] views | post:146 - Order #1 with Service_1 was created
+[INFO: 2022-05-31 22:28:15,519] tokens | _make_hash_value:34 - Token for Order #1 was created
+[INFO: 2022-05-31 22:28:15,527] views | post:152 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-05-31 22:28:15,591] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-05-31 22:28:25,468] views | OrderListCreateView:138 - Orders was loaded
+[ERROR: 2022-06-01 20:48:24,144] business_serializers | validate_owner:35 - Failed owner validation
+[INFO: 2022-06-01 20:48:24,240] business_serializers | validate_owner:41 - Sucessfully validated owner
+[INFO: 2022-06-01 20:48:24,295] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 20:48:24,319] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 20:48:24,327] models | get_all_specialists:255 - Got all specialists from business positions
+[INFO: 2022-06-01 20:48:24,455] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-06-01 20:48:24,487] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 20:48:24,519] models | save:505 - Added end time(2022-05-30 08:00:16+00:00) for order
+[INFO: 2022-06-01 20:48:24,559] models | save:505 - Added end time(2022-06-01 18:35:24.559906+00:00) for order
+[INFO: 2022-06-01 20:48:24,559] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:24,559] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:24,567] models | save:505 - Added end time(2022-06-01 18:35:24.559906+00:00) for order
+[INFO: 2022-06-01 20:48:24,567] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 20:48:24,567] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-06-01 20:48:24,567] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 20:48:24,567] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 20:48:25,501] models | save:505 - Added end time(2022-06-01 18:07:25.501286+00:00) for order
+[INFO: 2022-06-01 20:48:25,501] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:25,510] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:25,510] models | save:505 - Added end time(2022-06-01 18:07:25.501286+00:00) for order
+[INFO: 2022-06-01 20:48:25,510] views | get:216 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-06-01 20:48:25,510] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-06-01 20:48:25,510] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 20:48:25,510] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-06-01 20:48:25,510] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-06-01 20:48:25,534] models | save:505 - Added end time(2022-06-01 18:20:25.534055+00:00) for order
+[INFO: 2022-06-01 20:48:25,534] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:25,534] views | get:220 - Token for Order #1 is not valid
+[INFO: 2022-06-01 20:48:25,550] models | save:505 - Added end time(2022-06-01 18:34:25.550046+00:00) for order
+[INFO: 2022-06-01 20:48:25,550] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:25,558] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:25,566] models | save:505 - Added end time(2022-06-01 18:34:25.550046+00:00) for order
+[INFO: 2022-06-01 20:48:25,566] views | get:206 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 20:48:25,566] views | send_signal:247 - Signal was sent with Order #1
+[INFO: 2022-06-01 20:48:25,566] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 20:48:25,566] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 20:48:25,590] order_serializers | create:54 - Customer and specialist are the same person!
+[INFO: 2022-06-01 20:48:25,614] models | save:505 - Added end time(2022-05-30 08:07:16+00:00) for order
+[INFO: 2022-06-01 20:48:25,614] views | post:146 - Order #1 with Service_1 was created
+[INFO: 2022-06-01 20:48:25,614] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 20:48:25,630] views | post:152 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-06-01 20:48:25,702] order_serializers | create:44 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 20:48:25,798] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:25,996] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 20:48:26,011] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:26,214] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 20:48:26,228] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:26,450] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 20:48:26,450] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:26,669] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 20:48:26,669] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:26,880] customuser_serializers | create:173 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-06-01 20:48:26,897] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:27,092] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 20:48:27,108] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:27,295] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 20:48:27,320] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:27,518] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 20:48:27,533] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:27,729] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 20:48:27,748] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:27,957] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 20:48:27,957] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:28,160] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 20:48:28,176] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 20:48:28,182] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:28,396] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 20:48:28,404] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:28,600] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 20:48:28,720] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:28,924] customuser_serializers | create:173 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-06-01 20:48:28,952] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 20:48:28,952] customuser_serializers | update:233 - Data for user M  was updated
+[INFO: 2022-06-01 20:48:29,025] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 20:48:29,025] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-06-01 20:48:29,025] customuser_serializers | validate:83 - Password and Confirm password is checked
+[ERROR: 2022-06-01 21:19:28,566] business_serializers | validate_owner:36 - Failed owner validation
+[INFO: 2022-06-01 21:19:28,638] business_serializers | validate_owner:42 - Sucessfully validated owner
+[INFO: 2022-06-01 21:19:28,702] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 21:19:28,735] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 21:19:28,735] models | get_all_specialists:255 - Got all specialists from business positions
+[INFO: 2022-06-01 21:19:28,871] order_serializers | create:55 - Customer and specialist are the same person!
+[INFO: 2022-06-01 21:19:28,903] order_serializers | create:45 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 21:19:28,935] models | save:503 - Added end time(2022-05-30 08:22:16+00:00) for order
+[INFO: 2022-06-01 21:19:28,975] models | save:503 - Added end time(2022-06-01 19:19:28.975801+00:00) for order
+[INFO: 2022-06-01 21:19:28,975] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:28,975] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:28,983] models | save:503 - Added end time(2022-06-01 19:19:28.975801+00:00) for order
+[INFO: 2022-06-01 21:19:28,983] views | get:208 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 21:19:28,983] views | send_signal:249 - Signal was sent with Order #1
+[INFO: 2022-06-01 21:19:28,983] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 21:19:28,983] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 21:19:29,885] models | save:503 - Added end time(2022-06-01 18:34:29.885138+00:00) for order
+[INFO: 2022-06-01 21:19:29,885] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:29,888] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:29,888] models | save:503 - Added end time(2022-06-01 18:34:29.885138+00:00) for order
+[INFO: 2022-06-01 21:19:29,896] views | get:218 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-06-01 21:19:29,896] views | send_signal:249 - Signal was sent with Order #1
+[INFO: 2022-06-01 21:19:29,896] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 21:19:29,896] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-06-01 21:19:29,896] views | get:222 - Token for Order #1 is not valid
+[INFO: 2022-06-01 21:19:29,912] models | save:503 - Added end time(2022-06-01 18:55:29.912454+00:00) for order
+[INFO: 2022-06-01 21:19:29,912] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:29,912] views | get:222 - Token for Order #1 is not valid
+[INFO: 2022-06-01 21:19:29,936] models | save:503 - Added end time(2022-06-01 19:07:29.936495+00:00) for order
+[INFO: 2022-06-01 21:19:29,936] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:29,944] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:29,944] models | save:503 - Added end time(2022-06-01 19:07:29.936495+00:00) for order
+[INFO: 2022-06-01 21:19:29,952] views | get:208 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 21:19:29,952] views | send_signal:249 - Signal was sent with Order #1
+[INFO: 2022-06-01 21:19:29,952] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 21:19:29,952] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 21:19:29,984] order_serializers | create:55 - Customer and specialist are the same person!
+[INFO: 2022-06-01 21:19:30,016] models | save:503 - Added end time(2022-05-30 08:23:16+00:00) for order
+[INFO: 2022-06-01 21:19:30,016] views | post:148 - Order #1 with Service_1 was created
+[INFO: 2022-06-01 21:19:30,016] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 21:19:30,024] views | post:154 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-06-01 21:19:30,080] order_serializers | create:45 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 21:19:30,168] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:30,365] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 21:19:30,381] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:30,576] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 21:19:30,593] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:30,804] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 21:19:30,813] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:30,996] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 21:19:31,012] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:31,207] customuser_serializers | create:173 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-06-01 21:19:31,222] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:31,415] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 21:19:31,431] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:31,618] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 21:19:31,637] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:31,829] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 21:19:31,845] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:32,032] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 21:19:32,051] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:32,250] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 21:19:32,258] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:32,453] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 21:19:32,469] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 21:19:32,472] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:32,684] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 21:19:32,684] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:32,894] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 21:19:33,000] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:33,196] customuser_serializers | create:173 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-06-01 21:19:33,232] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 21:19:33,232] customuser_serializers | update:233 - Data for user M  was updated
+[INFO: 2022-06-01 21:19:33,363] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 21:19:33,366] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-06-01 21:19:33,366] customuser_serializers | validate:83 - Password and Confirm password is checked
+[ERROR: 2022-06-01 23:38:44,305] business_serializers | validate_owner:36 - Failed owner validation
+[INFO: 2022-06-01 23:38:44,384] business_serializers | validate_owner:42 - Sucessfully validated owner
+[INFO: 2022-06-01 23:38:44,483] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 23:38:44,522] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 23:38:44,524] models | get_all_specialists:255 - Got all specialists from business positions
+[INFO: 2022-06-01 23:38:44,759] order_serializers | create:55 - Customer and specialist are the same person!
+[INFO: 2022-06-01 23:38:44,812] order_serializers | create:45 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 23:38:44,857] models | save:503 - Added end time(2022-05-30 08:22:16+00:00) for order
+[INFO: 2022-06-01 23:38:44,923] models | save:503 - Added end time(2022-06-01 20:59:44.923075+00:00) for order
+[INFO: 2022-06-01 23:38:44,924] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:44,927] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:44,928] models | save:503 - Added end time(2022-06-01 20:59:44.923075+00:00) for order
+[INFO: 2022-06-01 23:38:44,930] views | get:209 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 23:38:44,930] views | send_signal:250 - Signal was sent with Order #1
+[INFO: 2022-06-01 23:38:44,930] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 23:38:44,934] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 23:38:45,870] models | save:503 - Added end time(2022-06-01 21:06:45.869608+00:00) for order
+[INFO: 2022-06-01 23:38:45,873] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:45,878] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:45,879] models | save:503 - Added end time(2022-06-01 21:06:45.869608+00:00) for order
+[INFO: 2022-06-01 23:38:45,884] views | get:219 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-06-01 23:38:45,885] views | send_signal:250 - Signal was sent with Order #1
+[INFO: 2022-06-01 23:38:45,885] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 23:38:45,886] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-06-01 23:38:45,888] views | get:223 - Token for Order #1 is not valid
+[INFO: 2022-06-01 23:38:45,908] models | save:503 - Added end time(2022-06-01 20:57:45.908682+00:00) for order
+[INFO: 2022-06-01 23:38:45,909] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:45,915] views | get:223 - Token for Order #1 is not valid
+[INFO: 2022-06-01 23:38:45,939] models | save:503 - Added end time(2022-06-01 21:10:45.939691+00:00) for order
+[INFO: 2022-06-01 23:38:45,941] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:45,947] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:45,950] models | save:503 - Added end time(2022-06-01 21:10:45.939691+00:00) for order
+[INFO: 2022-06-01 23:38:45,955] views | get:209 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 23:38:45,956] views | send_signal:250 - Signal was sent with Order #1
+[INFO: 2022-06-01 23:38:45,956] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 23:38:45,960] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 23:38:46,010] order_serializers | create:55 - Customer and specialist are the same person!
+[INFO: 2022-06-01 23:38:46,075] models | save:503 - Added end time(2022-05-30 08:07:16+00:00) for order
+[INFO: 2022-06-01 23:38:46,077] views | post:149 - Order #1 with Service_1 was created
+[INFO: 2022-06-01 23:38:46,078] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:38:46,086] views | post:155 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-06-01 23:38:46,192] order_serializers | create:45 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 23:38:46,312] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:46,566] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:38:46,575] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:46,800] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:38:46,820] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:47,052] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:38:47,061] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:47,305] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:38:47,313] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:47,529] customuser_serializers | create:173 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-06-01 23:38:47,538] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:47,763] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:38:47,771] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:47,979] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:38:47,993] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:48,222] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:38:48,232] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:48,464] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:38:48,476] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:48,728] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:38:48,815] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:49,140] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:38:49,158] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 23:38:49,182] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:49,515] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:38:49,549] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:49,833] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:38:49,988] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:50,225] customuser_serializers | create:173 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-06-01 23:38:50,256] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:38:50,256] customuser_serializers | update:233 - Data for user M  was updated
+[INFO: 2022-06-01 23:38:50,413] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 23:38:50,414] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-06-01 23:38:50,415] customuser_serializers | validate:83 - Password and Confirm password is checked
+[ERROR: 2022-06-01 23:53:49,774] business_serializers | validate_owner:36 - Failed owner validation
+[INFO: 2022-06-01 23:53:49,862] business_serializers | validate_owner:42 - Sucessfully validated owner
+[INFO: 2022-06-01 23:53:49,974] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 23:53:49,998] models | create_position:246 - New position with id=2 was created
+[INFO: 2022-06-01 23:53:49,998] models | get_all_specialists:255 - Got all specialists from business positions
+[INFO: 2022-06-01 23:53:50,158] order_serializers | create:55 - Customer and specialist are the same person!
+[INFO: 2022-06-01 23:53:50,198] order_serializers | create:45 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 23:53:50,230] models | save:503 - Added end time(2022-05-30 07:58:16+00:00) for order
+[INFO: 2022-06-01 23:53:50,270] models | save:503 - Added end time(2022-06-01 21:51:50.270239+00:00) for order
+[INFO: 2022-06-01 23:53:50,270] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:50,278] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:50,278] models | save:503 - Added end time(2022-06-01 21:51:50.270239+00:00) for order
+[INFO: 2022-06-01 23:53:50,286] views | get:209 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 23:53:50,286] views | send_signal:250 - Signal was sent with Order #1
+[INFO: 2022-06-01 23:53:50,286] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 23:53:50,294] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 23:53:51,185] models | save:503 - Added end time(2022-06-01 21:24:51.185662+00:00) for order
+[INFO: 2022-06-01 23:53:51,185] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:51,194] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:51,194] models | save:503 - Added end time(2022-06-01 21:24:51.185662+00:00) for order
+[INFO: 2022-06-01 23:53:51,194] views | get:219 - Order #1 was declined by specialist UserSpecialist 
+[INFO: 2022-06-01 23:53:51,194] views | send_signal:250 - Signal was sent with Order #1
+[INFO: 2022-06-01 23:53:51,194] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 23:53:51,194] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Declined)
+[INFO: 2022-06-01 23:53:51,194] views | get:223 - Token for Order #1 is not valid
+[INFO: 2022-06-01 23:53:51,225] models | save:503 - Added end time(2022-06-01 21:46:51.225526+00:00) for order
+[INFO: 2022-06-01 23:53:51,225] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:51,225] views | get:223 - Token for Order #1 is not valid
+[INFO: 2022-06-01 23:53:51,249] models | save:503 - Added end time(2022-06-01 21:22:51.249576+00:00) for order
+[INFO: 2022-06-01 23:53:51,257] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:51,265] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:51,265] models | save:503 - Added end time(2022-06-01 21:22:51.249576+00:00) for order
+[INFO: 2022-06-01 23:53:51,273] views | get:209 - Order #1 was approved by the specialist UserSpecialist 
+[INFO: 2022-06-01 23:53:51,273] views | send_signal:250 - Signal was sent with Order #1
+[INFO: 2022-06-01 23:53:51,273] signals | send_order_status_for_customer:25 - Signal was received from OrderApprovingView
+[INFO: 2022-06-01 23:53:51,273] signals | send_order_status_for_customer:33 - Email was sent to the UserCustomer  with specialist UserSpecialist decision(order was Approved)
+[INFO: 2022-06-01 23:53:51,313] order_serializers | create:55 - Customer and specialist are the same person!
+[INFO: 2022-06-01 23:53:51,345] models | save:503 - Added end time(2022-05-30 08:09:16+00:00) for order
+[INFO: 2022-06-01 23:53:51,353] views | post:149 - Order #1 with Service_1 was created
+[INFO: 2022-06-01 23:53:51,353] tokens | _make_hash_value:35 - Token for Order #1 was created
+[INFO: 2022-06-01 23:53:51,361] views | post:155 - Order #1: approving email was sent to the specialist UserSpecialist 
+[INFO: 2022-06-01 23:53:51,441] order_serializers | create:45 - Specialist UserSpecialist does not have such service
+[INFO: 2022-06-01 23:53:51,545] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:51,771] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:53:51,771] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:51,967] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:53:51,996] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:52,212] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:53:52,227] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:52,424] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:53:52,439] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:52,642] customuser_serializers | create:173 - User Specialist_6 with m61@com.ua was created.
+[INFO: 2022-06-01 23:53:52,649] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:52,862] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:53:52,862] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:53,073] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:53:53,086] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:53,289] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:53:53,289] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:53,501] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:53:53,510] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:53,710] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:53:53,710] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:53,913] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:53:53,913] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 23:53:53,924] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:54,130] customuser_serializers | create:173 - User Specialist_6 with m611@com.ua was created.
+[INFO: 2022-06-01 23:53:54,130] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:54,333] customuser_serializers | create:173 - User Specialist_6 with m6111@com.ua was created.
+[INFO: 2022-06-01 23:53:54,423] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:54,618] customuser_serializers | create:173 - User Specialist_6 with m6@com.ua was created.
+[INFO: 2022-06-01 23:53:54,654] customuser_serializers | validate:83 - Password and Confirm password is checked
+[INFO: 2022-06-01 23:53:54,654] customuser_serializers | update:233 - Data for user M  was updated
+[INFO: 2022-06-01 23:53:54,735] customuser_serializers | validate:70 - Password: Password confirmation does not match
+[INFO: 2022-06-01 23:53:54,735] customuser_serializers | validate:77 - Password: One of the password fields is empty
+[INFO: 2022-06-01 23:53:54,735] customuser_serializers | validate:83 - Password and Confirm password is checked
