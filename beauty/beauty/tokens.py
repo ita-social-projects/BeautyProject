@@ -3,6 +3,7 @@
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 

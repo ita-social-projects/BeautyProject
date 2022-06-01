@@ -20,13 +20,14 @@ from .permissions import (IsAccountOwnerOrReadOnly,
 from .serializers.business_serializers import BusinessListCreateSerializer
 from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order, Business, Position
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUserOrReadOnly)
+
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
 from api.serializers.order_serializers import (OrderSerializer,
-                                               OrderDetailSerializer)
+                                               OrderDeleteSerializer)
 from .serializers.business_serializers import BusinessListCreateSerializer
 from .serializers.position_serializer import PositionSerializer
 from beauty import signals
@@ -137,11 +138,9 @@ class BusinessListCreateView(ListCreateAPIView):
 class OrderListCreateView(ListCreateAPIView):
     """Generic API for orders custom POST method."""
 
-    queryset = Order.objects.exclude(status__in=[2, 4])
+    queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    logger.info("Orders was loaded")
 
     def post(self, request, *args, **kwargs):
         """Create an order and add an authenticated customer to it."""
@@ -166,9 +165,9 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy.
     """
 
-    queryset = Order.objects.all()
-    serializer_class = OrderDetailSerializer
-    permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
+    queryset = Order.objects.exclude(status__in=[2, 4])
+    serializer_class = OrderDeleteSerializer
+    permission_classes = (IsAuthenticated, IsOrderUser)
 
     def get_object(self):
         """Get object.
