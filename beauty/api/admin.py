@@ -1,4 +1,4 @@
-from api.models import CustomUser, Order, Service, Position, Business
+from api.models import CustomUser, Order, Service, Position, Business, Review
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import (UserAdmin as BaseUserAdmin,
@@ -50,5 +50,4 @@ admin.site.register(Order)
 admin.site.register(Service)
 admin.site.register(Position)
 admin.site.register(Business)
-
-
+admin.site.register(Review)

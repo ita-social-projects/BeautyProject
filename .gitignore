@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 .idea/
+.flake8
 
 # C extensions
 *.so
@@ -44,6 +45,7 @@ htmlcov/
 .tox/
 .nox/
 .coverage
+.coveragerc
 .coverage.*
 .cache
 nosetests.xml
