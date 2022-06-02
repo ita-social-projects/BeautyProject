@@ -19,4 +19,7 @@ urlpatterns = [
     path('order/<str:uid>/<str:token>/<str:status>/',
          OrderApprovingView.as_view(),
          name='order-approving'),
+    
+    path(r'<int:user>/reviews/add/', ReviewAddView.as_view(),
+         name='review-add'),
 ]
