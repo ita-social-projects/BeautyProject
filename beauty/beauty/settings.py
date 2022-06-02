@@ -113,15 +113,14 @@ DJOSER = {
     ],
     "HIDE_USERS": True,
 
-
     "SERIALIZERS": {
         "user": "api.serializers.customuser_serializers.CustomUserSerializer",
     },
+}
 
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 
 DATABASES = {
     # "default": {
@@ -207,6 +206,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
+
 
 SWAGGER_SETTINGS = {
     "exclude_namespaces": [],  # List URL namespaces to ignore
