@@ -27,8 +27,7 @@ from api.serializers.customuser_serializers import (CustomUserSerializer,
                                                     PasswordsValidation, CustomUserDetailSerializer)
 from rest_framework.test import APIRequestFactory
 from rest_framework.serializers import ValidationError
-from api.tests.factories import CustomUserFactory, GroupFactory
-
+from api.tests.factories import CustomUserFactory, GroupFactory, OrderFactory
 
 factory = APIRequestFactory()
 request = factory.get("/")
@@ -49,16 +48,32 @@ class CustomUserSerializerTestCase(TestCase):
                     "password": "0967478911m",
                     "confirm_password": "0967478911m"}
 
-    ecxpect_query = [{"url": "/api/v1/user/1/", "id": 1, "email": "user_1@com.ua",
-                      "first_name": "User_1", "patronymic": "", "last_name": "",
-                      "phone_number": "+380960000001", "bio": None, "rating": 0,
-                      "avatar": "/media/default_avatar.jpeg", "is_active": False,
-                      "groups": ["Specialist"], "specialist_orders": [], "customer_orders": []},
-                     {"url": "/api/v1/user/2/", "id": 2, "email": "user_2@com.ua",
-                      "first_name": "User_2", "patronymic": "", "last_name": "",
-                      "phone_number": "+380960000002", "bio": None, "rating": 0,
-                      "avatar": "/media/default_avatar.jpeg", "is_active": False,
-                      "groups": ["Customer"], "specialist_orders": [], "customer_orders": []}]
+    ecxpect_queryset = [
+        {"url": "/api/v1/user/1/", "id": 1, "email": "user_1@com.ua", "first_name": "User_1",
+         "patronymic": "", "last_name": "", "phone_number": "+380960000001", "bio": None,
+         "rating": 0, "avatar": "/media/default_avatar.jpeg", "is_active": False,
+         "groups": ["Specialist"], "specialist_orders": ["/api/v1/user/1/order/1/"],
+         "customer_orders": ["/api/v1/user/1/order/2/"]},
+        {"url": "/api/v1/user/2/", "id": 2, "email": "user_2@com.ua", "first_name": "User_2",
+         "patronymic": "", "last_name": "", "phone_number": "+380960000002", "bio": None,
+         "rating": 0, "avatar": "/media/default_avatar.jpeg", "is_active": False,
+         "groups": ["Customer"], "specialist_orders": [],
+         "customer_orders": ["/api/v1/user/2/order/1/"]}]
+
+    ecxpect_queryset2 = [
+        {"url": "http://testserver/api/v1/user/1/", "id": 1, "email": "user_1@com.ua",
+         "first_name": "User_1",
+         "patronymic": "", "last_name": "", "phone_number": "+380960000001", "bio": None,
+         "rating": 0, "avatar": "http://testserver/media/default_avatar.jpeg",
+         "is_active": False, "groups": ["Specialist"],
+         "specialist_orders": ["http://testserver/api/v1/user/1/order/1/"],
+         "customer_orders": ["http://testserver/api/v1/user/1/order/2/"]},
+        {"url": "http://testserver/api/v1/user/2/", "id": 2, "email": "user_2@com.ua",
+         "first_name": "User_2",
+         "patronymic": "", "last_name": "", "phone_number": "+380960000002", "bio": None,
+         "rating": 0, "avatar": "http://testserver/media/default_avatar.jpeg", "is_active": False,
+         "groups": ["Customer"], "specialist_orders": [],
+         "customer_orders": ["http://testserver/api/v1/user/2/order/1/"]}]
 
     def setUp(self):
         """This method adds needed info for tests."""
@@ -69,10 +84,14 @@ class CustomUserSerializerTestCase(TestCase):
                                             phone_number="+380960000001")
         self.customer = CustomUserFactory(first_name="User_2", email="user_2@com.ua",
                                           phone_number="+380960000002")
+        self.specialist2 = CustomUserFactory()
+        self.customer_order = OrderFactory(customer=self.customer, specialist=self.specialist)
+        self.specialist_order = OrderFactory(customer=self.specialist, specialist=self.specialist2)
         self.queryset = [self.specialist, self.customer]
 
         self.groups = GroupFactory.groups_for_test()
         self.groups.specialist.user_set.add(self.specialist)
+        self.groups.specialist.user_set.add(self.specialist2)
         self.groups.customer.user_set.add(self.customer)
 
     def test_valid_serializer(self):
@@ -137,45 +156,13 @@ class CustomUserSerializerTestCase(TestCase):
     def test_relative_hyperlinks(self):
         """Serialize all users with relative hyperlinks using CustomUserSerializer."""
         serializer = self.Serializer(self.queryset, many=True, context={"request": None})
-        self.assertEqual(serializer.data, self.ecxpect_query)
+        self.assertEqual(serializer.data, self.ecxpect_queryset)
 
     def test_reverse_many_to_many_retrieve(self):
         """Serialize all users with reverse many to many retrieve using CustomUserSerializer."""
-        for obj in self.ecxpect_query:
-            obj["url"] = f"http://testserver{obj['url']}"
-            obj["avatar"] = f"http://testserver{obj['avatar']}"
         serializer = self.Serializer(self.queryset, many=True, context={"request": request})
         with self.assertNumQueries(6):
-            self.assertEqual(serializer.data, self.ecxpect_query)
-
-    def test_deserialize_create_user(self):
-        """Deserializing a data and creating a new user."""
-        data = {"url": "http://testserver/api/v1/user/3/",
-                "id": 3,
-                "email": "m6@com.ua",
-                "first_name": "Specialist_6",
-                "patronymic": "PSpecialist_6",
-                "last_name": "LSpecialist_6",
-                "phone_number": "+380967470016",
-                "bio": "Specialist_6",
-                "rating": 0,
-                "is_active": True,
-                "groups": ["Specialist"],
-                "specialist_orders": [],
-                "customer_orders": [],
-                "password": "0967478911m",
-                "confirm_password": "0967478911m"}
-        serializer = self.Serializer(
-            data=data,
-            context={"request": request},
-        )
-        self.assertTrue(serializer.is_valid(raise_exception=True))
-        obj = serializer.save()
-        data.pop("confirm_password")
-        data.pop("password")
-        data["avatar"] = "http://testserver/media/default_avatar.jpeg"
-        self.assertEqual(serializer.data, data)
-        self.assertEqual(obj.email, "m6@com.ua")
+            self.assertEqual(serializer.data, self.ecxpect_queryset2)
 
     def test_deserialize_update_user(self):
         """Deserializing a data and updating a user data."""
