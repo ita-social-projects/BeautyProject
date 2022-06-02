@@ -4,6 +4,7 @@ from rest_framework import serializers
 from api.models import (Order, CustomUser, Service, Position)
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,7 +59,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
 
 
-class OrderDetailSerializer(serializers.ModelSerializer):
+class OrderDeleteSerializer(serializers.ModelSerializer):
     """Serializer for order cancellation."""
 
     reason = serializers.CharField(required=True)

@@ -5,6 +5,7 @@ from rest_framework.reverse import reverse
 from beauty.utils import StatusOrderEmail
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 order_status_changed = Signal()
