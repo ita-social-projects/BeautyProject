@@ -268,4 +268,6 @@ class ResetPasswordSerializer(PasswordsValidation):
 
             logger.info("Password: Fields should be valid")
 
-            raise serializers.ValidationError({"password": "Fields should be valid"})
+            raise serializers.ValidationError(
+                {"password": "Fields should be valid"},
+            )
