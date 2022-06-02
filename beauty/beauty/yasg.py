@@ -15,7 +15,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="beautyproject689@gmail.com"),
         license=openapi.License(name="BSD License"),
     ),
-    public=False,
+    public=True,
     permission_classes=(permissions.IsAuthenticatedOrReadOnly,),
 )
 
