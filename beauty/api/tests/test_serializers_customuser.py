@@ -7,8 +7,8 @@ Tests for CustomUser serializers:
 - Check serializer with invalid data type;
 - Check serializer without data;
 - Check serializer with data equal None;
-- Serialize all users with relative hyperlinks using CustomUserSerializer;
-- Serialize all users with reverse many to many retrieve using CustomUserSerializer;
+- Check serializer with customer instance data;
+- Check serializer with specialist instance data;
 - Deserializing a data and updating a user data with password data;
 - Deserializing a data and updating a user data without password data;
 - To_internal_value() is expected to return a str, but return int.
@@ -23,6 +23,7 @@ Passwords validation tests:
 from django.contrib.auth.hashers import check_password, make_password
 from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
+from rest_framework.reverse import reverse
 
 from api.serializers.customuser_serializers import (CustomUserSerializer,
                                                     PasswordsValidation, CustomUserDetailSerializer)
@@ -51,33 +52,6 @@ class CustomUserSerializerTestCase(TestCase):
                     "confirm_password": "0967478911m",
                     "groups": [4]}
 
-    ecxpect_queryset = [
-        {"url": "/api/v1/user/1/", "id": 1, "email": "user_1@com.ua", "first_name": "User_1",
-         "patronymic": "", "last_name": "", "phone_number": "+380960000001", "bio": None,
-         "rating": 0, "avatar": "/media/default_avatar.jpeg", "is_active": False,
-         "groups": ["Specialist"], "specialist_orders": ["/api/v1/user/1/order/1/"],
-         "customer_orders": ["/api/v1/user/1/order/2/"]},
-        {"url": "/api/v1/user/2/", "id": 2, "email": "user_2@com.ua", "first_name": "User_2",
-         "patronymic": "", "last_name": "", "phone_number": "+380960000002", "bio": None,
-         "rating": 0, "avatar": "/media/default_avatar.jpeg", "is_active": False,
-         "groups": ["Customer"], "specialist_orders": [],
-         "customer_orders": ["/api/v1/user/2/order/1/"]}]
-
-    ecxpect_queryset2 = [
-        {"url": "http://testserver/api/v1/user/1/", "id": 1, "email": "user_1@com.ua",
-         "first_name": "User_1",
-         "patronymic": "", "last_name": "", "phone_number": "+380960000001", "bio": None,
-         "rating": 0, "avatar": "http://testserver/media/default_avatar.jpeg",
-         "is_active": False, "groups": ["Specialist"],
-         "specialist_orders": ["http://testserver/api/v1/user/1/order/1/"],
-         "customer_orders": ["http://testserver/api/v1/user/1/order/2/"]},
-        {"url": "http://testserver/api/v1/user/2/", "id": 2, "email": "user_2@com.ua",
-         "first_name": "User_2",
-         "patronymic": "", "last_name": "", "phone_number": "+380960000002", "bio": None,
-         "rating": 0, "avatar": "http://testserver/media/default_avatar.jpeg", "is_active": False,
-         "groups": ["Customer"], "specialist_orders": [],
-         "customer_orders": ["http://testserver/api/v1/user/2/order/1/"]}]
-
     def setUp(self):
         """This method adds needed info for tests."""
         self.Serializer = CustomUserSerializer
@@ -91,11 +65,9 @@ class CustomUserSerializerTestCase(TestCase):
                                              phone_number="+380960000003")
         self.customer_order = OrderFactory(customer=self.customer, specialist=self.specialist)
         self.specialist_order = OrderFactory(customer=self.specialist, specialist=self.specialist2)
-        self.queryset = [self.specialist, self.customer]
 
         self.groups = GroupFactory.groups_for_test()
         self.groups.specialist.user_set.add(self.specialist)
-        self.groups.specialist.user_set.add(self.specialist2)
         self.groups.customer.user_set.add(self.customer)
 
     def test_valid_serializer(self):
@@ -157,22 +129,33 @@ class CustomUserSerializerTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertEqual(serializer.errors, {"non_field_errors": ["No data provided"]})
 
-    def test_relative_hyperlinks(self):
-        """Serialize all users with relative hyperlinks using CustomUserSerializer."""
-        serializer = self.Serializer(self.queryset, many=True, context={"request": None})
-        self.assertEqual(serializer.data, self.ecxpect_queryset)
+    def test_serialize_customer_instance(self):
+        """Check serializer with customer instance data."""
+        serializer = self.Serializer(self.customer, context={"request": request})
+        self.assertEqual(serializer.data["customer_orders"],
+                         [reverse("api:user-order-detail", request=request,
+                                  args=[self.customer.id, self.customer_order.id])])
+        self.assertEqual(serializer.data["specialist_orders"], [])
+        self.assertEqual(serializer.data["groups"], ["Customer"])
+        with self.assertRaises(KeyError):
+            serializer.data["password"]
 
-    def test_reverse_many_to_many_retrieve(self):
-        """Serialize all users with reverse many to many retrieve using CustomUserSerializer."""
-        serializer = self.Serializer(self.queryset, many=True, context={"request": request})
-        with self.assertNumQueries(6):
-            self.assertEqual(serializer.data, self.ecxpect_queryset2)
+    def test_serialize_specialist_instance(self):
+        """Check serializer with specialist instance data."""
+        customer_order = reverse("api:user-order-detail", request=request,
+                                 args=[self.specialist.id, self.specialist_order.id])
+        specialist_order = reverse("api:user-order-detail", request=request,
+                                   args=[self.specialist.id, self.customer_order.id])
+        serializer = self.Serializer(self.specialist, context={"request": request})
+        self.assertEqual(serializer.data["specialist_orders"], [specialist_order])
+        self.assertEqual(serializer.data["customer_orders"], [customer_order])
+        self.assertEqual(serializer.data["groups"], ["Specialist"])
 
     def test_deserialize_update_user_with_password(self):
         """Deserializing a data and updating a user data with password data."""
         data = {"first_name": "Specialist_1_1", "email": "test@com.ua",
                 "password": "0987654321s", "confirm_password": "0987654321s"}
-        instance = self.queryset[0]
+        instance = self.customer
         serializer = self.Detail_serializer(
             instance=instance, data=data,
             partial=True,
@@ -188,7 +171,7 @@ class CustomUserSerializerTestCase(TestCase):
         """Deserializing a data and updating a user data without password data."""
         data = {"first_name": "Specialist_1_2", "email": "test@com.ua",
                 "password": "", "confirm_password": ""}
-        instance = self.queryset[0]
+        instance = self.customer
         serializer = self.Detail_serializer(
             instance=instance, data=data,
             partial=True,
