@@ -1,5 +1,7 @@
 """All views for the BeatyProject."""
 
+import logging
+
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
@@ -22,12 +24,11 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  ResetPasswordSerializer)
 from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDetailSerializer)
-from .serializers.business_serializers import BusinessListCreateSerializer
 from .serializers.position_serializer import PositionSerializer
 
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
-import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ class UserActivationView(GenericAPIView):
 
 class ResetPasswordView(GenericAPIView):
     """Generic view for reset password."""
-    
+
     serializer_class = ResetPasswordSerializer
     model = CustomUser
 
@@ -141,6 +142,7 @@ class OrderListCreateView(ListCreateAPIView):
 
 class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """Generic API for orders custom GET, PUT and DELETE methods.
+
     RUD - Retrieve, Update, Destroy.
     """
 
@@ -172,17 +174,23 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
 
 class PositionListCreateView(ListCreateAPIView):
-    """Generic API for position POST methods"""
-    
+    """Generic API for position POST methods."""
+
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
+    permission_classes = (IsAuthenticated, )
 
+    def get_queryset(self):
+        """Filter positions for owner."""
+        if self.request.user:
+            logger.debug("A view to display list of positions of certain owner has opened")
 
-class BusinessListCreateView(ListCreateAPIView):
-    queryset = Business.objects.all()
-    serializer_class = BusinessListCreateSerializer
-    permission_classes = [IsAccountOwnerOrReadOnly, ]
+            businesses = Business.objects.filter(owner=self.request.user.id)
+            return Position.objects.filter(business__in=[business.id for business in businesses])
+        else:
+            logger.debug("A view to display list of all businesses has opened")
+
+            return Position.objects.all()
 
 
 class OrderApprovingView(ListCreateAPIView):
