@@ -122,15 +122,7 @@ class BusinessListCreateView(ListCreateAPIView):
 
     queryset = Business.objects.all()
     serializer_class = BusinessListCreateSerializer
-
-    def get_permissions(self):
-        """For business creation you need to be authentificated."""
-        if self.request.method == "POST":
-            self.permission_classes = (
-                IsAccountOwnerOrReadOnly,
-                IsAuthenticated,
-            )
-        return super().get_permissions()
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class OrderListCreateView(ListCreateAPIView):
@@ -282,6 +274,6 @@ class ReviewAddView(GenericAPIView):
             return Response(status=status.HTTP_201_CREATED)
         else:
             logger.info(
-                f"Error validating review: Field {serializer.errors.popitem()}"
+                f"Error validating review: Field {serializer.errors.popitem()}",
             )
             return Response(status=status.HTTP_400_BAD_REQUEST)

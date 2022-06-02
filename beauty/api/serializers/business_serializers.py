@@ -3,6 +3,7 @@
 from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
@@ -33,7 +34,7 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
         try:
             value.groups.get(name="Owner")
 
-        except User.DoesNotExist:
+        except Group.DoesNotExist:
             logger.error("Failed owner validation")
 
             raise ValidationError(
