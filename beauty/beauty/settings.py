@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "phonenumber_field",
     "address",
+    "drf_yasg",
     # project apps
     "api",
 ]
@@ -113,8 +114,8 @@ DJOSER = {
     "SERIALIZERS": {
         "user": "api.serializers.customuser_serializers.CustomUserSerializer",
     },
-
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -203,6 +204,27 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
+
+
+SWAGGER_SETTINGS = {
+    "exclude_namespaces": [],  # List URL namespaces to ignore
+    "SECURITY_DEFINITIONS": {
+        "JWT": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        },
+    },
+    "SUPPORTED_SUBMIT_METHODS": ["get", "put", "post", "delete", "patch"],
+    "SHOW_REQUEST_HEADERS": True,
+}
+
+
+REDOC_SETTINGS = {
+    "LAZY_RENDERING": False,
+}
+
+LOGIN_URL = "/auth/jwt/create/"
 
 ADMINS = [("Admin", config("EMAIL_HOST_USER"))]
 
