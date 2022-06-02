@@ -1,8 +1,10 @@
 """Module with app api urls."""
 
 from django.urls import path
-from .views import (CustomUserListCreateView, CustomUserDetailRUDView, ReviewAddView,
-                    OrderRetrieveUpdateDestroyView, OrderListCreateView, OrderApprovingView)
+from .views import (CustomUserListCreateView, CustomUserDetailRUDView,
+                    ReviewAddView, OrderRetrieveUpdateDestroyView,
+                    OrderListCreateView, OrderApprovingView,
+                    BusinessListCreateView)
 
 app_name = "api"     
 
