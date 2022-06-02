@@ -9,8 +9,9 @@ Tests for CustomUser serializers:
 - Check serializer with data equal None;
 - Serialize all users with relative hyperlinks using CustomUserSerializer;
 - Serialize all users with reverse many to many retrieve using CustomUserSerializer;
-- Deserializing a data and creating a new user;
-- Deserializing a data and updating a user data.
+- Deserializing a data and updating a user data with password data;
+- Deserializing a data and updating a user data without password data;
+- To_internal_value() is expected to return a str, but return int.
 
 Passwords validation tests:
 - This method adds needed info for tests;
@@ -199,7 +200,7 @@ class CustomUserSerializerTestCase(TestCase):
         self.assertEqual(user.email, data["email"])
 
     def test_custom_to_internal_value_for_groups(self):
-        """To_internal_value() is expected to return a str, but subclasses may return int."""
+        """To_internal_value() is expected to return a str, but return int."""
         serializer = self.Serializer(data=self.valid_data)
         self.assertTrue(serializer.is_valid())
         groups = serializer.validated_data["groups"]
