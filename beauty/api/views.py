@@ -1,4 +1,5 @@
 """All views for the BeatyProject."""
+import logging
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -12,8 +13,6 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
-
-import logging
 
 from .models import CustomUser, Order, Business
 
@@ -29,6 +28,7 @@ from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDeleteSerializer)
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
+from .serializers.review_serializers import ReviewAddSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -91,7 +91,7 @@ class ResetPasswordView(GenericAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
 
-    RUD - Retrieve, Update, Destroy.
+    RUD - Retrieve, Update, Destroy
     """
 
     permission_classes = [IsAccountOwnerOrReadOnly]
@@ -252,3 +252,36 @@ class OrderApprovingView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
+
+
+class ReviewAddView(GenericAPIView):
+    """Create Review view.
+
+    This class represents a view which is accessed when someone
+    is trying to create a new Review. It makes use of the POST method,
+    other methods are not allowed in this view.
+    """
+
+    serializer_class = ReviewAddSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user):
+        """This is a POST method of the view."""
+        serializer = ReviewAddSerializer(data=request.data)
+        author = self.request.user
+        to_user = CustomUser.objects.get(pk=user)
+        if serializer.is_valid():
+            serializer.save(
+                from_user=author,
+                to_user=to_user,
+            )
+            logger.info(
+                f"User {author} (id = {author.id}) posted a review for"
+                f"{to_user} (id = {to_user.id})",
+            )
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            logger.info(
+                f"Error validating review: Field {serializer.errors.popitem()}"
+            )
+            return Response(status=status.HTTP_400_BAD_REQUEST)

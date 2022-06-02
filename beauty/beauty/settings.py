@@ -115,6 +115,7 @@ DJOSER = {
     "SERIALIZERS": {
         "user": "api.serializers.customuser_serializers.CustomUserSerializer",
     },
+
 }
 
 # Database
@@ -262,6 +263,6 @@ LOGGING = {
         "beauty": {
             "handlers": ["console", "file", "mail_admins"],
             "level": "INFO",
-        }
-    }
+        },
+    },
 }
