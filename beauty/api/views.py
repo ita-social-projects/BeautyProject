@@ -13,10 +13,12 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
-from rest_framework.permissions import IsAuthenticated
 
+from .models import CustomUser, Order, Business
+
+from .serializers.business_serializers import BusinessListCreateSerializer
 from beauty.tokens import OrderApprovingTokenGenerator
-from .models import CustomUser, Order
+
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
@@ -31,7 +33,6 @@ from .serializers.review_serializers import ReviewAddSerializer
 
 logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
 
 class CustomUserListCreateView(ListCreateAPIView):
     """Generic API for users custom POST methods."""
@@ -89,7 +90,10 @@ class ResetPasswordView(GenericAPIView):
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
-    RUD - Retrieve, Update, Destroy"""
+
+    RUD - Retrieve, Update, Destroy
+    """
+
     permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
@@ -108,6 +112,17 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class BusinessListCreateView(ListCreateAPIView):
+    """View for business creation and displaying list of all businesses.
+
+    Gives basic info about all businesses
+    """
+
+    queryset = Business.objects.all()
+    serializer_class = BusinessListCreateSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class OrderListCreateView(ListCreateAPIView):
@@ -151,10 +166,11 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         Method for getting order objects by using both order user id
         and order id lookup fields.
         """
+        user = self.kwargs["user"]
         if len(self.kwargs) > 1:
             obj = get_object_or_404(
                 self.get_queryset(),
-                Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
+                Q(customer=user) | Q(specialist=user),
                 id=self.kwargs["pk"],
             )
             self.check_object_permissions(self.request, obj)
@@ -230,9 +246,10 @@ class OrderApprovingView(ListCreateAPIView):
         )
 
 
-
 class ReviewAddView(GenericAPIView):
-    """This class represents a view which is accessed when someone
+    """Create Review view.
+
+    This class represents a view which is accessed when someone
     is trying to create a new Review. It makes use of the POST method,
     other methods are not allowed in this view.
     """
@@ -241,17 +258,22 @@ class ReviewAddView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user):
-        """This is a POST method of the view"""
+        """This is a POST method of the view."""
         serializer = ReviewAddSerializer(data=request.data)
         author = self.request.user
         to_user = CustomUser.objects.get(pk=user)
         if serializer.is_valid():
             serializer.save(
                 from_user=author,
-                to_user=to_user
+                to_user=to_user,
             )
-            logger.info(f"User {author} (id = {author.id}) posted a review for {to_user} (id = {to_user.id})")
+            logger.info(
+                f"User {author} (id = {author.id}) posted a review for"
+                f"{to_user} (id = {to_user.id})",
+            )
             return Response(status=status.HTTP_201_CREATED)
         else:
-            logger.info(f"Error validating review: Field {serializer.errors.popitem()}")
+            logger.info(
+                f"Error validating review: Field {serializer.errors.popitem()}",
+            )
             return Response(status=status.HTTP_400_BAD_REQUEST)
