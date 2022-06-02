@@ -30,9 +30,10 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
         Checks if such user exists, validates if user belongs to
         Specialist group
         """
-        group = value.groups.filter(name="Owner").first()
-        if group is None:
+        try:
+            value.groups.get(name="Owner")
 
+        except User.DoesNotExist:
             logger.error("Failed owner validation")
 
             raise ValidationError(
