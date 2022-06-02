@@ -22,4 +22,9 @@ urlpatterns = [
     
     path(r'<int:user>/reviews/add/', ReviewAddView.as_view(),
          name='review-add'),
+    
+        path("services/", AllServicesListView.as_view(),
+         name="service-list"),
+    path("service/<int:pk>/", ServiceUpdateView.as_view(),
+         name="service-detail"),
 ]
