@@ -208,35 +208,18 @@ REST_FRAMEWORK = {
 }
 
 SWAGGER_SETTINGS = {
-    # "USE_SESSION_AUTH": False,
+    "exclude_namespaces": [],  # List URL namespaces to ignore
     "SECURITY_DEFINITIONS": {
-        # "Basic": {
-        #     "type": "basic"
-        # },
-        "Bearer": {
+        "JWT": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header",
         },
-        #     "Your App API - Swagger": {
-        #         "type": "oauth2",
-        #         "description": "Google OAuth",
-        #         "authorizationUrl": "https://accounts.google.com/o/oauth2/v2/auth",
-        #         "tokenUrl": "https://oauth2.googleapis.com/token",
-        #         "flow": "accessCode",
-        #         "scopes": {
-        #             "read:adwords": "read adwords",
-        #         }
-        #     }
     },
-    # "OAUTH2_CONFIG": {
-    #     "clientId": "701216664577-ttag7920obptmhqnfmhecgcbcug2ilf3.apps.googleusercontent.com",
-    #     "clientSecret": "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",
-    #     "appName": "beauty"
-    # },
-    "SUPPORTED_SUBMIT_METHODS": ["get", "put", "post",
-                                 "delete", "patch"],
+    "SUPPORTED_SUBMIT_METHODS": ["get", "put", "post", "delete", "patch"],
+    "SHOW_REQUEST_HEADERS": True,
 }
+
 
 REDOC_SETTINGS = {
     "LAZY_RENDERING": False,
