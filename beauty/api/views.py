@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import django_filters
@@ -8,8 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import GenericAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView,\
-    RetrieveAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import filters
@@ -114,21 +114,18 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         return obj
 
 
-class ReviewDisplayView(RetrieveAPIView):
+class ReviewDisplayView(GenericAPIView):
     """Generic API for custom GET method"""
-
-    queryset = Review.objects
+    queryset = Review.objects.all()
     serializer_class = ReviewDisplaySerializer
-    filter_backends = (filters.OrderingFilter,
-                       django_filters.rest_framework.DjangoFilterBackend, )
+    filter_backends = (filters.OrderingFilter, )
     ordering_fields = ("date_of_publication", )
-    filterset_fields = ("to_user", )
     ordering = ('-date_of_publication', )
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, pk):
         """Method for retrieving reviews from the database"""
-
-        queryset = super().filter_queryset(self.queryset)
+        queryset = self.queryset.filter(to_user=pk)
+        queryset = super().filter_queryset(queryset)
         if not queryset:
             return Response({"error": "User wasn't reviewed yet"},
                             status=status.HTTP_404_NOT_FOUND)
