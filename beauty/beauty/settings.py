@@ -113,10 +113,11 @@ DJOSER = {
     ],
     "HIDE_USERS": True,
 
+
     "SERIALIZERS": {
         "user": "api.serializers.customuser_serializers.CustomUserSerializer",
     },
-}
+
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
