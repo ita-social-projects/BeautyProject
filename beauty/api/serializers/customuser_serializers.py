@@ -204,7 +204,6 @@ class CustomUserDetailSerializer(PasswordsValidation,
     )
     specialist_reviews = serializers.HyperlinkedRelatedField(
         many=True, view_name="api:review-get", read_only=True)
-
     customer_reviews = serializers.HyperlinkedRelatedField(
         many=True, view_name="api:review-get", read_only=True)
 
@@ -218,13 +217,17 @@ class CustomUserDetailSerializer(PasswordsValidation,
                   "password", "confirm_password", "specialist_reviews", "customer_reviews"]
 
     def to_representation(self, instance):
-        """Represent specialist_reviews field when instance is in specialist group."""
+        """Display info about specific user."""
         obj = super().to_representation(instance)
-        
-        if "Specialist" in instance.groups.all().values_list('name', flat=True):
+
+        if "Specialist" in instance.groups.all().values_list("name", flat=True):
+            logger.info(f"Displayed info about specialist {instance.id}")
+
             return obj
 
         del obj["specialist_reviews"]
+
+        logger.info(f"Displayed info about user {instance.id}")
 
         return obj
 
