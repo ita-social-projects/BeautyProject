@@ -24,6 +24,7 @@ from .factories import (GroupFactory,
                         PositionFactory,
                         ServiceFactory)
 
+
 CET = pytz.timezone("Europe/Kiev")
 
 
