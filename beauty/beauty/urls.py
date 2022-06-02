@@ -22,6 +22,7 @@ from django.urls import include, path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from beauty.yasg import urlpatterns as doc_urls
 
 from api.views import UserActivationView, ResetPasswordView
 
@@ -59,6 +60,8 @@ urlpatterns = [
     path(r"auth/", include("djoser.urls.jwt")),
 
 ]
+
+urlpatterns += doc_urls
 
 if settings.DEBUG:
     urlpatterns += static(
