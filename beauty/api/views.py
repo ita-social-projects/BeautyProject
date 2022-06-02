@@ -1,3 +1,7 @@
+import datetime
+import logging
+
+import django_filters
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
@@ -5,18 +9,19 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import GenericAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework import filters
 
-from .models import CustomUser, Order
+from .models import CustomUser, Order, Review
 from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
 from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
 from .serializers.serializers_customuser import CustomUserDetailSerializer
 from .serializers.serializers_customuser import CustomUserSerializer
 from .serializers.serializers_customuser import UserOrderDetailSerializer
 from .serializers.serializers_customuser import ResetPasswordSerializer
-import logging
+from .serializers.review_serializers import ReviewDisplaySerializer
 
 logger = logging.getLogger(__name__)
 
@@ -107,3 +112,25 @@ class CustomUserOrderDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"{obj} was got for the user {user} (id={user.id})")
 
         return obj
+
+
+class ReviewDisplayView(GenericAPIView):
+    """Generic API for custom GET method"""
+    queryset = Review.objects.all()
+    serializer_class = ReviewDisplaySerializer
+    filter_backends = (filters.OrderingFilter, )
+    ordering_fields = ("date_of_publication", )
+    ordering = ('-date_of_publication', )
+
+    def get(self, request, pk):
+        """Method for retrieving reviews from the database"""
+        queryset = self.queryset.filter(to_user=pk)
+        queryset = super().filter_queryset(queryset)
+        if not queryset:
+            return Response({"error": "User wasn't reviewed yet"},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        queryset = super().paginate_queryset(queryset)
+
+        serialized_data = self.serializer_class(queryset, many=True)
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
