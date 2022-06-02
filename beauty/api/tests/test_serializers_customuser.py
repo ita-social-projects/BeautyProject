@@ -1,21 +1,37 @@
-"""The module includes tests for CustomUser serializers."""
+"""The module includes tests for CustomUser serializers.
 
-import pytz
+Tests for CustomUser serializers:
+- This method adds needed info for tests;
+- Check serializer with valid data;
+- Check serializer with invalid data;
+- Check serializer with invalid data type;
+- Check serializer without data;
+- Check serializer with data equal None;
+- Serialize all users with relative hyperlinks using CustomUserSerializer;
+- Serialize all users with reverse many to many retrieve using CustomUserSerializer;
+- Deserializing a data and creating a new user;
+- Deserializing a data and updating a user data.
+
+Passwords validation tests:
+- This method adds needed info for tests;
+- Checking valid data;
+- Checking invalid data;
+- Checking when password or password confirmation is null.
+"""
+
 from django.contrib.auth.hashers import check_password
 from django.test import TestCase
+from rest_framework.exceptions import ErrorDetail
 
 from api.serializers.customuser_serializers import (CustomUserSerializer,
-                                                    PasswordsValidation)
+                                                    PasswordsValidation, CustomUserDetailSerializer)
 from rest_framework.test import APIRequestFactory
 from rest_framework.serializers import ValidationError
+from api.tests.factories import CustomUserFactory, GroupFactory
 
-from api.tests.factories import GroupFactory, CustomUserFactory, PositionFactory, ServiceFactory
 
 factory = APIRequestFactory()
-
 request = factory.get("/")
-
-CET = pytz.timezone("Europe/Kiev")
 
 
 class CustomUserSerializerTestCase(TestCase):
@@ -33,19 +49,31 @@ class CustomUserSerializerTestCase(TestCase):
                     "password": "0967478911m",
                     "confirm_password": "0967478911m"}
 
+    ecxpect_query = [{"url": "/api/v1/user/1/", "id": 1, "email": "user_1@com.ua",
+                      "first_name": "User_1", "patronymic": "", "last_name": "",
+                      "phone_number": "+380960000001", "bio": None, "rating": 0,
+                      "avatar": "/media/default_avatar.jpeg", "is_active": False,
+                      "groups": ["Specialist"], "specialist_orders": [], "customer_orders": []},
+                     {"url": "/api/v1/user/2/", "id": 2, "email": "user_2@com.ua",
+                      "first_name": "User_2", "patronymic": "", "last_name": "",
+                      "phone_number": "+380960000002", "bio": None, "rating": 0,
+                      "avatar": "/media/default_avatar.jpeg", "is_active": False,
+                      "groups": ["Customer"], "specialist_orders": [], "customer_orders": []}]
+
     def setUp(self):
         """This method adds needed info for tests."""
         self.Serializer = CustomUserSerializer
+        self.Detail_serializer = CustomUserDetailSerializer
+
+        self.specialist = CustomUserFactory(first_name="User_1", email="user_1@com.ua",
+                                            phone_number="+380960000001")
+        self.customer = CustomUserFactory(first_name="User_2", email="user_2@com.ua",
+                                          phone_number="+380960000002")
+        self.queryset = [self.specialist, self.customer]
 
         self.groups = GroupFactory.groups_for_test()
-        self.specialist = CustomUserFactory(first_name="UserSpecialist")
-        self.customer = CustomUserFactory(first_name="UserCustomer")
-        self.position = PositionFactory(name="Position_1")
-        self.service = ServiceFactory(name="Service_1", position=self.position)
-
         self.groups.specialist.user_set.add(self.specialist)
         self.groups.customer.user_set.add(self.customer)
-        self.position.specialist.add(self.specialist)
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
@@ -53,6 +81,7 @@ class CustomUserSerializerTestCase(TestCase):
         self.assertTrue(serializer.is_valid(raise_exception=True))
         self.assertEqual(serializer.validated_data, self.ecxpect_data)
         self.assertEqual(serializer.errors, {})
+
         user = serializer.save()
         self.assertEqual(user.email, self.ecxpect_data["email"])
         self.assertEqual(user.first_name, self.ecxpect_data["first_name"])
@@ -65,94 +94,102 @@ class CustomUserSerializerTestCase(TestCase):
             str(ex.exception),
         )
 
-    # def setUp(self):
-    #     """Set up data for tests."""
-    #     self.serializer = CustomUserSerializer
-    #     self.detail_serializer = CustomUserDetailSerializer
-    #     self.queryset = CustomUser.objects.all()
-    #
-    # def test_relative_hyperlinks(self):
-    #     """Serialize all users with relative hyperlinks using
-    #     CustomUserSerializer.
-    #     """
-    #     with open("api/fixtures/customuser_serializer_test/"
-    #               "relative_hyperlinks_expected_data.json") as f:
-    #         expected = json.load(f)
-    #         serializer = self.serializer(
-    #             self.queryset, many=True,
-    #             context={"request": None}
-    #         )
-    #         self.assertEqual(serializer.data, expected)
-    #
-    # def test_reverse_many_to_many_retrieve(self):
-    #     """Serialize all users with reverse many to many retrieve using
-    #     CustomUserSerializer.
-    #     """
-    #     with open("api/fixtures/customuser_serializer_test/"
-    #               "retrieve_create_expected_data.json") as f:
-    #         expected = json.load(f)
-    #         serializer = self.serializer(
-    #             self.queryset, many=True,
-    #             context={"request": request}
-    #         )
-    #         with self.assertNumQueries(16):
-    #             self.assertEqual(serializer.data, expected)
-    #
-    # def test_deserialize_create_user(self):
-    #     """Deserializing a data and creating a new user."""
-    #     data = {"url": "http://testserver/api/v1/user/6/",
-    #             "id": 6,
-    #             "email": "m6@com.ua",
-    #             "first_name": "Specialist_6",
-    #             "patronymic": "PSpecialist_6",
-    #             "last_name": "LSpecialist_6",
-    #             "phone_number": "+380967470016",
-    #             "bio": "Specialist_6",
-    #             "rating": 0,
-    #             "is_active": True,
-    #             "groups": ["Specialist", ],
-    #             "specialist_orders": [],
-    #             "customer_orders": [],
-    #             "password": "0967478911m",
-    #             "confirm_password": "0967478911m"}
-    #     serializer = self.serializer(
-    #         data=data,
-    #         context={"request": request}
-    #     )
-    #     self.assertTrue(serializer.is_valid(raise_exception=True))
-    #     obj = serializer.save()
-    #     saved_obj = self.queryset.get(id=6)
-    #     data["avatar"] = "http://testserver/media/default_avatar.jpeg"
-    #     data.pop("password"),
-    #     data.pop("confirm_password")
-    #     self.assertEqual(saved_obj, obj)
-    #     self.assertEqual(serializer.data, data)
-    #     self.assertEqual(obj.email, "m6@com.ua")
-    #
-    #     # Ensure target 6 is added, and everything else is as expected
-    #     with open("api/fixtures/customuser_serializer_test/"
-    #               "retrieve_create_expected_data.json") as f:
-    #         expected = json.load(f)
-    #         expected.append(data)
-    #         serializer = self.serializer(
-    #             self.queryset, many=True,
-    #             context={"request": request}
-    #         )
-    #         self.assertEqual(serializer.data, expected)
-    #
-    # def test_deserialize_update_user(self):
-    #     """Deserializing a data and updating a user data."""
-    #     data = {"first_name": "Specialist_1_1", "email": "test@com.ua"}
-    #     instance = self.queryset[0]
-    #     serializer = self.detail_serializer(
-    #         instance=instance, data=data,
-    #         partial=True,
-    #         context={"request": request}
-    #     )
-    #     self.assertTrue(serializer.is_valid(raise_exception=True))
-    #     serializer.save()
-    #     self.assertEqual(serializer.data["first_name"], data["first_name"])
-    #     self.assertEqual(serializer.data["email"], data["email"])
+    def test_invalid_serializer(self):
+        """Check serializer with invalid data."""
+        invalid_data = self.valid_data.copy()
+        invalid_data["phone_number"] = "invalid_phone_number"
+
+        serializer = self.Serializer(data=invalid_data)
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.validated_data, {})
+        self.assertEqual(serializer.data, invalid_data)
+        self.assertEqual(serializer.errors, {
+            "phone_number": [ErrorDetail(string="The phone number entered is not valid.",
+                                         code="invalid_phone_number")]})
+
+    def test_invalid_datatype(self):
+        """Check serializer with invalid data type."""
+        invalid_data = [self.valid_data]
+
+        serializer = self.Serializer(data=invalid_data)
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.validated_data, {})
+        self.assertEqual(serializer.data, {})
+        self.assertEqual(serializer.errors, {"non_field_errors": [ErrorDetail(
+            string="Invalid data. Expected a dictionary, but got list.", code="invalid")],
+        })
+
+    def test_empty_serializer(self):
+        """Check serializer without data."""
+        serializer = self.Serializer()
+        self.assertEqual(serializer.data, {"email": "", "first_name": "", "patronymic": "",
+                                           "last_name": "", "phone_number": "", "bio": "",
+                                           "rating": None, "avatar": None, "is_active": False,
+                                           "groups": [], "password": "", "confirm_password": ""})
+
+    def test_validate_none_data(self):
+        """Check serializer with data equal None."""
+        data = None
+        serializer = self.Serializer(data=data)
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.errors, {"non_field_errors": ["No data provided"]})
+
+    def test_relative_hyperlinks(self):
+        """Serialize all users with relative hyperlinks using CustomUserSerializer."""
+        serializer = self.Serializer(self.queryset, many=True, context={"request": None})
+        self.assertEqual(serializer.data, self.ecxpect_query)
+
+    def test_reverse_many_to_many_retrieve(self):
+        """Serialize all users with reverse many to many retrieve using CustomUserSerializer."""
+        for obj in self.ecxpect_query:
+            obj["url"] = f"http://testserver{obj['url']}"
+            obj["avatar"] = f"http://testserver{obj['avatar']}"
+        serializer = self.Serializer(self.queryset, many=True, context={"request": request})
+        with self.assertNumQueries(6):
+            self.assertEqual(serializer.data, self.ecxpect_query)
+
+    def test_deserialize_create_user(self):
+        """Deserializing a data and creating a new user."""
+        data = {"url": "http://testserver/api/v1/user/3/",
+                "id": 3,
+                "email": "m6@com.ua",
+                "first_name": "Specialist_6",
+                "patronymic": "PSpecialist_6",
+                "last_name": "LSpecialist_6",
+                "phone_number": "+380967470016",
+                "bio": "Specialist_6",
+                "rating": 0,
+                "is_active": True,
+                "groups": ["Specialist"],
+                "specialist_orders": [],
+                "customer_orders": [],
+                "password": "0967478911m",
+                "confirm_password": "0967478911m"}
+        serializer = self.Serializer(
+            data=data,
+            context={"request": request},
+        )
+        self.assertTrue(serializer.is_valid(raise_exception=True))
+        obj = serializer.save()
+        data.pop("confirm_password")
+        data.pop("password")
+        data["avatar"] = "http://testserver/media/default_avatar.jpeg"
+        self.assertEqual(serializer.data, data)
+        self.assertEqual(obj.email, "m6@com.ua")
+
+    def test_deserialize_update_user(self):
+        """Deserializing a data and updating a user data."""
+        data = {"first_name": "Specialist_1_1", "email": "test@com.ua"}
+        instance = self.queryset[0]
+        serializer = self.Detail_serializer(
+            instance=instance, data=data,
+            partial=True,
+            context={"request": request},
+        )
+        self.assertTrue(serializer.is_valid(raise_exception=True))
+        serializer.save()
+        self.assertEqual(serializer.data["first_name"], data["first_name"])
+        self.assertEqual(serializer.data["email"], data["email"])
 
 
 class PasswordsValidationTest(TestCase):
@@ -168,7 +205,7 @@ class PasswordsValidationTest(TestCase):
     null_data_two = {"password": "0967478911m", "confirm_password": ""}
 
     def setUp(self):
-        """Set up data for tests."""
+        """This method adds needed info for tests."""
         self.validator = PasswordsValidation()
 
     def test_valid_data(self):
