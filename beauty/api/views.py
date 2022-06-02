@@ -8,7 +8,8 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
                                      GenericAPIView,
-                                     RetrieveUpdateDestroyAPIView)
+                                     RetrieveUpdateDestroyAPIView, 
+                                     ListAPIView)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
@@ -16,7 +17,7 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
 from rest_framework.permissions import IsAuthenticated
 
 from beauty.tokens import OrderApprovingTokenGenerator
-from .models import CustomUser, Order
+from .models import CustomUser, Order, Service
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
@@ -24,6 +25,7 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  ResetPasswordSerializer)
 from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDeleteSerializer)
+from api.serializers.service_serializers import ServiceSerializer
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
 from .serializers.review_serializers import ReviewAddSerializer
@@ -255,3 +257,23 @@ class ReviewAddView(GenericAPIView):
         else:
             logger.info(f"Error validating review: Field {serializer.errors.popitem()}")
             return Response(status=status.HTTP_400_BAD_REQUEST)
+ 
+
+class AllServicesListView(ListAPIView):
+    """ListView for all Services."""
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("View to display all services that can be provided.")
+
+
+class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
+    """View for retrieving, updating or deleting service info."""
+
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("A view for retrieving, updating or deleting a service instance.")
