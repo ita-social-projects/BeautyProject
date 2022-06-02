@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 
 
 class ReviewDisplaySerializer(serializers.ModelSerializer):
-    """This is a serializer for review display"""
+    """This is a serializer for review display."""
 
     class Meta:
-        """This is a class Meta that keeps settings for serializer"""
+        """This is a class Meta that keeps settings for serializer."""
 
         model = Review
         fields = ("text_body",
@@ -22,9 +22,7 @@ class ReviewDisplaySerializer(serializers.ModelSerializer):
 
 
 class ReviewDisplayDetailSerializer(ReviewDisplaySerializer):
-    """This serializer receives data from
-    PUT, PATCH methods and checks whether data is valid
-    """
+    """This serializer receives data from PUT, PATCH methods and checks whether data is valid."""
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Update review information using dict with data.
@@ -53,13 +51,11 @@ class ReviewAddSerializer(serializers.ModelSerializer):
         fields = ["text_body", "rating", "from_user", "to_user"]
 
     def save(self, **kwargs):
-        """The save method was redefined in order to check whether users
-        are trying to review themselves, which is not allowed.
-        """
+        """The save method to check whether users are trying to review themselves."""
         if kwargs["from_user"] == kwargs["to_user"]:
             user = kwargs["from_user"]
             logger.info(f"User {user} (id = {user.id}) tried reviewing himself.")
             raise serializers.ValidationError(
-                {"error": "You are not able to review yourself"}
+                {"error": "You are not able to review yourself"},
             )
         return super().save(**kwargs)

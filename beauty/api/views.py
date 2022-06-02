@@ -1,7 +1,6 @@
 """All views for the BeatyProject."""
-import datetime
 import logging
-import django_filters
+
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -10,32 +9,23 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, get_object_or_404
 from rest_framework.generics import GenericAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
-from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
-                                     GenericAPIView,
-                                     RetrieveUpdateDestroyAPIView)
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework import filters
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
                                         IsAuthenticated)
-from rest_framework.permissions import IsAuthenticated
 
 from .models import CustomUser, Order, Review
-from .permissions import IsAdminOrIsAccountOwnerOrReadOnly
-from .permissions import IsAccountOwnerOrReadOnly, IsOrReadOnly
-from .serializers.serializers_customuser import CustomUserDetailSerializer
-from .serializers.serializers_customuser import CustomUserSerializer
-from .serializers.serializers_customuser import UserOrderDetailSerializer
-from .serializers.serializers_customuser import ResetPasswordSerializer
+from .permissions import IsAccountOwnerOrReadOnly
+from .serializers.customuser_serializers import CustomUserDetailSerializer
+from .serializers.customuser_serializers import CustomUserSerializer
+# from .serializers.customuser_serializers import UserOrderDetailSerializer
+from .serializers.customuser_serializers import ResetPasswordSerializer
 from .serializers.review_serializers import ReviewDisplaySerializer
 from beauty.tokens import OrderApprovingTokenGenerator
-from .models import CustomUser, Order
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
+from .permissions import IsOrderUser
 
-from .serializers.customuser_serializers import (CustomUserDetailSerializer,
-                                                 CustomUserSerializer,
-                                                 ResetPasswordSerializer)
 from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDeleteSerializer)
 from beauty import signals
@@ -45,7 +35,6 @@ from .serializers.review_serializers import ReviewAddSerializer
 
 logger = logging.getLogger(__name__)
 
-logger = logging.getLogger(__name__)
 
 class CustomUserListCreateView(ListCreateAPIView):
     """Generic API for users custom POST methods."""
@@ -103,7 +92,9 @@ class ResetPasswordView(GenericAPIView):
 
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
-    RUD - Retrieve, Update, Destroy"""
+
+    RUD - Retrieve, Update, Destroy
+    """
     permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
@@ -241,25 +232,26 @@ class OrderApprovingView(ListCreateAPIView):
 
 
 class ReviewAddView(GenericAPIView):
-    """This class represents a view which is accessed when someone
-    is trying to create a new Review. It makes use of the POST method,
-    other methods are not allowed in this view.
+    """This class represents a view which is accessed when someone is trying to create a new Review.
+
+    It makes use of the POST method, other methods are not allowed in this view.
     """
 
     serializer_class = ReviewAddSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request, user):
-        """This is a POST method of the view"""
+        """This is a POST method of the view."""
         serializer = ReviewAddSerializer(data=request.data)
         author = self.request.user
         to_user = CustomUser.objects.get(pk=user)
         if serializer.is_valid():
             serializer.save(
                 from_user=author,
-                to_user=to_user
+                to_user=to_user,
             )
-            logger.info(f"User {author} (id = {author.id}) posted a review for {to_user} (id = {to_user.id})")
+            logger.info(f"User {author} (id = {author.id}) "
+                        f"posted a review for {to_user} (id = {to_user.id})")
             return Response(status=status.HTTP_201_CREATED)
         else:
             logger.info(f"Error validating review: Field {serializer.errors.popitem()}")
@@ -267,26 +259,23 @@ class ReviewAddView(GenericAPIView):
 
 
 class ReviewDisplayView(GenericAPIView):
-    """Generic API for custom GET method"""
+    """Generic API for custom GET method."""
     queryset = Review.objects.all()
     serializer_class = ReviewDisplaySerializer
     filter_backends = (filters.OrderingFilter, )
     ordering_fields = ("date_of_publication", )
-    ordering = ('-date_of_publication', )
+    ordering = ("-date_of_publication", )
 
     def get(self, request, pk):
-        """Method for retrieving reviews from the database"""
+        """Method for retrieving reviews from the database."""
         queryset = self.queryset.filter(to_user=pk)
         queryset = super().filter_queryset(queryset)
         if not queryset:
+            logger.info(f"Reviews for user with id {pk} were unsuccessfully obtained")
             return Response({"error": "User wasn't reviewed yet"},
                             status=status.HTTP_404_NOT_FOUND)
 
         queryset = super().paginate_queryset(queryset)
-
+        logger.info(f"Reviews for user with id {pk} were successfully obtained")
         serialized_data = self.serializer_class(queryset, many=True)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
-
-        logger.info(f"{super().get_object()} was got")
-
-        return super().get_object()
