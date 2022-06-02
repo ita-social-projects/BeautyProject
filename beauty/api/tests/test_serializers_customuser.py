@@ -19,7 +19,7 @@ Passwords validation tests:
 - Checking when password or password confirmation is null.
 """
 
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
 
@@ -40,13 +40,15 @@ class CustomUserSerializerTestCase(TestCase):
                   "first_name": "Specialist_6",
                   "phone_number": "+380967470016",
                   "password": "0967478911m",
-                  "confirm_password": "0967478911m"}
+                  "confirm_password": "0967478911m",
+                  "groups": ["Specialist"]}
 
     ecxpect_data = {"email": "m6@com.ua",
                     "first_name": "Specialist_6",
                     "phone_number": "+380967470016",
                     "password": "0967478911m",
-                    "confirm_password": "0967478911m"}
+                    "confirm_password": "0967478911m",
+                    "groups": [4]}
 
     ecxpect_queryset = [
         {"url": "/api/v1/user/1/", "id": 1, "email": "user_1@com.ua", "first_name": "User_1",
@@ -84,7 +86,8 @@ class CustomUserSerializerTestCase(TestCase):
                                             phone_number="+380960000001")
         self.customer = CustomUserFactory(first_name="User_2", email="user_2@com.ua",
                                           phone_number="+380960000002")
-        self.specialist2 = CustomUserFactory()
+        self.specialist2 = CustomUserFactory(first_name="User_3", email="user_3@com.ua",
+                                             phone_number="+380960000003")
         self.customer_order = OrderFactory(customer=self.customer, specialist=self.specialist)
         self.specialist_order = OrderFactory(customer=self.specialist, specialist=self.specialist2)
         self.queryset = [self.specialist, self.customer]
@@ -164,19 +167,46 @@ class CustomUserSerializerTestCase(TestCase):
         with self.assertNumQueries(6):
             self.assertEqual(serializer.data, self.ecxpect_queryset2)
 
-    def test_deserialize_update_user(self):
-        """Deserializing a data and updating a user data."""
-        data = {"first_name": "Specialist_1_1", "email": "test@com.ua"}
+    def test_deserialize_update_user_with_password(self):
+        """Deserializing a data and updating a user data with password data."""
+        data = {"first_name": "Specialist_1_1", "email": "test@com.ua",
+                "password": "0987654321s", "confirm_password": "0987654321s"}
         instance = self.queryset[0]
         serializer = self.Detail_serializer(
             instance=instance, data=data,
             partial=True,
             context={"request": request},
         )
-        self.assertTrue(serializer.is_valid(raise_exception=True))
-        serializer.save()
-        self.assertEqual(serializer.data["first_name"], data["first_name"])
-        self.assertEqual(serializer.data["email"], data["email"])
+        self.assertTrue(serializer.is_valid())
+        user = serializer.save()
+        self.assertTrue(check_password(data["password"], make_password(data["password"])))
+        self.assertEqual(user.first_name, data["first_name"])
+        self.assertEqual(user.email, data["email"])
+
+    def test_deserialize_update_user_without_password(self):
+        """Deserializing a data and updating a user data without password data."""
+        data = {"first_name": "Specialist_1_2", "email": "test@com.ua",
+                "password": "", "confirm_password": ""}
+        instance = self.queryset[0]
+        serializer = self.Detail_serializer(
+            instance=instance, data=data,
+            partial=True,
+            context={"request": request},
+        )
+        self.assertTrue(serializer.is_valid())
+        user = serializer.save()
+        self.assertEqual(user.first_name, data["first_name"])
+        self.assertEqual(user.email, data["email"])
+
+    def test_custom_to_internal_value_for_groups(self):
+        """To_internal_value() is expected to return a str, but subclasses may return int."""
+        serializer = self.Serializer(data=self.valid_data)
+        self.assertTrue(serializer.is_valid())
+        groups = serializer.validated_data["groups"]
+        if groups:
+            self.assertIsInstance(groups[0], int)
+            self.assertIn(self.groups.specialist.id, groups)
+        self.assertEqual(serializer.errors, {})
 
 
 class PasswordsValidationTest(TestCase):
