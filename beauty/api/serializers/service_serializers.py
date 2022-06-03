@@ -1,9 +1,9 @@
 """The module includes serializers for Service model."""
 
+import logging
+
 from rest_framework import serializers
 from api.models import Service
-
-import logging
 
 logger = logging.getLogger(__name__)
 
