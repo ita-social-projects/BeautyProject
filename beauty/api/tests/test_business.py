@@ -143,11 +143,11 @@ class BusinessListCreateViewTest(TestCase):
 
         self.client.force_authenticate(user=None)
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
 
     def test_create_business_valid_owner(self) -> None:
         """Checks business creation with authenticated user and valid data."""
-        self.client.force_authenticate(user=self.customer)
+        self.client.force_authenticate(user=self.owner)
 
         response = self.client.post(
             path=reverse("api:businesses-list-create"),

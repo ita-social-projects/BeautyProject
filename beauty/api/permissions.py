@@ -3,6 +3,7 @@
 import logging
 
 from rest_framework import permissions
+from django.contrib.auth.models import Group
 
 
 logger = logging.getLogger(__name__)
@@ -68,3 +69,30 @@ class IsOrderUser(permissions.BasePermission):
         logger.debug(f"Object {obj.id} permission check")
 
         return obj.specialist == request.user or obj.customer == request.user
+
+
+
+class IsOwner(permissions.BasePermission):
+    """Permission class which checks if current user is an owner"""
+
+    def has_permission(self, request, view):
+        """Checks if user belongs to owner group"""
+        user = request.user
+
+        if user.is_authenticated:
+            try:
+                user.groups.get(name="Owner")
+                logger.error("User have owner permission")
+                return True
+
+            except Group.DoesNotExist:
+                logger.error("Current user is not an owner")
+
+        return False
+
+
+class ReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+
+

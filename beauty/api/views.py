@@ -1,6 +1,7 @@
 """This module provides all needed api views."""
 
 import logging
+from re import I
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -20,7 +21,7 @@ from beauty.utils import ApprovingOrderEmail
 
 from .models import Business, CustomUser, Order
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsOwner, ReadOnly)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
@@ -239,29 +240,34 @@ class OrderApprovingView(ListCreateAPIView):
 class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
     """List View for all businesses or businesses of certain owner."""
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = (IsOwner|ReadOnly,)
 
     def get_serializer_class(self):
         """Return specific Serializer for businesses creation."""
         if self.request.method == "POST":
             return BusinessListCreateSerializer
-        else:
-            return BusinessesSerializer
+        return BusinessesSerializer
 
-    def get_queryset(self, owner_id=None):
+    def get_queryset(self):
         """Filter businesses for owner."""
         if self.kwargs.get("owner_id"):
-            logger.debug("A view to display list of businesses of certain owner has opened")
+            logger.debug(
+                "A view to display list of businesses " 
+                "of certain owner has opened"
+            )
             return Business.objects.filter(owner=self.kwargs["owner_id"])
         else:
             logger.debug("A view to display list of all businesses has opened")
             return Business.objects.all()
 
-#    def get_permissions(self):
-#        """Get specific permission for businesses creation."""
-#        if self.request.method == "POST":
-#            self.permission_classes = (IsAccountOwnerOrReadOnly,)
-#        return super().get_permissions()
+    def post(self, request, *args, **kwargs):
+        """Create an business and add an authenticated owner to it."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        business = serializer.save(owner=request.user)
+
+        logger.info(f"{business} was created")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
