@@ -17,7 +17,6 @@ from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
 from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order, Business, Position
 from .permissions import (IsAccountOwnerOrReadOnly,
-                          IsOrderUserOrReadOnly,
                           IsOrderUser)
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -190,7 +189,18 @@ class PositionListCreateView(ListCreateAPIView):
 
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated, IsOrderUserOrReadOnly)
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        """Filter positions for owner."""
+        if "Owner" in self.request.user.groups.all().values_list("name", flat=True):
+            logger.debug("A view to display list of positions of certain owner has opened")
+
+            businesses = Business.objects.filter(owner=self.request.user.id)
+            return Position.objects.filter(business__in=[business.id for business in businesses])
+        else:
+            # RETURNS NONE If user is not owner
+            logger.debug("PositionListCreateView: returns None")
 
 
 class OrderApprovingView(ListCreateAPIView):

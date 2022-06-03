@@ -13,19 +13,16 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.serializers.position_serializer import PositionSerializer
-                                                    
 from api.models import Position
 from api.views import PositionListCreateView
-from .factories import BusinessFactory, CustomUserFactory, GroupFactory
+from .factories import BusinessFactory, CustomUserFactory, GroupFactory, PositionFactory
 
-from datetime import datetime, timedelta
 
 class TestPositionListCreateView(TestCase):
-    """TestCase to test PositionListCreateView"""
+    """TestCase to test PositionListCreateView."""
 
     def setUp(self):
-        """Create business and 2 specialists"""
-        self.business = BusinessFactory(name="Hoppe")
+        """Create business and 2 specialists."""
         self.groups = GroupFactory.groups_for_test()
         self.specialist1 = CustomUserFactory(first_name="UserSpecialist")
         self.specialist2 = CustomUserFactory(first_name="UserSpecialist2")
@@ -36,71 +33,60 @@ class TestPositionListCreateView(TestCase):
         self.queryset = Position.objects.all()
         self.view = PositionListCreateView.as_view()
 
-        self.customer = CustomUserFactory(first_name="UserCustomer")
-        self.groups.customer.user_set.add(self.customer)
-        self.client = APIClient()
-        self.client.force_authenticate(user=self.customer)
+        self.owner = CustomUserFactory(first_name="OwnerUser")
+        self.groups.owner.user_set.add(self.owner)
 
-        self.position_valid = {
-            "name": "Wyh",
-            "business": self.business.id,
-            "specialist": [self.specialist1.id, self.specialist2.id],
-            "start_time": "10:51:00",
-            "end_time": "13:51:00"
-        }
+        self.business = BusinessFactory(name="Hope", owner=self.owner)
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.owner)
+
+        # Dict needed for successful POST method. Factory won't work
         self.position_testing = {
             "name": "Wyh",
             "business": self.business.id,
             "specialist": [self.specialist1.id, self.specialist2.id],
             "start_time": "10:51:00",
-            "end_time": "13:51:00"
+            "end_time": "13:51:00",
         }
 
-        self.client.post(
-                        path=reverse("api:position-list"),
-                        data=self.position_valid
-                        )
-
-    def test_position_get_all_view(self):
-        """Get 1 created position"""
-        resp = self.client.generic(
-                                    method="GET",
-                                    path=reverse("api:position-list")
-                                    )
+    def test_position_get_from_valid_business(self):
+        """Get 1 created position."""
+        self.position_valid = PositionFactory.create(name="Wyh",
+                                                     business=self.business,
+                                                     specialist=[self.specialist1],
+                                                     )
+        resp = self.client.generic(method="GET",
+                                   path=reverse("api:position-list"),
+                                   )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.data), 1)
 
     def test_position_post_list_create_view(self):
         """POST requests to ListCreateAPIView with valid data should create a new object."""
-        response = self.client.post(
-                                    path=reverse("api:position-list"),
-                                    data=self.position_testing
+        response = self.client.post(path=reverse("api:position-list"),
+                                    data=self.position_testing,
                                     )
         self.assertEqual(response.status_code, 201)
 
     def test_position_post_list_create_view_no_authenticate(self):
         """POST requests to ListCreateAPIView with no authenticate shouldn't create a new object."""
         self.client.force_authenticate(user=None)
-        response = self.client.post(
-                                    path=reverse("api:position-list"),
-                                    data=self.position_testing
+        response = self.client.post(path=reverse("api:position-list"),
+                                    data=self.position_testing,
                                     )
         self.assertEqual(response.status_code, 401)
 
     def test_position_post_list_create_view_invalid_time(self):
         """POST requests to ListCreateAPIView with invalid time shouldn't create a new object."""
         self.position_testing["end_time"] = "9:51:00"
-        response = self.client.post(
-                                    path=reverse("api:position-list"),
-                                    data=self.position_testing
+        response = self.client.post(path=reverse("api:position-list"),
+                                    data=self.position_testing,
                                     )
         self.assertEqual(response.status_code, 400)
 
     def test_position_post_list_create_view_empty_data(self):
         """POST requests to ListCreateAPIView with empty data shouldn't create a new object."""
-        response = self.client.post(
-                                    path=reverse("api:position-list"),
-                                    data={}
+        response = self.client.post(path=reverse("api:position-list"),
+                                    data={},
                                     )
         self.assertEqual(response.status_code, 400)
-
