@@ -239,6 +239,8 @@ class OrderApprovingView(ListCreateAPIView):
 class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
     """List View for all businesses or businesses of certain owner."""
 
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_serializer_class(self):
         """Return specific Serializer for businesses creation."""
         if self.request.method == "POST":
@@ -255,11 +257,11 @@ class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
             logger.debug("A view to display list of all businesses has opened")
             return Business.objects.all()
 
-    def get_permissions(self):
-        """Get specific permission for businesses creation."""
-        if self.request.method == "POST":
-            self.permission_classes = (IsAccountOwnerOrReadOnly,)
-        return super().get_permissions()
+#    def get_permissions(self):
+#        """Get specific permission for businesses creation."""
+#        if self.request.method == "POST":
+#            self.permission_classes = (IsAccountOwnerOrReadOnly,)
+#        return super().get_permissions()
 
 
 class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
