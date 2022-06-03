@@ -2,6 +2,7 @@
 
 import logging
 
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
@@ -28,18 +29,21 @@ class BusinessListCreateSerializer(serializers.ModelSerializer):
         Checks if such user exists and validates if user belongs to
         Specialist group
         """
-        group = value.groups.filter(name="Owner").first()
-        if group is None:
-            raise ValidationError(
-                _("Only Owners can create Business"), code="invalid",
-            )
+        try:
+            value.groups.get(name="Owner")
+
+        except Group.DoesNotExist:
+            logger.error("Owner validation failed")
+            raise ValidationError(_("Only Owners can create Business"), code="invalid")
+
+        logger.info("Owner was validated")
 
         return value
 
     def to_representation(self, instance):
-        """Display owner full name."""
+        """Change the display of owner field data."""
         data = super().to_representation(instance)
-        owner = CustomUser.objects.filter(id=data["owner"]).first()
+        owner = CustomUser.objects.get(id=data["owner"])
         data["owner"] = owner.get_full_name()
         return data
 
@@ -64,21 +68,21 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
 class BusinessAllDetailSerializer(serializers.ModelSerializer):
     """Serializer for specific business."""
 
-    owner_name = serializers.SerializerMethodField()
     created_at = serializers.ReadOnlyField()
     address = serializers.CharField(max_length=500)
 
-    def get_owner_name(self, obj):
-        """Return full name of business owner."""
-        full_name = f"{obj.owner.first_name} {obj.owner.last_name}"
-        logger.debug("Owner name transferred to frontend")
-        return full_name
+    def to_representation(self, instance):
+        """Change the display of owner field data."""
+        data = super().to_representation(instance)
+        owner = CustomUser.objects.get(id=data["owner"])
+        data["owner"] = owner.get_full_name()
+        return data
 
     class Meta:
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        fields = ("owner_name", "created_at", "logo", "name", "business_type", "address",
+        fields = ("owner", "created_at", "logo", "name", "business_type", "address",
                   "description")
 
 
