@@ -12,20 +12,20 @@ from rest_framework.generics import (ListCreateAPIView, get_object_or_404,
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
-                                        IsAuthenticated,
-                                        )
+                                        IsAuthenticated)
 
-from .serializers.business_serializers import BusinessListCreateSerializer
 from beauty.tokens import OrderApprovingTokenGenerator
 from .models import CustomUser, Order, Business, Position
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
-
+from .permissions import (IsAccountOwnerOrReadOnly,
+                          IsOrderUser)
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
 from api.serializers.order_serializers import (OrderSerializer,
                                                OrderDeleteSerializer)
+from .serializers.business_serializers import BusinessListCreateSerializer
 from .serializers.position_serializer import PositionSerializer
+
 from beauty import signals
 from beauty.utils import ApprovingOrderEmail
 from .serializers.review_serializers import ReviewAddSerializer
@@ -193,15 +193,14 @@ class PositionListCreateView(ListCreateAPIView):
 
     def get_queryset(self):
         """Filter positions for owner."""
-        if self.request.user:
+        if "Owner" in self.request.user.groups.all().values_list("name", flat=True):
             logger.debug("A view to display list of positions of certain owner has opened")
 
             businesses = Business.objects.filter(owner=self.request.user.id)
             return Position.objects.filter(business__in=[business.id for business in businesses])
         else:
-            logger.debug("A view to display list of all businesses has opened")
-
-            return Position.objects.all()
+            # RETURNS NONE If user is not owner
+            logger.debug("PositionListCreateView: returns None")
 
 
 class OrderApprovingView(ListCreateAPIView):
