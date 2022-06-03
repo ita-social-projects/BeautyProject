@@ -23,17 +23,30 @@ from django.urls import include, path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from beauty.yasg import urlpatterns as doc_urls
 
 from api.views import ResetPasswordView, UserActivationView
 
 
 @api_view(["GET"])
-def api_root(request, format=None): # noqa
-    """Add urls to API Home page."""
-    return Response(
-        {"users": reverse("api:user-list-create", request=request, format=format),
-         "businesses": reverse("api:businesses-list", request=request, format=format),
-         "orders": reverse("api:order-list-create", request=request, format=format)},
+def api_root(request, reverse_format=None):
+    """Add links of all lists to API Home page."""
+    return Response({
+        "users": reverse(
+            "api:user-list-create",
+            request=request,
+            format=reverse_format,
+        ),
+        "businesses": reverse(
+            "api:businesses-list-create",
+            request=request,
+            format=reverse_format,
+        ),
+        "orders": reverse(
+            "api:order-list-create",
+            request=request,
+            format=reverse_format,
+        )},
     )
 
 
@@ -51,9 +64,16 @@ urlpatterns = [
         name="reset-password",
     ),
     path("api/v1/", include("api.urls", namespace="api")),
-    path("auth/", include("djoser.urls")),
-    path("auth/", include("djoser.urls.jwt")),
+    # path(
+    #    "api-auth/",
+    # include("rest_framework.urls", namespace="rest_framework")
+    # ),
+    path(r"auth/", include("djoser.urls")),
+    path(r"auth/", include("djoser.urls.jwt")),
+
 ]
+
+urlpatterns += doc_urls
 
 if settings.DEBUG:
     urlpatterns += static(

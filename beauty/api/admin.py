@@ -1,4 +1,6 @@
-from api.models import CustomUser, Order, Service, Position, Business
+"""Configuration for admin."""
+
+from api.models import CustomUser, Order, Service, Position, Business, Review
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import (UserAdmin as BaseUserAdmin,
@@ -7,37 +9,39 @@ from api.forms import CustomUserChangeForm, CustomUserCreationForm
 
 
 class CustomUserAdmin(BaseUserAdmin):
+    """Class for specifing CustomUser fields in admin."""
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
 
-    list_display = ('email', 'is_admin', 'first_name', 'last_name',
-                    'phone_number', 'is_active', 'id')
-    list_filter = ('is_admin', 'groups')
+    list_display = ("email", "is_admin", "first_name", "last_name",
+                    "phone_number", "is_active", "id")
+    list_filter = ("is_admin", "groups")
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'groups')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'patronymic',
-                                      'phone_number', 'bio', 'avatar')}),
-        ('Permissions', {'fields': ('is_admin', 'is_active')}),
+        (None, {"fields": ("email", "password", "groups")}),
+        ("Personal info", {"fields": ("first_name", "last_name", "patronymic",
+                                      "phone_number", "bio", "avatar")}),
+        ("Permissions", {"fields": ("is_admin", "is_active")}),
     )
     add_fieldsets = (
         (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'first_name', 'phone_number', 'groups',
-                       'avatar', 'password1', 'password2'),
+            "classes": ("wide",),
+            "fields": ("email", "first_name", "phone_number", "groups",
+                       "avatar", "password1", "password2"),
         }),
     )
-    search_fields = ('email',)
-    ordering = ('email',)
+    search_fields = ("email",)
+    ordering = ("email",)
     filter_horizontal = ()
 
 
 class CustomUserInline(admin.TabularInline):
+    """Class allows to add CustomUser in Group admin page."""
     model = CustomUser.groups.through
     extra = 1
 
 
 class CustomGroupAdmin(BaseGroupAdmin):
-
+    """Extends BaseGroupAdmin class adding CustomUserInline class."""
     inlines = [
         CustomUserInline,
     ]
@@ -50,3 +54,4 @@ admin.site.register(Order)
 admin.site.register(Service)
 admin.site.register(Position)
 admin.site.register(Business)
+admin.site.register(Review)

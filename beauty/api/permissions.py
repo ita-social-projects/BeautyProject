@@ -1,4 +1,4 @@
-"""This module provides all needed permissions."""
+"""Module with permissions for api appliaction."""
 
 import logging
 
@@ -32,10 +32,9 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
 
 
 class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
-    """IsAdminOrAccountOwnerOrReadOnly permission class.
+    """Object-level permission.
 
-    Object-level permission to only allow owners of an object
-    or admin to edit it.
+    Only allow owners of an object or admin to edit it.
     """
 
     def has_object_permission(self, request, view, obj):

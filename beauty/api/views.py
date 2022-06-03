@@ -1,4 +1,4 @@
-"""This module provides all needed views."""
+"""This module provides all needed api views."""
 
 import logging
 
@@ -19,6 +19,7 @@ from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
 
 from .models import Business, CustomUser, Order
+
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
@@ -28,6 +29,7 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
 from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
+from .serializers.review_serializers import ReviewAddSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -101,7 +103,7 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         """Reimplementation of the DESTROY (DELETE) method.
 
-        Makes current user inactive by changing its field
+        Makes current user inactive by changing its field.
         """
         if instance.is_active:
             instance.is_active = False
@@ -154,10 +156,11 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         Method for getting order objects by using both order user id
         and order id lookup fields.
         """
+        user = self.kwargs["user"]
         if len(self.kwargs) > 1:
             obj = get_object_or_404(
                 self.get_queryset(),
-                Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
+                Q(customer=user) | Q(specialist=user),
                 id=self.kwargs["pk"],
             )
             self.check_object_permissions(self.request, obj)
@@ -279,3 +282,36 @@ class BusinessDetailRetrieveAPIView(RetrieveAPIView):
     serializer_class = BusinessDetailSerializer
 
     logger.debug("A view to display certain business has opened")
+
+
+class ReviewAddView(GenericAPIView):
+    """Create Review view.
+
+    This class represents a view which is accessed when someone
+    is trying to create a new Review. It makes use of the POST method,
+    other methods are not allowed in this view.
+    """
+
+    serializer_class = ReviewAddSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user):
+        """This is a POST method of the view."""
+        serializer = ReviewAddSerializer(data=request.data)
+        author = self.request.user
+        to_user = CustomUser.objects.get(pk=user)
+        if serializer.is_valid():
+            serializer.save(
+                from_user=author,
+                to_user=to_user,
+            )
+            logger.info(
+                f"User {author} (id = {author.id}) posted a review for"
+                f"{to_user} (id = {to_user.id})",
+            )
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            logger.info(
+                f"Error validating review: Field {serializer.errors.popitem()}",
+            )
+            return Response(status=status.HTTP_400_BAD_REQUEST)

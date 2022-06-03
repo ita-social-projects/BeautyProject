@@ -2,6 +2,7 @@
 
 import logging
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
@@ -11,39 +12,43 @@ from rest_framework import serializers
 from api.models import Business, CustomUser
 
 
+User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
 class BusinessListCreateSerializer(serializers.ModelSerializer):
-    """Serializer for business creation."""
+    """Business serilalizer for list and create views."""
 
     class Meta:
-        """Meta for BusinessListCreateSerializer class."""
+        """Display 4 required fields for Business creation."""
 
         model = Business
         fields = ("name", "business_type", "owner", "description")
 
     def validate_owner(self, value):
-        """User validation.
+        """Validates owner.
 
-        Checks if such user exists and validates if user belongs to
+        Checks if such user exists, validates if user belongs to
         Specialist group
         """
         try:
             value.groups.get(name="Owner")
 
         except Group.DoesNotExist:
-            logger.error("Owner validation failed")
-            raise ValidationError(_("Only Owners can create Business"), code="invalid")
+            logger.error("Failed owner validation")
 
-        logger.info("Owner was validated")
+            raise ValidationError(
+                _("Only Owners can create Business"), code="invalid",
+            )
+
+        logger.info("Sucessfully validated owner")
 
         return value
 
     def to_representation(self, instance):
-        """Change the display of owner field data."""
+        """Display owner full name."""
         data = super().to_representation(instance)
-        owner = CustomUser.objects.get(id=data["owner"])
+        owner = User.objects.filter(id=data["owner"]).first()
         data["owner"] = owner.get_full_name()
         return data
 
@@ -59,7 +64,7 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     address = serializers.CharField(max_length=500)
 
     class Meta:
-        """Meta for OwnerBusinessesSerializer class."""
+        """Display main field & urls for businesses."""
 
         model = Business
         fields = ("business_url", "owner_url", "name", "business_type", "address")
