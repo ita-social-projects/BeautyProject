@@ -9,7 +9,6 @@ from .views import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetriev
 
 
 app_name = "api"
-
 urlpatterns = [
     path(
         "users/",
