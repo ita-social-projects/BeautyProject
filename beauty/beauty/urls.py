@@ -19,22 +19,34 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from beauty.yasg import urlpatterns as doc_urls
 
-from api.views import UserActivationView, ResetPasswordView
+from api.views import ResetPasswordView, UserActivationView
 
 
 @api_view(["GET"])
 def api_root(request, reverse_format=None):
-    """Gives list of all list links."""
-    return Response(
-        {"users": reverse("api:user-list-create", request=request,
-                          format=reverse_format),
-         "orders": reverse("api:order-list-create", request=request,
-                           format=reverse_format)},
+    """Add links of all lists to API Home page."""
+    return Response({
+        "users": reverse(
+            "api:user-list-create",
+            request=request,
+            format=reverse_format,
+        ),
+        "businesses": reverse(
+            "api:businesses-list-create",
+            request=request,
+            format=reverse_format,
+        ),
+        "orders": reverse(
+            "api:order-list-create",
+            request=request,
+            format=reverse_format,
+        )},
     )
 
 
