@@ -109,7 +109,7 @@ class BusinessListCreateViewTest(TestCase):
     def test_list_of_businesses(self) -> None:
         """Tests if view gives all businesses."""
         response = self.client.get(
-            path=reverse("api:business-list-create"),
+            path=reverse("api:businesses-list-create"),
         )
 
         self.assertEqual(response.status_code, 200)
@@ -122,7 +122,7 @@ class BusinessListCreateViewTest(TestCase):
         authentication
         """
         response = self.client.post(
-            path=reverse("api:business-list-create"),
+            path=reverse("api:businesses-list-create"),
             data=self.valid_create_data,
         )
 
@@ -137,7 +137,7 @@ class BusinessListCreateViewTest(TestCase):
         self.client.force_authenticate(user=self.customer)
 
         response = self.client.post(
-            path=reverse("api:business-list-create"),
+            path=reverse("api:businesses-list-create"),
             data=self.invalid_create_data,
         )
 
@@ -150,7 +150,7 @@ class BusinessListCreateViewTest(TestCase):
         self.client.force_authenticate(user=self.customer)
 
         response = self.client.post(
-            path=reverse("api:business-list-create"),
+            path=reverse("api:businesses-list-create"),
             data=self.valid_create_data,
         )
 
