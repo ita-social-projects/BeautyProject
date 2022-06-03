@@ -15,7 +15,10 @@ from rest_framework.reverse import reverse
 from api.serializers.position_serializer import PositionSerializer
 from api.models import Position
 from api.views import PositionListCreateView
-from .factories import BusinessFactory, CustomUserFactory, GroupFactory, PositionFactory
+from .factories import (BusinessFactory,
+                        CustomUserFactory,
+                        GroupFactory,
+                        PositionFactory)
 
 
 class TestPositionListCreateView(TestCase):

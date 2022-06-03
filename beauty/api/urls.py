@@ -5,7 +5,7 @@ from django.urls import path
 from .views import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetrieveAPIView,
                     CustomUserDetailRUDView, CustomUserListCreateView,
                     OrderApprovingView, OrderListCreateView, OrderRetrieveUpdateDestroyView,
-                    OwnerBusinessDetailRUDView, ReviewAddView, PositionListCreateView)
+                    OwnerBusinessDetailRUDView, PositionListCreateView, ReviewAddView)
 
 
 app_name = "api"

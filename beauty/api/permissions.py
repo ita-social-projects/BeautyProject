@@ -68,3 +68,18 @@ class IsOrderUser(permissions.BasePermission):
         logger.debug(f"Object {obj.id} permission check")
 
         return obj.specialist == request.user or obj.customer == request.user
+
+
+class IsPositionOwner(permissions.BasePermission):
+    """IsPositionOwner permission class.
+
+    Allows only position owners and specialist to work with it.
+    """
+    def has_object_permission(self, request, view, obj):
+        """Object permission check."""
+        logger.debug(f"Object {obj.id} permission check. Is position owner")
+
+        if "Owner" in request.user.groups.all().values_list("name", flat=True):
+            return obj.business.owner == request.user
+        else:
+            return False

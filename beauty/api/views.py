@@ -20,7 +20,7 @@ from beauty.utils import ApprovingOrderEmail
 
 from .models import Business, CustomUser, Order, Position
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsPositionOwner)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
@@ -180,18 +180,8 @@ class PositionListCreateView(ListCreateAPIView):
 
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated, )
-
-    def get_queryset(self):
-        """Filter positions for owner."""
-        if "Owner" in self.request.user.groups.all().values_list("name", flat=True):
-            logger.debug("A view to display list of positions of certain owner has opened")
-
-            businesses = Business.objects.filter(owner=self.request.user.id)
-            return Position.objects.filter(business__in=[business.id for business in businesses])
-        else:
-            # RETURNS NONE If user is not owner
-            logger.debug("PositionListCreateView: returns None")
+    permission_classes = (IsAuthenticated,
+                          IsPositionOwner)
 
 
 class OrderApprovingView(ListCreateAPIView):
