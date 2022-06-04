@@ -108,4 +108,3 @@ class IsPositionOwner(permissions.BasePermission):
             return obj.business.owner == request.user
         else:
             return False
-
