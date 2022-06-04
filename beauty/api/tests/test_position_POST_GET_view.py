@@ -15,7 +15,10 @@ from rest_framework.reverse import reverse
 from api.serializers.position_serializer import PositionSerializer
 from api.models import Position
 from api.views import PositionListCreateView
-from .factories import BusinessFactory, CustomUserFactory, GroupFactory, PositionFactory
+from .factories import (BusinessFactory,
+                        CustomUserFactory,
+                        GroupFactory,
+                        PositionFactory)
 
 
 class TestPositionListCreateView(TestCase):
@@ -51,10 +54,11 @@ class TestPositionListCreateView(TestCase):
 
     def test_position_get_from_valid_business(self):
         """Get 1 created position."""
-        self.position_valid = PositionFactory.create(name="Wyh",
-                                                     business=self.business,
-                                                     specialist=[self.specialist1],
-                                                     )
+        self.position_valid = PositionFactory.create(
+            name="Wyh",
+            business=self.business,
+            specialist=[self.specialist1],
+        )
         resp = self.client.generic(method="GET",
                                    path=reverse("api:position-list"),
                                    )

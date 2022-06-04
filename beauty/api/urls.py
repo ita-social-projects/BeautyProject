@@ -2,10 +2,17 @@
 
 from django.urls import path
 
-from .views import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetrieveAPIView,
-                    CustomUserDetailRUDView, CustomUserListCreateView,
-                    OrderApprovingView, OrderListCreateView, OrderRetrieveUpdateDestroyView,
-                    OwnerBusinessDetailRUDView, ReviewAddView, PositionListCreateView)
+from .views import (AllOrOwnerBusinessesListCreateAPIView,
+                    BusinessDetailRetrieveAPIView,
+                    CustomUserDetailRUDView,
+                    CustomUserListCreateView,
+                    OrderApprovingView,
+                    OrderListCreateView,
+                    OrderRetrieveUpdateDestroyView,
+                    OwnerBusinessDetailRUDView,
+                    PositionListCreateView,
+                    PositionRetrieveUpdateDestroyView,
+                    ReviewAddView)
 
 
 app_name = "api"
@@ -63,6 +70,11 @@ urlpatterns = [
         "position/",
         PositionListCreateView.as_view(),
         name="position-list",
+    ),
+    path(
+        "position/<int:pk>",
+        PositionRetrieveUpdateDestroyView.as_view(),
+        name="position-detail-list",
     ),
     path(
         r"<int:user>/reviews/add/",

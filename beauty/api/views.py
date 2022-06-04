@@ -20,7 +20,7 @@ from beauty.utils import ApprovingOrderEmail
 
 from .models import Business, CustomUser, Order, Position
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsPositionOwner)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
@@ -175,25 +175,6 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         return super().get_object()
 
 
-class PositionListCreateView(ListCreateAPIView):
-    """Generic API for position POST methods."""
-
-    queryset = Position.objects.all()
-    serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated, )
-
-    def get_queryset(self):
-        """Filter positions for owner."""
-        if "Owner" in self.request.user.groups.all().values_list("name", flat=True):
-            logger.debug("A view to display list of positions of certain owner has opened")
-
-            businesses = Business.objects.filter(owner=self.request.user.id)
-            return Position.objects.filter(business__in=[business.id for business in businesses])
-        else:
-            # RETURNS NONE If user is not owner
-            logger.debug("PositionListCreateView: returns None")
-
-
 class OrderApprovingView(ListCreateAPIView):
     """Approving orders custom GET method."""
 
@@ -337,3 +318,26 @@ class ReviewAddView(GenericAPIView):
                 f"Error validating review: Field {serializer.errors.popitem()}",
             )
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class PositionListCreateView(ListCreateAPIView):
+    """Generic API for position POST methods."""
+
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated,
+                          IsPositionOwner)
+
+
+class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """Generic API for position PUT, GET, DELTE methods."""
+
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated,
+                          IsPositionOwner)
+
+    def put(self, request, *args, **kwargs):
+        """Posibility to modify certain fields in PUT."""
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
