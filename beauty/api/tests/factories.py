@@ -5,7 +5,7 @@ from collections import namedtuple
 from django.utils import timezone
 import factory
 from factory import fuzzy
-from api.models import (CustomUser, Order, Service, Position, Business)
+from api.models import (CustomUser, Order, Service, Position, Business, Review)
 from django.contrib.auth.models import Group
 
 
@@ -123,3 +123,14 @@ class OrderFactory(factory.django.DjangoModelFactory):
     service = factory.SubFactory(ServiceFactory)
     reason = ""
     start_time = factory.LazyFunction(timezone.now)
+
+
+class ReviewFactory(factory.django.DjangoModelFactory):
+    """Factory class for testing Review model."""
+
+    class Meta:
+        """Class Meta for the definition of the Review model."""
+        model = Review
+
+    text_body = factory.Faker("text", max_nb_chars=500)
+    rating = factory.Faker("random_int", min=0, max=5)
