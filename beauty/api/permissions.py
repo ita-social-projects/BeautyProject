@@ -76,3 +76,20 @@ class IsPositionOwner(permissions.BasePermission):
             return obj.business.owner == request.user
         else:
             return False
+
+
+class IsProfileOwner(permissions.BasePermission):
+    """Permission used in Users profile."""
+
+    def has_object_permission(self, request, view, obj):
+        """User Profile permission.
+
+        Object-level permission to only allow users of an object to edit it, still
+        it allows to view an object for non-users.
+        """
+        logger.info(f"{request.user} (id={request.user.id}) tried to access "
+                    f"object {obj.id}, permission is checked")
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_authenticated and (request.user.is_admin or obj == request.user)
