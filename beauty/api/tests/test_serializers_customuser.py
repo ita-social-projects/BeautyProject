@@ -20,19 +20,16 @@ Passwords validation tests:
 - Checking when password or password confirmation is null.
 """
 
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import (check_password, make_password)
 from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.reverse import reverse
 
 from api.serializers.customuser_serializers import (CustomUserSerializer,
                                                     PasswordsValidation, CustomUserDetailSerializer)
-from rest_framework.test import APIRequestFactory, APIClient
+from rest_framework.test import (APIRequestFactory, APIClient)
 from rest_framework.serializers import ValidationError
-from api.tests.factories import CustomUserFactory, GroupFactory, OrderFactory
-
-factory = APIRequestFactory()
-request = factory.get("/")
+from api.tests.factories import (CustomUserFactory, GroupFactory, OrderFactory)
 
 
 class CustomUserSerializerTestCase(TestCase):
@@ -71,7 +68,7 @@ class CustomUserSerializerTestCase(TestCase):
         self.groups.customer.user_set.add(self.customer)
 
         self.factory = APIRequestFactory()
-        self.request = factory.get("/")
+        self.request = self.factory.get("/")
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.specialist)
@@ -140,10 +137,10 @@ class CustomUserSerializerTestCase(TestCase):
         response = self.client.get(path=reverse("api:user-detail",
                                                 args=[self.customer.id]))
 
-        request.user = self.customer
-        serializer = self.Serializer(self.customer, context={"request": request})
+        self.request.user = self.customer
+        serializer = self.Serializer(self.customer, context={"request": self.request})
         self.assertEqual(serializer.data["customer_orders"],
-                         [reverse("api:user-order-detail", request=request,
+                         [reverse("api:user-order-detail", request=self.request,
                                   args=[self.customer.id, self.customer_order.id])])
         self.assertEqual(serializer.data["groups"], ["Customer"])
         with self.assertRaises(KeyError):
@@ -155,10 +152,10 @@ class CustomUserSerializerTestCase(TestCase):
         response = self.client.get(path=reverse("api:user-detail",
                                                 args=[self.specialist.id]))
 
-        request.user = self.specialist
-        customer_order = reverse("api:user-order-detail", request=request,
+        self.request.user = self.specialist
+        customer_order = reverse("api:user-order-detail", request=self.request,
                                  args=[self.specialist.id, self.specialist_order.id])
-        serializer = self.Serializer(self.specialist, context={"request": request})
+        serializer = self.Serializer(self.specialist, context={"request": self.request})
         self.assertEqual(serializer.data["specialist_orders"],
                          response.data["specialist_exist_orders"])
         self.assertEqual(serializer.data["customer_orders"], [customer_order])
@@ -168,11 +165,11 @@ class CustomUserSerializerTestCase(TestCase):
         """Deserializing a data and updating a user data with password data."""
         data = {"first_name": "Customer_1_2", "email": "test@com.ua",
                 "password": "0987654321s", "confirm_password": "0987654321s"}
-        request.user = self.customer
+        self.request.user = self.customer
         serializer = self.Detail_serializer(
             instance=self.customer, data=data,
             partial=True,
-            context={"request": request},
+            context={"request": self.request},
         )
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
@@ -188,7 +185,7 @@ class CustomUserSerializerTestCase(TestCase):
         serializer = self.Detail_serializer(
             instance=instance, data=data,
             partial=True,
-            context={"request": request},
+            context={"request": self.request},
         )
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
