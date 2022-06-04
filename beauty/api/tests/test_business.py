@@ -37,6 +37,7 @@ class BusinessModelTest(TestCase):
         self.specialist2 = CustomUserFactory.create()
         self.groups.specialist.user_set.add(self.specialist1)
         self.groups.specialist.user_set.add(self.specialist2)
+        print(self.specialist1, self.specialist2)
 
         self.business = BusinessFactory.create()
 

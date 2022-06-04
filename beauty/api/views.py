@@ -10,15 +10,10 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
-                                     RetrieveUpdateDestroyAPIView,
+                                     RetrieveUpdateDestroyAPIView, ListAPIView,
                                      get_object_or_404)
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
-
-from rest_framework.generics import (GenericAPIView, ListCreateAPIView, RetrieveAPIView,
-                                     RetrieveUpdateDestroyAPIView, get_object_or_404,
-                                     ListAPIView)
-from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
 
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
