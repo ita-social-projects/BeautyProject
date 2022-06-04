@@ -15,20 +15,13 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
     to edit it.
     """
 
-    def has_permission(self, request, view):
-        """Read permission.
-
-        Read permissions are allowed to any request,
-        so we'll always allow GET, HEAD or OPTIONS requests.
-        """
-        return request.method in permissions.SAFE_METHODS
-
     def has_object_permission(self, request, view, obj):
         """Object permission check."""
         logger.debug(f"Object {obj.id} permission check")
 
-        if request.user.is_authenticated:
-            return request.user.is_admin or (obj == request.user)
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_authenticated and (request.user.is_admin or (obj == request.user))
 
 
 class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
