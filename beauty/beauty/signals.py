@@ -1,4 +1,6 @@
 """Module with all project signals."""
+
+import logging
 from django.db.models.signals import post_save
 from django.dispatch import Signal, receiver
 from rest_framework.reverse import reverse
@@ -6,7 +8,6 @@ from rest_framework.reverse import reverse
 from api.models import Order
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import StatusOrderEmail
-import logging
 
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ def send_order_status_for_customer(sender, **kwargs):
                                        args=[order.customer.id, order.id])}
 
     logger.info(f"Email was sent to the {order.customer.get_full_name()} with "
-                f"specialist {order.specialist.get_full_name()}"
+                f"specialist {order.specialist.get_full_name()} "
                 f"decision(order was {order.get_status_display()})")
 
     StatusOrderEmail(request, context).send([order.customer.email])

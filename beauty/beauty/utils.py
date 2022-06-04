@@ -8,7 +8,6 @@ from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
 from faker import Faker
 
-
 faker = Faker()
 
 
@@ -82,11 +81,15 @@ class StatusOrderEmail(BaseEmailMessage):
     template_name = "email/customer_order_status.html"
 
 
-def order_approve_decline_urls(order: object, request=None) -> dict:
+def order_approve_decline_urls(order: object, approve_name="url_for_approve",
+                               decline_name="url_for_decline", request=None) -> dict:
     """Get URLs for approving and declining orders.
 
     Args:
-        order(Order): Order instance
+        approve_name (str): key name for approving URL
+        decline_name (str): key name for declining URL
+        request: request data
+        order (Order): Order instance
 
     Returns:
         urls(dict): dict with URLs
@@ -97,10 +100,10 @@ def order_approve_decline_urls(order: object, request=None) -> dict:
     params = {"uid": encode_uid(order.pk), "token": order.token}
 
     url_approved_params = params | {"status": encode_uid("approved")}
-    urls["url_approved"] = reverse("api:order-approving",
-                                   kwargs=url_approved_params, request=request)
+    urls[approve_name] = reverse("api:order-approving",
+                                 kwargs=url_approved_params, request=request)
 
     url_declined_params = params | {"status": encode_uid("declined")}
-    urls["url_declined"] = reverse("api:order-approving",
-                                   kwargs=url_declined_params, request=request)
+    urls[decline_name] = reverse("api:order-approving",
+                                 kwargs=url_declined_params, request=request)
     return urls

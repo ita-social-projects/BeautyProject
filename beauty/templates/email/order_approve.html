@@ -30,10 +30,10 @@
 <p><b>Service:</b> {{order.service.name}}</p>
 <hr>
 <p><i><b>{% trans "Please go to the following page to approve order:" %}</b></i></p>
-<p><a href="{{ protocol }}://{{ domain }}{{ url_approved|safe }}">{{ protocol }}://{{ domain }}{{ url_approved|safe }}</a></p>
+<p><a href="{{ protocol }}://{{ domain }}{{ url_for_approve|safe }}">{{ protocol }}://{{ domain }}{{ url_for_approve|safe }}</a></p>
 
 <p><i><b>{% trans "Please go to the following page to declined order:" %}</b></i></p>
-<p><a href="{{ protocol }}://{{ domain }}{{ url_declined|safe }}">{{ protocol }}://{{ domain }}{{ url_declined|safe }}</a></p>
+<p><a href="{{ protocol }}://{{ domain }}{{ url_for_decline|safe }}">{{ protocol }}://{{ domain }}{{ url_for_decline|safe }}</a></p>
 
 <p>{% trans "Thanks for using our site!" %}</p>
 

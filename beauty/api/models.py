@@ -138,9 +138,9 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     is_admin = models.BooleanField(default=False)
 
-    objects = MyUserManager()
-
     USERNAME_FIELD = "email"
+
+    objects = MyUserManager()
 
     REQUIRED_FIELDS = ("password", "first_name", "phone_number")
 
@@ -155,6 +155,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     def is_staff(self):
         """Determines whether user is admin."""
         return self.is_admin
+
+    @property
+    def is_specialist(self):
+        """Determines whether user is specialist."""
+        return self.groups.filter(name="Specialist").exists()
 
     @property
     def specialist_exist_orders(self):
@@ -513,13 +518,6 @@ class Order(models.Model):
 
         super(Order, self).save(*args, **kwargs)
         return self
-
-    # @property
-    # def token(self):
-    #     """Create token for order."""
-    #     d = OrderApprovingTokenGenerator().make_token(self)
-    #     print(OrderApprovingTokenGenerator().check_token(self, d))
-    #     return OrderApprovingTokenGenerator().make_token(self)
 
     @property
     def is_active(self) -> bool:

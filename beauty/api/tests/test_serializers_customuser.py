@@ -27,7 +27,7 @@ from rest_framework.reverse import reverse
 
 from api.serializers.customuser_serializers import (CustomUserSerializer,
                                                     PasswordsValidation, CustomUserDetailSerializer)
-from rest_framework.test import APIRequestFactory
+from rest_framework.test import APIRequestFactory, APIClient
 from rest_framework.serializers import ValidationError
 from api.tests.factories import CustomUserFactory, GroupFactory, OrderFactory
 
@@ -69,6 +69,12 @@ class CustomUserSerializerTestCase(TestCase):
         self.groups = GroupFactory.groups_for_test()
         self.groups.specialist.user_set.add(self.specialist)
         self.groups.customer.user_set.add(self.customer)
+
+        self.factory = APIRequestFactory()
+        self.request = factory.get("/")
+
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.specialist)
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
@@ -131,33 +137,40 @@ class CustomUserSerializerTestCase(TestCase):
 
     def test_serialize_customer_instance(self):
         """Check serializer with customer instance data."""
+        response = self.client.get(path=reverse("api:user-detail",
+                                                args=[self.customer.id]))
+
+        request.user = self.customer
         serializer = self.Serializer(self.customer, context={"request": request})
         self.assertEqual(serializer.data["customer_orders"],
                          [reverse("api:user-order-detail", request=request,
                                   args=[self.customer.id, self.customer_order.id])])
-        self.assertEqual(serializer.data["specialist_orders"], [])
         self.assertEqual(serializer.data["groups"], ["Customer"])
         with self.assertRaises(KeyError):
             serializer.data["password"]
+            response.data["specialist_exist_orders"]
 
     def test_serialize_specialist_instance(self):
         """Check serializer with specialist instance data."""
+        response = self.client.get(path=reverse("api:user-detail",
+                                                args=[self.specialist.id]))
+
+        request.user = self.specialist
         customer_order = reverse("api:user-order-detail", request=request,
                                  args=[self.specialist.id, self.specialist_order.id])
-        specialist_order = reverse("api:user-order-detail", request=request,
-                                   args=[self.specialist.id, self.customer_order.id])
         serializer = self.Serializer(self.specialist, context={"request": request})
-        self.assertEqual(serializer.data["specialist_orders"], [specialist_order])
+        self.assertEqual(serializer.data["specialist_orders"],
+                         response.data["specialist_exist_orders"])
         self.assertEqual(serializer.data["customer_orders"], [customer_order])
         self.assertEqual(serializer.data["groups"], ["Specialist"])
 
     def test_deserialize_update_user_with_password(self):
         """Deserializing a data and updating a user data with password data."""
-        data = {"first_name": "Specialist_1_1", "email": "test@com.ua",
+        data = {"first_name": "Customer_1_2", "email": "test@com.ua",
                 "password": "0987654321s", "confirm_password": "0987654321s"}
-        instance = self.customer
+        request.user = self.customer
         serializer = self.Detail_serializer(
-            instance=instance, data=data,
+            instance=self.customer, data=data,
             partial=True,
             context={"request": request},
         )
