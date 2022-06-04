@@ -99,11 +99,11 @@ class BusinessListCreateViewTest(TestCase):
 
         self.valid_create_data = {
             "name": faker.word(), "business_type": faker.word(),
-            "description": faker.text(), "owner": self.owner.id,
+            "description": faker.text(),
         }
         self.invalid_create_data = {
             "name": faker.word(), "business_type": faker.word(),
-            "description": faker.text(), "owner": self.customer.id,
+            "description": faker.text(),
         }
 
     def test_list_of_businesses(self) -> None:

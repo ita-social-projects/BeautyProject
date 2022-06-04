@@ -1,7 +1,6 @@
 """This module provides all needed api views."""
 
 import logging
-from re import I
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -9,9 +8,11 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
 from rest_framework import status
-from rest_framework.generics import (GenericAPIView, ListCreateAPIView, RetrieveAPIView,
-                                     RetrieveUpdateDestroyAPIView, get_object_or_404)
-from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
+from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
+                                     RetrieveUpdateDestroyAPIView,
+                                     get_object_or_404)
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -21,15 +22,17 @@ from beauty.utils import ApprovingOrderEmail
 
 from .models import Business, CustomUser, Order
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsOwner, ReadOnly)
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsOwner,
+                          ReadOnly)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
-                                               BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
-                                               BusinessesSerializer)
+                                               BusinessesSerializer,
+                                               BusinessesOwnerSerializer)
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
-from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
+from .serializers.order_serializers import (OrderDeleteSerializer,
+                                            OrderSerializer)
 from .serializers.review_serializers import ReviewAddSerializer
 
 
@@ -237,25 +240,29 @@ class OrderApprovingView(ListCreateAPIView):
         )
 
 
-class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
+class AllOrOwnerBusinessesListCreateView(ListCreateAPIView):
     """List View for all businesses or businesses of certain owner."""
 
-    permission_classes = (IsOwner|ReadOnly,)
+    permission_classes = (IsOwner | ReadOnly,)
 
     def get_serializer_class(self):
         """Return specific Serializer for businesses creation."""
         if self.request.method == "POST":
             return BusinessListCreateSerializer
-        return BusinessesSerializer
+
+        if self.kwargs.get("owner_id"):
+            return BusinessesSerializer
+        return BusinessesOwnerSerializer
 
     def get_queryset(self):
         """Filter businesses for owner."""
-        if self.kwargs.get("owner_id"):
+        owner = self.kwargs.get("owner_id")
+        if owner:
             logger.debug(
-                "A view to display list of businesses " 
-                "of certain owner has opened"
+                "A view to display list of businesses "
+                "of certain owner has opened",
             )
-            return Business.objects.filter(owner=self.kwargs["owner_id"])
+            return Business.objects.filter(owner=owner)
         else:
             logger.debug("A view to display list of all businesses has opened")
             return Business.objects.all()
@@ -274,22 +281,22 @@ class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     """RUD View for business editing."""
 
     permission_classes = [IsAccountOwnerOrReadOnly]
-
-    queryset = Business.objects.all()
     serializer_class = BusinessAllDetailSerializer
 
-    logger.debug("A view to edit business has opened")
+    def get_queryset(self):
+        """Return all business or business of certain owner.
 
+        If owner_id is provided, display owner's businesses else all businesses
+        """
+        try:
+            owner = get_object_or_404(
+                CustomUser, id=self.kwargs["owner_id"],
+            )
+            logger.info("Successfully got business from owner")
+            return owner.businesses.all()
 
-class BusinessDetailRetrieveAPIView(RetrieveAPIView):
-    """Retrieve View for business details."""
-
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    queryset = Business.objects.all()
-    serializer_class = BusinessDetailSerializer
-
-    logger.debug("A view to display certain business has opened")
+        except KeyError:
+            return Business.objects.all()
 
 
 class ReviewAddView(GenericAPIView):
@@ -320,6 +327,7 @@ class ReviewAddView(GenericAPIView):
             return Response(status=status.HTTP_201_CREATED)
         else:
             logger.info(
-                f"Error validating review: Field {serializer.errors.popitem()}",
+                "Error validating review: "
+                f"Field {serializer.errors.popitem()}",
             )
             return Response(status=status.HTTP_400_BAD_REQUEST)

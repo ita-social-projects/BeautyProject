@@ -11,25 +11,17 @@ logger = logging.getLogger(__name__)
 
 class IsAccountOwnerOrReadOnly(permissions.BasePermission):
     """IsAccountOwnerOrReadOnly permission class.
-
     Object-level permission to only allow owners of an object
     to edit it.
     """
-
-    def has_permission(self, request, view):
-        """Read permission.
-
-        Read permissions are allowed to any request,
-        so we'll always allow GET, HEAD or OPTIONS requests.
-        """
-        return request.method in permissions.SAFE_METHODS
 
     def has_object_permission(self, request, view, obj):
         """Object permission check."""
         logger.debug(f"Object {obj.id} permission check")
 
-        if request.user.is_authenticated:
-            return request.user.is_admin or (obj == request.user)
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.is_authenticated and (request.user.is_admin or (obj == request.user))
 
 
 class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):
@@ -71,12 +63,11 @@ class IsOrderUser(permissions.BasePermission):
         return obj.specialist == request.user or obj.customer == request.user
 
 
-
 class IsOwner(permissions.BasePermission):
-    """Permission class which checks if current user is an owner"""
+    """Permission class which checks if current user is an owner."""
 
     def has_permission(self, request, view):
-        """Checks if user belongs to owner group"""
+        """Checks if user belongs to owner group."""
         user = request.user
 
         if user.is_authenticated:
@@ -92,7 +83,8 @@ class IsOwner(permissions.BasePermission):
 
 
 class ReadOnly(permissions.BasePermission):
+    """Permission which gives access for SAFE_METHODS."""
+
     def has_permission(self, request, view):
+        """Checks if method in SAFE_METHODS."""
         return request.method in permissions.SAFE_METHODS
-
-

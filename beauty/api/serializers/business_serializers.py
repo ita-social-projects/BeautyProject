@@ -1,7 +1,6 @@
 """The module includes serializers for Business model."""
 
 import logging
-from django.utils.translation import gettext as _
 from rest_framework import serializers
 from api.models import Business, CustomUser
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class BaseBusinessSerializer(serializers.ModelSerializer):
     """Base business serilalizer.
-    
+
     Provides to_representation which display owner with his full_name
     """
 
@@ -39,10 +38,6 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     business_url = serializers.HyperlinkedIdentityField(
         view_name="api:business-detail", lookup_field="pk",
     )
-    owner_url = serializers.HyperlinkedIdentityField(
-        view_name="api:certain-owners-businesses-list",
-        lookup_field="owner_id",
-    )
     address = serializers.CharField(max_length=500)
 
     class Meta:
@@ -50,8 +45,22 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
 
         model = Business
         fields = (
-            "business_url", "owner_url", "name", "business_type", "address"
+            "business_url", "name", "business_type", "address",
         )
+
+
+class BusinessesOwnerSerializer(BusinessesSerializer):
+    """Serializer for business base fields."""
+
+    owner_url = serializers.HyperlinkedIdentityField(
+        view_name="api:certain-owners-businesses-list",
+        lookup_field="owner_id",
+    )
+
+    class Meta(BusinessesSerializer.Meta):
+        """Display main field & urls for businesses."""
+
+        fields = BusinessesSerializer.Meta.fields + ("owner_url",)
 
 
 class BusinessAllDetailSerializer(BaseBusinessSerializer):
@@ -65,15 +74,3 @@ class BusinessAllDetailSerializer(BaseBusinessSerializer):
 
         model = Business
         fields = "__all__"
-
-
-class BusinessDetailSerializer(BaseBusinessSerializer):
-    """Serializer for specific business."""
-
-    address = serializers.CharField(max_length=500)
-
-    class Meta:
-        """Meta for BusinessDetailSerializer class."""
-
-        model = Business
-        exclude = ("created_at", )
