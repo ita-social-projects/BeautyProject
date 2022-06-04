@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class IsAccountOwnerOrReadOnly(permissions.BasePermission):
     """IsAccountOwnerOrReadOnly permission class.
+
     Object-level permission to only allow owners of an object
     to edit it.
     """
@@ -21,7 +22,11 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
 
         if request.method in permissions.SAFE_METHODS:
             return True
-        return request.user.is_authenticated and (request.user.is_admin or (obj == request.user))
+        return (
+            request.user.is_authenticated and (
+                request.user.is_admin or (obj == request.user)
+            )
+        )
 
 
 class IsAdminOrIsAccountOwnerOrReadOnly(permissions.BasePermission):

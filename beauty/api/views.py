@@ -31,11 +31,14 @@ from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessListCreateSerializer,
                                                BusinessesSerializer,
                                                BusinessesOwnerSerializer)
+
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
+
 from .serializers.order_serializers import (OrderDeleteSerializer,
                                             OrderSerializer)
+
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
@@ -298,7 +301,7 @@ class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     serializer_class = BusinessAllDetailSerializer
 
     def get_queryset(self):
-        """Return all business or business of certain owner.
+        """Return all businesses or businesses of certain owner.
 
         If owner_id is provided, display owner's businesses else all businesses
         """
