@@ -10,6 +10,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
+
+from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ModelsUtils
 import logging
 
@@ -507,6 +509,11 @@ class Order(models.Model):
 
         super(Order, self).save(*args, **kwargs)
         return self
+
+    @property
+    def token(self):
+        """Create token for order."""
+        return OrderApprovingTokenGenerator().make_token(self)
 
     @property
     def is_active(self) -> bool:
