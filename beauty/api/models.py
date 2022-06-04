@@ -146,6 +146,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     class Meta:
         """This meta class stores verbose names ordering data."""
+
         ordering = ["id"]
         verbose_name = "User"
         verbose_name_plural = "Users"
@@ -331,11 +332,11 @@ class Position(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Business"),
     )
-    start_time = models.DateTimeField(
+    start_time = models.TimeField(
         editable=True,
         verbose_name=_("Start time"),
     )
-    end_time = models.DateTimeField(
+    end_time = models.TimeField(
         editable=True,
         verbose_name=_("End time"),
     )
@@ -353,7 +354,8 @@ class Position(models.Model):
 
 
 class Review(models.Model):
-    """This class represents basic Review (for Reviews system)
+    """This class represents basic Review (for Reviews system).
+
     that stores all the required information.
 
     Attributes:
@@ -405,7 +407,8 @@ class Review(models.Model):
 
 
 class Order(models.Model):
-    """This class represents a basic Order (for an appointment system)
+    """This class represents a basic Order (for an appointment system).
+
     that stores all the required information.
 
     Note:
@@ -418,8 +421,8 @@ class Order(models.Model):
         end_time (datetime): Time that is calculated according to the duration of service
         created_at (datetime): Time of creation of the order
         specialist (CustomUser): An appointed specialist for the order
-        customer (CustomUser): A customer who will recieve the order
-        service (Service): Service that will be fulfield for the order
+        customer (CustomUser): A customer who will receive the order
+        service (Service): Service that will be fulfilled for the order
         reason (str, optional): Reason for cancellation
 
     Properties:

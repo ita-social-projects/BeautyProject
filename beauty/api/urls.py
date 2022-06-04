@@ -6,8 +6,8 @@ from .views import (AllOrOwnerBusinessesListCreateView,
                     CustomUserDetailRUDView, CustomUserListCreateView,
                     OrderApprovingView, OrderListCreateView,
                     OrderRetrieveUpdateDestroyView, OwnerBusinessDetailRUDView,
-                    ReviewAddView, ServiceUpdateView,
-                    AllServicesListView)
+                    ReviewAddView, ServiceUpdateView, AllServicesListView,
+                    PositionListCreateView)
 
 
 app_name = "api"
@@ -60,6 +60,11 @@ urlpatterns = [
         "business/<int:pk>/",
         OwnerBusinessDetailRUDView.as_view(),
         name="business-detail",
+    ),
+    path(
+        "position/",
+        PositionListCreateView.as_view(),
+        name="position-list",
     ),
     path(
         r"<int:user>/reviews/add/",
