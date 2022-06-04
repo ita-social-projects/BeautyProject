@@ -51,10 +51,10 @@ class TestPositionListCreateView(TestCase):
 
     def test_position_get_from_valid_business(self):
         """Get 1 created position."""
-        self.position_valid = PositionFactory.create(name="Wyh",
-                                                     business=self.business,
-                                                     specialist=[self.specialist1],
-                                                     )
+        self.position = PositionFactory.create(name="Wyh",
+                                               business=self.business,
+                                               specialist=[self.specialist1],
+                                               )
         resp = self.client.generic(method="GET",
                                    path=reverse("api:position-list"),
                                    )
