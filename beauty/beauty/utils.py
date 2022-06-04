@@ -8,7 +8,6 @@ from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
 from faker import Faker
 
-from api.models import Order
 
 faker = Faker()
 
@@ -83,7 +82,7 @@ class StatusOrderEmail(BaseEmailMessage):
     template_name = "email/customer_order_status.html"
 
 
-def order_approve_decline_urls(order: Order) -> dict:
+def order_approve_decline_urls(order: object, request=None) -> dict:
     """Get URLs for approving and declining orders.
 
     Args:
@@ -99,12 +98,9 @@ def order_approve_decline_urls(order: Order) -> dict:
 
     url_approved_params = params | {"status": encode_uid("approved")}
     urls["url_approved"] = reverse("api:order-approving",
-                                   kwargs=url_approved_params)
+                                   kwargs=url_approved_params, request=request)
 
     url_declined_params = params | {"status": encode_uid("declined")}
-    urls["url_approved"] = reverse("api:order-approving",
-                                   kwargs=url_approved_params)
-
     urls["url_declined"] = reverse("api:order-approving",
-                                   kwargs=url_declined_params)
+                                   kwargs=url_declined_params, request=request)
     return urls

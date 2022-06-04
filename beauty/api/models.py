@@ -4,14 +4,13 @@ from datetime import timedelta
 from address.models import AddressField
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email, MinValueValidator,\
+from django.core.validators import validate_email, MinValueValidator, \
     MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
 
-from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ModelsUtils
 import logging
 
@@ -28,7 +27,6 @@ class MyUserManager(BaseUserManager):
         Saves user instance with given fields values.
         """
         if not email:
-
             logger.info("Users must have an email address")
 
             raise ValueError("Users must have an email address")
@@ -499,6 +497,12 @@ class Order(models.Model):
         verbose_name=_("Reason for cancellation"),
     )
 
+    token = models.CharField(
+        max_length=64,
+        editable=False,
+        null=True,
+    )
+
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation."""
         self.end_time = self.start_time + timedelta(
@@ -510,10 +514,12 @@ class Order(models.Model):
         super(Order, self).save(*args, **kwargs)
         return self
 
-    @property
-    def token(self):
-        """Create token for order."""
-        return OrderApprovingTokenGenerator().make_token(self)
+    # @property
+    # def token(self):
+    #     """Create token for order."""
+    #     d = OrderApprovingTokenGenerator().make_token(self)
+    #     print(OrderApprovingTokenGenerator().check_token(self, d))
+    #     return OrderApprovingTokenGenerator().make_token(self)
 
     @property
     def is_active(self) -> bool:

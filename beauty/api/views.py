@@ -159,8 +159,8 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         Method for getting order objects by using both order user id
         and order id lookup fields.
         """
-        user = self.kwargs["user"]
         if len(self.kwargs) > 1:
+            user = self.kwargs["user"]
             obj = get_object_or_404(
                 self.get_queryset(),
                 Q(customer=user) | Q(specialist=user),
