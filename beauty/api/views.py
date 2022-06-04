@@ -14,6 +14,9 @@ from rest_framework.generics import (GenericAPIView, ListCreateAPIView, Retrieve
 from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.decorators import action
+
+from djoser.views import UserViewSet as DjoserUserViewSet
 
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
@@ -358,3 +361,12 @@ class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
     serializer_class = ServiceSerializer
 
     logger.debug("A view for retrieving, updating or deleting a service instance.")
+
+
+class UserViewSet(DjoserUserViewSet):
+    """This class is implemented to disable djoser DELETE method."""
+
+    @action(["get", "put", "patch"], detail=False)
+    def me(self, request, *args, **kwargs):
+        """Delete is now forbidden for this method."""
+        return super().me(request, *args, **kwargs)
