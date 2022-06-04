@@ -9,7 +9,8 @@ from django.utils.http import urlsafe_base64_decode
 
 from rest_framework import status
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView, RetrieveAPIView,
-                                     RetrieveUpdateDestroyAPIView, get_object_or_404)
+                                     RetrieveUpdateDestroyAPIView, get_object_or_404,
+                                     ListAPIView)
 from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -18,7 +19,7 @@ from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
 
-from .models import Business, CustomUser, Order, Position
+from .models import Business, CustomUser, Order, Service, Position
 
 from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsPositionOwner)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
@@ -31,6 +32,7 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
 from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
+from .serializers.service_serializers import ServiceSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -327,3 +329,23 @@ class ReviewAddView(GenericAPIView):
                 f"Error validating review: Field {serializer.errors.popitem()}",
             )
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class AllServicesListView(ListAPIView):
+    """ListView for all Services."""
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("View to display all services that can be provided.")
+
+
+class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
+    """View for retrieving, updating or deleting service info."""
+
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("A view for retrieving, updating or deleting a service instance.")
