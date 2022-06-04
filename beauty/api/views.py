@@ -19,9 +19,9 @@ from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
 
-from .models import Business, CustomUser, Order, Service
+from .models import Business, CustomUser, Order, Service, Position
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
+from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsPositionOwner)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
@@ -31,6 +31,7 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  ResetPasswordSerializer)
 from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 from .serializers.review_serializers import ReviewAddSerializer
+from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
 
 
@@ -174,6 +175,15 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         logger.info(f"{super().get_object()} was got")
 
         return super().get_object()
+
+
+class PositionListCreateView(ListCreateAPIView):
+    """Generic API for position POST methods."""
+
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated,
+                          IsPositionOwner)
 
 
 class OrderApprovingView(ListCreateAPIView):
