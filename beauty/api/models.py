@@ -507,6 +507,13 @@ class Order(models.Model):
         null=True,
     )
 
+    note = models.TextField(
+        max_length=300,
+        null=True,
+        blank=True,
+        verbose_name=_("Additional note"),
+    )
+
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation."""
         self.end_time = self.start_time + timedelta(
