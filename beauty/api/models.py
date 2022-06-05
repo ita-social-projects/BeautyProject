@@ -1,18 +1,17 @@
 """This module provides all needed models."""
 
+import logging
 from datetime import timedelta
 from address.models import AddressField
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.base_user import (AbstractBaseUser, BaseUserManager)
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email, MinValueValidator, \
-    MaxValueValidator
+from django.core.validators import (validate_email, MinValueValidator, MaxValueValidator)
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
-
 from beauty.utils import ModelsUtils
-import logging
+
 
 logger = logging.getLogger(__name__)
 
