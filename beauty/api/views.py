@@ -1,36 +1,45 @@
-"""All views for the BeatyProject."""
-import logging
+"""This module provides all needed api views."""
 
+import logging
 
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, get_object_or_404
-from rest_framework.generics import GenericAPIView
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+
+from rest_framework import (status, filters)
+from rest_framework.generics import (GenericAPIView, ListCreateAPIView, RetrieveAPIView,
+                                     RetrieveUpdateDestroyAPIView, get_object_or_404,
+                                     ListAPIView)
+from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework import filters
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
-                                        IsAuthenticated)
+from rest_framework.decorators import action
 
-from .models import CustomUser, Order, Review
-from .permissions import IsAccountOwnerOrReadOnly
-from .serializers.customuser_serializers import CustomUserDetailSerializer
-from .serializers.customuser_serializers import CustomUserSerializer
-# from .serializers.customuser_serializers import UserOrderDetailSerializer
-from .serializers.customuser_serializers import ResetPasswordSerializer
-from .serializers.review_serializers import ReviewDisplaySerializer
-from beauty.tokens import OrderApprovingTokenGenerator
-from .permissions import IsOrderUser
+from djoser.views import UserViewSet as DjoserUserViewSet
 
-from api.serializers.order_serializers import (OrderSerializer,
-                                               OrderDeleteSerializer)
 from beauty import signals
+from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
-from .serializers.review_serializers import ReviewAddSerializer
+
+from .models import Business, CustomUser, Order, Service, Position, Review
+
+from .permissions import (IsAccountOwnerOrReadOnly,
+                          IsOrderUser,
+                          IsPositionOwner,
+                          IsProfileOwner)
+
+from .serializers.business_serializers import (BusinessAllDetailSerializer,
+                                               BusinessDetailSerializer,
+                                               BusinessListCreateSerializer,
+                                               BusinessesSerializer)
+from .serializers.customuser_serializers import (CustomUserDetailSerializer,
+                                                 CustomUserSerializer,
+                                                 ResetPasswordSerializer)
+from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
+from .serializers.review_serializers import (ReviewAddSerializer, ReviewDisplaySerializer)
+from .serializers.position_serializer import PositionSerializer
+from .serializers.service_serializers import ServiceSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -47,7 +56,7 @@ class UserActivationView(GenericAPIView):
     """Generic view for user account activation."""
 
     def get(self, request: object, uidb64: str, token: str):
-        """Activate use account.
+        """Activate use account and redirect to personal page.
 
         Args:
             request (object): request data.
@@ -93,25 +102,31 @@ class ResetPasswordView(GenericAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
 
-    RUD - Retrieve, Update, Destroy
+    RUD - Retrieve, Update, Destroy.
     """
-    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    permission_classes = [IsProfileOwner]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
 
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
         """Reimplementation of the DESTROY (DELETE) method.
 
-        Makes current user inactive by changing its field.
+        Instead of deleting a User, it makes User inactive by modifing
+        its 'is_active' field. Only an authentificated Users can change
+        themselves. Endpoint is used in the User Profile.
         """
+        instance = self.get_object()
+
         if instance.is_active:
             instance.is_active = False
             instance.save()
-
-            logger.info(f"User {instance} was deactivated")
-
+            logger.info(f"User {instance} was deactivated.")
             return Response(status=status.HTTP_200_OK)
+
+        logger.info(f"User {instance} (id={instance.id}) is already "
+                    f"deactivated, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -157,9 +172,10 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         and order id lookup fields.
         """
         if len(self.kwargs) > 1:
+            user = self.kwargs["user"]
             obj = get_object_or_404(
                 self.get_queryset(),
-                Q(customer=self.kwargs["user"]) | Q(specialist=self.kwargs["user"]),
+                Q(customer=user) | Q(specialist=user),
                 id=self.kwargs["pk"],
             )
             self.check_object_permissions(self.request, obj)
@@ -167,6 +183,19 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
             logger.info(f"{obj} was got from user page")
 
             return obj
+
+        logger.info(f"{super().get_object()} was got")
+
+        return super().get_object()
+
+
+class PositionListCreateView(ListCreateAPIView):
+    """Generic API for position POST methods."""
+
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated,
+                          IsPositionOwner)
 
 
 class OrderApprovingView(ListCreateAPIView):
@@ -231,10 +260,56 @@ class OrderApprovingView(ListCreateAPIView):
         )
 
 
-class ReviewAddView(GenericAPIView):
-    """This class represents a view which is accessed when someone is trying to create a new Review.
+class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
+    """List View for all businesses or businesses of certain owner."""
 
-    It makes use of the POST method, other methods are not allowed in this view.
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_serializer_class(self):
+        """Return specific Serializer for businesses creation."""
+        if self.request.method == "POST":
+            return BusinessListCreateSerializer
+        else:
+            return BusinessesSerializer
+
+    def get_queryset(self, owner_id=None):
+        """Filter businesses for owner."""
+        if self.kwargs.get("owner_id"):
+            logger.debug("A view to display list of businesses of certain owner has opened")
+            return Business.objects.filter(owner=self.kwargs["owner_id"])
+        else:
+            logger.debug("A view to display list of all businesses has opened")
+            return Business.objects.all()
+
+
+class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
+    """RUD View for business editing."""
+
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Business.objects.all()
+    serializer_class = BusinessAllDetailSerializer
+
+    logger.debug("A view to edit business has opened")
+
+
+class BusinessDetailRetrieveAPIView(RetrieveAPIView):
+    """Retrieve View for business details."""
+
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    queryset = Business.objects.all()
+    serializer_class = BusinessDetailSerializer
+
+    logger.debug("A view to display certain business has opened")
+
+
+class ReviewAddView(GenericAPIView):
+    """Create Review view.
+
+    This class represents a view which is accessed when someone
+    is trying to create a new Review. It makes use of the POST method,
+    other methods are not allowed in this view.
     """
 
     serializer_class = ReviewAddSerializer
@@ -250,12 +325,44 @@ class ReviewAddView(GenericAPIView):
                 from_user=author,
                 to_user=to_user,
             )
-            logger.info(f"User {author} (id = {author.id}) "
-                        f"posted a review for {to_user} (id = {to_user.id})")
+            logger.info(
+                f"User {author} (id = {author.id}) posted a review for"
+                f"{to_user} (id = {to_user.id})",
+            )
             return Response(status=status.HTTP_201_CREATED)
         else:
-            logger.info(f"Error validating review: Field {serializer.errors.popitem()}")
+            logger.info(
+                f"Error validating review: Field {serializer.errors.popitem()}",
+            )
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class AllServicesListView(ListAPIView):
+    """ListView for all Services."""
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("View to display all services that can be provided.")
+
+
+class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
+    """View for retrieving, updating or deleting service info."""
+
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+    logger.debug("A view for retrieving, updating or deleting a service instance.")
+
+
+class UserViewSet(DjoserUserViewSet):
+    """This class is implemented to disable djoser DELETE method."""
+
+    @action(["get", "put", "patch"], detail=False)
+    def me(self, request, *args, **kwargs):
+        """Delete is now forbidden for this method."""
+        return super().me(request, *args, **kwargs)
 
 
 class ReviewDisplayView(GenericAPIView):
@@ -271,7 +378,7 @@ class ReviewDisplayView(GenericAPIView):
         queryset = self.queryset.filter(to_user=pk)
         queryset = super().filter_queryset(queryset)
         if not queryset:
-            logger.info(f"Reviews for user with id {pk} were unsuccessfully obtained")
+            logger.info(f"Failed to get reviews for user with id {pk}")
             return Response({"error": "User wasn't reviewed yet"},
                             status=status.HTTP_404_NOT_FOUND)
 

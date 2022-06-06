@@ -1,5 +1,6 @@
 """The module includes serializers for CustomUser model."""
 
+import logging
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
@@ -7,7 +8,8 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from api.models import CustomUser
-import logging
+from beauty.tokens import OrderApprovingTokenGenerator
+from beauty.utils import order_approve_decline_urls
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +49,23 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
 
         logger.debug(f"User order url: {url} was added to "
                      f"user with id={getattr(obj, self.url_user_id)}")
+        return url
+
+    def to_representation(self, order):
+        """Get order custom data for specialists.
+
+        Args:
+            order (Order): instance Order class
+
+        Returns:
+            data: dict or string for representation
+        """
+        url = super().to_representation(order)
+        request = self.context.get("request")
+        valid_token = OrderApprovingTokenGenerator().check_token(order, order.token)
+        if all([request.user.is_authenticated, request.user == order.specialist, valid_token,
+                self.url_user_id == "specialist_id"]):
+            return {"url": url} | order_approve_decline_urls(order, request=request)
         return url
 
 
@@ -175,6 +194,20 @@ class CustomUserSerializer(PasswordsValidation,
 
         return super().create(validated_data)
 
+    def to_representation(self, instance):
+        """Hide concrete specialist's orders from everybody.
+
+        Args:
+            instance (CustomUser): instance CustomUser class
+
+        Returns:
+            data (dict): data for representation
+        """
+        data = super().to_representation(instance)
+        if not instance.is_specialist or self.context.get("request").user != instance:
+            del data["specialist_orders"]
+        return data
+
 
 class CustomUserDetailSerializer(PasswordsValidation,
                                  serializers.ModelSerializer):
@@ -234,6 +267,20 @@ class CustomUserDetailSerializer(PasswordsValidation,
 
         return super().update(instance, validated_data)
 
+    def to_representation(self, instance):
+        """Hide concrete specialist's orders from everybody.
+
+        Args:
+            instance (CustomUser): instance CustomUser class
+
+        Returns:
+            data (dict): data for representation
+        """
+        data = super().to_representation(instance)
+        if not instance.is_specialist or self.context.get("request").user != instance:
+            del data["specialist_exist_orders"]
+        return data
+
 
 class ResetPasswordSerializer(PasswordsValidation):
     """Serilizer for reseting password."""
@@ -268,4 +315,6 @@ class ResetPasswordSerializer(PasswordsValidation):
 
             logger.info("Password: Fields should be valid")
 
-            raise serializers.ValidationError({"password": "Fields should be valid"})
+            raise serializers.ValidationError(
+                {"password": "Fields should be valid"},
+            )

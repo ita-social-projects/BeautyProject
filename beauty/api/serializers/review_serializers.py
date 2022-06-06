@@ -14,28 +14,7 @@ class ReviewDisplaySerializer(serializers.ModelSerializer):
         """This is a class Meta that keeps settings for serializer."""
 
         model = Review
-        fields = ("text_body",
-                  "rating",
-                  "from_user",
-                  "to_user",
-                  "date_of_publication")
-
-
-class ReviewDisplayDetailSerializer(ReviewDisplaySerializer):
-    """This serializer receives data from PUT, PATCH methods and checks whether data is valid."""
-
-    def update(self, instance: object, validated_data: dict) -> object:
-        """Update review information using dict with data.
-
-        Args:
-            instance (object): instance for changing
-            validated_data (dict): validated data for updating instance
-
-        Returns:
-            review (object): instance with updated data
-
-        """
-        return super().update(instance, validated_data)
+        fields = "__all__"
 
 
 class ReviewAddSerializer(serializers.ModelSerializer):
