@@ -1,11 +1,15 @@
-"""Module for all factories classes used in the tests."""
+"""Module for all factories classes used in the tests.
+
+Todo:
+    - fix addresses in Business factory
+"""
 
 from collections import namedtuple
 
 from django.utils import timezone
 import factory
 from factory import fuzzy
-from api.models import (CustomUser, Order, Service, Position, Business)
+from api.models import (CustomUser, Order, Service, Position, Business, Review)
 from django.contrib.auth.models import Group
 
 
@@ -39,8 +43,10 @@ class CustomUserFactory(factory.django.DjangoModelFactory):
     email = factory.LazyAttribute(lambda o: f"{o.first_name.lower()}"
                                             f"{o.phone_number[-2:]}@example.com")
     first_name = factory.Faker("first_name")
-    phone_number = factory.Faker("phone_number")
-    password = "1234567890"
+    last_name = factory.Faker("last_name")
+    phone_number = factory.Sequence(lambda n: "+38050666%04d" % n)
+    password = factory.PostGenerationMethodCall("set_password", "1234567890")
+    bio = factory.Faker("paragraph", nb_sentences=5)
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
@@ -64,7 +70,7 @@ class BusinessFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Business_{n}")
     business_type = factory.Sequence(lambda n: f"Business_type_#{n}")
-    owner = factory.SubFactory(CustomUserFactory)
+    owner = factory.SubFactory(CustomUserFactory, is_active=True)
     address = factory.Faker("address")
     description = factory.Faker("sentence", nb_words=4)
 
@@ -118,8 +124,19 @@ class OrderFactory(factory.django.DjangoModelFactory):
         model = Order
 
     status = fuzzy.FuzzyChoice(Order.StatusChoices, getter=lambda c: c.ACTIVE)
-    specialist = factory.SubFactory(CustomUserFactory)
-    customer = factory.SubFactory(CustomUserFactory)
+    specialist = factory.SubFactory(CustomUserFactory, is_active=True)
+    customer = factory.SubFactory(CustomUserFactory, is_active=True)
     service = factory.SubFactory(ServiceFactory)
     reason = ""
     start_time = factory.LazyFunction(timezone.now)
+
+
+class ReviewFactory(factory.django.DjangoModelFactory):
+    """Factory class for testing Review model."""
+
+    class Meta:
+        """Class Meta for the definition of the Review model."""
+        model = Review
+
+    text_body = factory.Faker("text", max_nb_chars=500)
+    rating = factory.Faker("random_int", min=0, max=5)

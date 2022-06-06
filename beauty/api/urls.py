@@ -5,7 +5,8 @@ from django.urls import path
 from .views import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetrieveAPIView,
                     CustomUserDetailRUDView, CustomUserListCreateView,
                     OrderApprovingView, OrderListCreateView, OrderRetrieveUpdateDestroyView,
-                    OwnerBusinessDetailRUDView, ReviewAddView)
+                    OwnerBusinessDetailRUDView, PositionListCreateView, ReviewAddView,
+                    ServiceUpdateView, AllServicesListView)
 
 
 app_name = "api"
@@ -60,7 +61,21 @@ urlpatterns = [
         name="business-detail",
     ),
     path(
+        "position/",
+        PositionListCreateView.as_view(),
+        name="position-list",
+    ),
+    path(
         r"<int:user>/reviews/add/",
         ReviewAddView.as_view(),
-        name="review-add"),
+        name="review-add",
+    ),
+    path(
+        "services/",
+        AllServicesListView.as_view(),
+        name="service-list",
+    ),
+    path("service/<int:pk>/",
+         ServiceUpdateView.as_view(),
+         name="service-detail"),
 ]
