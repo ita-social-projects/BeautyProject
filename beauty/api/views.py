@@ -102,7 +102,7 @@ class ResetPasswordView(GenericAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
 
-    RUD - Retrieve, Update, Destroy
+    RUD - Retrieve, Update, Destroy.
     """
 
     permission_classes = [IsProfileOwner]
@@ -171,8 +171,8 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         Method for getting order objects by using both order user id
         and order id lookup fields.
         """
-        user = self.kwargs["user"]
         if len(self.kwargs) > 1:
+            user = self.kwargs["user"]
             obj = get_object_or_404(
                 self.get_queryset(),
                 Q(customer=user) | Q(specialist=user),
@@ -281,12 +281,6 @@ class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
             logger.debug("A view to display list of all businesses has opened")
             return Business.objects.all()
 
-#    def get_permissions(self):
-#        """Get specific permission for businesses creation."""
-#        if self.request.method == "POST":
-#            self.permission_classes = (IsAccountOwnerOrReadOnly,)
-#        return super().get_permissions()
-
 
 class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     """RUD View for business editing."""
@@ -359,7 +353,6 @@ class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-
     logger.debug("A view for retrieving, updating or deleting a service instance.")
 
 
