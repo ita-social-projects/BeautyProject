@@ -2,11 +2,10 @@
 
 from django.urls import path
 
-from .views import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetrieveAPIView,
+from .views import (BusinessesListCreateAPIView, BusinessDetailRUDView,
                     CustomUserDetailRUDView, CustomUserListCreateView,
                     OrderApprovingView, OrderListCreateView, OrderRetrieveUpdateDestroyView,
-                    OwnerBusinessDetailRUDView, PositionListCreateView, ReviewAddView,
-                    ServiceUpdateView, AllServicesListView)
+                    PositionListCreateView, ReviewAddView, ServiceUpdateView, AllServicesListView)
 
 
 app_name = "api"
@@ -42,22 +41,12 @@ urlpatterns = [
     ),
     path(
         "businesses/",
-        AllOrOwnerBusinessesListCreateAPIView.as_view(),
+        BusinessesListCreateAPIView.as_view(),
         name="businesses-list-create",
     ),
     path(
-        "businesses/<int:owner_id>/",
-        AllOrOwnerBusinessesListCreateAPIView.as_view(),
-        name="certain-owners-businesses-list",
-    ),
-    path(
-        "businesses/<int:owner_id>/<int:pk>/",
-        OwnerBusinessDetailRUDView.as_view(),
-        name="owner-business-detail",
-    ),
-    path(
         "business/<int:pk>/",
-        BusinessDetailRetrieveAPIView.as_view(),
+        BusinessDetailRUDView.as_view(),
         name="business-detail",
     ),
     path(
