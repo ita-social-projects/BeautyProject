@@ -1,6 +1,4 @@
-"""This module provides all needed api views."""
-
-import logging
+"""All views for the BeatyProject."""
 
 from django.db.models import Q
 from django.shortcuts import redirect
@@ -22,17 +20,16 @@ from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
 
-from .models import Business, CustomUser, Order, Service, Position
+from .models import (Business, CustomUser, Order, Service, Position)
 
 from .permissions import (IsAccountOwnerOrReadOnly,
                           IsOrderUser,
-                          IsPositionOwner,
-                          IsProfileOwner)
+                          IsPositionOwner)
 
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
-                                               BusinessesSerializer)
+                                               BusinessesSerializer, BusinessGetAllInfoSerializers)
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
@@ -41,6 +38,7 @@ from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
 
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +55,8 @@ class UserActivationView(GenericAPIView):
 
     def get(self, request: object, uidb64: str, token: str):
         """Activate use account and redirect to personal page.
+
+        user = get_object_or_404(CustomUser, id=user_id)
 
         Args:
             request (object): request data.
@@ -102,10 +102,10 @@ class ResetPasswordView(GenericAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
 
-    RUD - Retrieve, Update, Destroy.
+    RUD - Retrieve, Update, Destroy
     """
 
-    permission_classes = [IsProfileOwner]
+    permission_classes = [IsAccountOwnerOrReadOnly]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
@@ -180,9 +180,30 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
             )
             self.check_object_permissions(self.request, obj)
 
-            logger.info(f"{obj} was got from user page")
+        user = (
+            obj.customer if self.kwargs["user"] == obj.customer.id else obj.specialist
+        )
 
-            return obj
+        logger.info(f"{obj} was got for the user {user} (id={user.id})")
+        logger.info(f"{obj} was got from user page")
+
+        return obj
+
+
+class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
+    """Generic API for business GET, PUT and DELETE methods.
+
+    RUD - Retrieve, Update, Destroy
+    """
+
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Business.objects.all()
+    serializer_class = BusinessGetAllInfoSerializers
+
+    def get_info(self, instance):
+        """Method for getting all info about business."""
+        return get_object_or_404(self.queryset, id=instance.id)
 
         logger.info(f"{super().get_object()} was got")
 
