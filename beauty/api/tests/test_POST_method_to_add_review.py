@@ -20,8 +20,8 @@ from rest_framework.reverse import reverse
 from api.serializers.review_serializers import ReviewAddSerializer
 from api.views import ReviewAddView
 from .factories import (CustomUserFactory,
-                        ReviewFactory,
-                        GroupFactory)
+                        GroupFactory,
+                        ReviewFactory)
 
 
 class TestReviewAddView(TestCase):
