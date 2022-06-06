@@ -9,18 +9,26 @@ from django.utils.http import urlsafe_base64_decode
 
 from rest_framework import status
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView, RetrieveAPIView,
-                                     RetrieveUpdateDestroyAPIView, get_object_or_404)
+                                     RetrieveUpdateDestroyAPIView, get_object_or_404,
+                                     ListAPIView)
 from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.decorators import action
+
+from djoser.views import UserViewSet as DjoserUserViewSet
 
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
 
-from .models import Business, CustomUser, Order, Position
+from .models import Business, CustomUser, Order, Service, Position
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser)
+from .permissions import (IsAccountOwnerOrReadOnly,
+                          IsOrderUser,
+                          IsPositionOwner,
+                          IsProfileOwner)
+
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessDetailSerializer,
                                                BusinessListCreateSerializer,
@@ -31,6 +39,7 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
 from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
+from .serializers.service_serializers import ServiceSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -96,23 +105,28 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy
     """
 
-    permission_classes = [IsAccountOwnerOrReadOnly]
+    permission_classes = [IsProfileOwner]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
 
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
         """Reimplementation of the DESTROY (DELETE) method.
 
-        Makes current user inactive by changing its field.
+        Instead of deleting a User, it makes User inactive by modifing
+        its 'is_active' field. Only an authentificated Users can change
+        themselves. Endpoint is used in the User Profile.
         """
+        instance = self.get_object()
+
         if instance.is_active:
             instance.is_active = False
             instance.save()
-
-            logger.info(f"User {instance} was deactivated")
-
+            logger.info(f"User {instance} was deactivated.")
             return Response(status=status.HTTP_200_OK)
+
+        logger.info(f"User {instance} (id={instance.id}) is already "
+                    f"deactivated, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -180,18 +194,8 @@ class PositionListCreateView(ListCreateAPIView):
 
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated, )
-
-    def get_queryset(self):
-        """Filter positions for owner."""
-        if "Owner" in self.request.user.groups.all().values_list("name", flat=True):
-            logger.debug("A view to display list of positions of certain owner has opened")
-
-            businesses = Business.objects.filter(owner=self.request.user.id)
-            return Position.objects.filter(business__in=[business.id for business in businesses])
-        else:
-            # RETURNS NONE If user is not owner
-            logger.debug("PositionListCreateView: returns None")
+    permission_classes = (IsAuthenticated,
+                          IsPositionOwner)
 
 
 class OrderApprovingView(ListCreateAPIView):
@@ -337,3 +341,32 @@ class ReviewAddView(GenericAPIView):
                 f"Error validating review: Field {serializer.errors.popitem()}",
             )
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class AllServicesListView(ListAPIView):
+    """ListView for all Services."""
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("View to display all services that can be provided.")
+
+
+class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
+    """View for retrieving, updating or deleting service info."""
+
+    permission_classes = [IsAccountOwnerOrReadOnly]
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    logger.debug("A view for retrieving, updating or deleting a service instance.")
+
+
+class UserViewSet(DjoserUserViewSet):
+    """This class is implemented to disable djoser DELETE method."""
+
+    @action(["get", "put", "patch"], detail=False)
+    def me(self, request, *args, **kwargs):
+        """Delete is now forbidden for this method."""
+        return super().me(request, *args, **kwargs)

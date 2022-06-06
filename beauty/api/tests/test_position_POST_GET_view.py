@@ -15,7 +15,10 @@ from rest_framework.reverse import reverse
 from api.serializers.position_serializer import PositionSerializer
 from api.models import Position
 from api.views import PositionListCreateView
-from .factories import BusinessFactory, CustomUserFactory, GroupFactory, PositionFactory
+from .factories import (BusinessFactory,
+                        CustomUserFactory,
+                        GroupFactory,
+                        PositionFactory)
 
 
 class TestPositionListCreateView(TestCase):
@@ -40,53 +43,59 @@ class TestPositionListCreateView(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.owner)
 
-        # Dict needed for successful POST method. Factory won't work
+        self.position_testing = PositionFactory.build(name="Wyh")
         self.position_testing = {
-            "name": "Wyh",
+            "name": self.position_testing.name,
             "business": self.business.id,
             "specialist": [self.specialist1.id, self.specialist2.id],
-            "start_time": "10:51:00",
-            "end_time": "13:51:00",
+            "start_time": self.position_testing.start_time.time(),
+            "end_time": self.position_testing.end_time.time(),
         }
 
     def test_position_get_from_valid_business(self):
         """Get 1 created position."""
-        self.position = PositionFactory.create(name="Wyh",
-                                               business=self.business,
-                                               specialist=[self.specialist1],
-                                               )
-        resp = self.client.generic(method="GET",
-                                   path=reverse("api:position-list"),
-                                   )
+        self.position = PositionFactory.create(
+            business=self.business,
+            specialist=[self.specialist1],
+        )
+        resp = self.client.generic(
+            method="GET",
+            path=reverse("api:position-list"),
+        )
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(len(resp.data), 1)
 
     def test_position_post_list_create_view(self):
         """POST requests to ListCreateAPIView with valid data should create a new object."""
-        response = self.client.post(path=reverse("api:position-list"),
-                                    data=self.position_testing,
-                                    )
+        print(self.position_testing)
+        response = self.client.post(
+            path=reverse("api:position-list"),
+            data=self.position_testing,
+        )
         self.assertEqual(response.status_code, 201)
 
     def test_position_post_list_create_view_no_authenticate(self):
         """POST requests to ListCreateAPIView with no authenticate shouldn't create a new object."""
         self.client.force_authenticate(user=None)
-        response = self.client.post(path=reverse("api:position-list"),
-                                    data=self.position_testing,
-                                    )
+        response = self.client.post(
+            path=reverse("api:position-list"),
+            data=self.position_testing,
+        )
         self.assertEqual(response.status_code, 401)
 
     def test_position_post_list_create_view_invalid_time(self):
         """POST requests to ListCreateAPIView with invalid time shouldn't create a new object."""
         self.position_testing["end_time"] = "9:51:00"
-        response = self.client.post(path=reverse("api:position-list"),
-                                    data=self.position_testing,
-                                    )
+        response = self.client.post(
+            path=reverse("api:position-list"),
+            data=self.position_testing,
+        )
         self.assertEqual(response.status_code, 400)
 
     def test_position_post_list_create_view_empty_data(self):
         """POST requests to ListCreateAPIView with empty data shouldn't create a new object."""
-        response = self.client.post(path=reverse("api:position-list"),
-                                    data={},
-                                    )
+        response = self.client.post(
+            path=reverse("api:position-list"),
+            data={},
+        )
         self.assertEqual(response.status_code, 400)
