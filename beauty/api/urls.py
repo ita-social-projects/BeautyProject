@@ -6,7 +6,8 @@ from .views import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetriev
                     CustomUserDetailRUDView, CustomUserListCreateView,
                     OrderApprovingView, OrderListCreateView, OrderRetrieveUpdateDestroyView,
                     OwnerBusinessDetailRUDView, PositionListCreateView, ReviewAddView,
-                    ReviewDisplayView, ServiceUpdateView, AllServicesListView)
+                    ReviewDisplayView, ServiceUpdateView, AllServicesListView,
+                    ReviewDisplayDetailView)
 
 
 app_name = "api"
@@ -74,6 +75,11 @@ urlpatterns = [
         r"reviews/<int:to_user>/",
         ReviewDisplayView.as_view(),
         name="review-get",
+    ),
+    path(
+        r"review/<int:pk>/",
+        ReviewDisplayDetailView.as_view(),
+        name="review-detail",
     ),
     path(
         "services/",
