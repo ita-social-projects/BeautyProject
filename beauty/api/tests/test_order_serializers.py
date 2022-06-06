@@ -106,7 +106,8 @@ class TestOrderSerializer(TestCase):
     def test_empty_serializer(self):
         """Check serializer without data."""
         serializer = self.Serializer()
-        self.assertEqual(serializer.data, {"specialist": None, "service": None, "start_time": None})
+        self.assertEqual(serializer.data, {"specialist": None, "service": None,
+                                           "start_time": None, "note": ""})
 
     def test_validate_none_data(self):
         """Check serializer with data equal None."""

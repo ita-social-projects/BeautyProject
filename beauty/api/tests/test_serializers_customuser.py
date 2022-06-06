@@ -7,6 +7,9 @@ Tests for CustomUser serializers:
 - Check serializer with invalid data type;
 - Check serializer without data;
 - Check serializer with data equal None;
+- Check Custom User Serializer with users' queryset data when a specialist is logged;
+- Check Custom User Serializer with users' queryset data when a customer is logged;
+- Check Custom User Serializer with users' queryset data when a user is not logged;
 - Check serializer with customer instance data;
 - Check serializer with specialist instance data;
 - Deserializing a data and updating a user data with password data;
@@ -21,10 +24,12 @@ Passwords validation tests:
 """
 
 from django.contrib.auth.hashers import (check_password, make_password)
+from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.reverse import reverse
 
+from api.models import CustomUser
 from api.serializers.customuser_serializers import (CustomUserSerializer,
                                                     PasswordsValidation, CustomUserDetailSerializer)
 from rest_framework.test import (APIRequestFactory, APIClient)
@@ -71,7 +76,7 @@ class CustomUserSerializerTestCase(TestCase):
         self.request = self.factory.get("/")
 
         self.client = APIClient()
-        self.client.force_authenticate(user=self.specialist)
+
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
@@ -132,16 +137,46 @@ class CustomUserSerializerTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertEqual(serializer.errors, {"non_field_errors": ["No data provided"]})
 
-    def test_serialize_customer_instance(self):
-        """Check serializer with customer instance data."""
-        response = self.client.get(path=reverse("api:user-detail",
-                                                args=[self.customer.id]))
+    def test_customuserserialize_customer_logged(self):
+        """Check Custom User Serializer with users' queryset data when a customer is logged."""
+        self.client.force_authenticate(user=self.customer)
+        queryset = CustomUser.objects.all()
+        response = self.client.get(path=reverse("api:user-list-create"))
 
         self.request.user = self.customer
-        serializer = self.Serializer(self.customer, context={"request": self.request})
-        self.assertEqual(serializer.data["customer_orders"],
-                         [reverse("api:user-order-detail", request=self.request,
-                                  args=[self.customer.id, self.customer_order.id])])
+        serializer = self.Serializer(queryset, many=True, context={"request": self.request})
+        self.assertEqual(serializer.data, response.data)
+
+    def test_customuserserialize_specialist_logged(self):
+        """Check Custom User Serializer with users' queryset data when a specialist is logged."""
+        self.client.force_authenticate(user=self.specialist)
+        queryset = CustomUser.objects.all()
+        response = self.client.get(path=reverse("api:user-list-create"))
+
+        self.request.user = self.specialist
+        serializer = self.Serializer(queryset, many=True, context={"request": self.request})
+        self.assertEqual(serializer.data, response.data)
+
+    def test_customuserserialize_user_no_logged(self):
+        """Check Custom User Serializer with users' queryset data when a user is not logged."""
+        self.client.force_authenticate(user=None)
+        queryset = CustomUser.objects.all()
+        response = self.client.get(path=reverse("api:user-list-create"))
+
+        self.request.user = AnonymousUser()
+        serializer = self.Serializer(queryset, many=True, context={"request": self.request})
+        self.assertEqual(serializer.data, response.data)
+
+    def test_serialize_customer_instance(self):
+        """Check serializer with customer instance data."""
+        self.client.force_authenticate(self.customer)
+        response = self.client.get(path=reverse("api:user-detail", args=[self.customer.id]))
+
+        self.request.user = self.customer
+        serializer = self.Detail_serializer(self.customer, context={"request": self.request})
+        self.assertEqual(serializer.data["customer_exist_orders"],
+                         response.data["customer_exist_orders"])
+        
         self.assertEqual(serializer.data["groups"], ["Customer"])
         with self.assertRaises(KeyError):
             serializer.data["password"]
@@ -149,16 +184,15 @@ class CustomUserSerializerTestCase(TestCase):
 
     def test_serialize_specialist_instance(self):
         """Check serializer with specialist instance data."""
-        response = self.client.get(path=reverse("api:user-detail",
-                                                args=[self.specialist.id]))
+        self.client.force_authenticate(self.specialist)
+        response = self.client.get(path=reverse("api:user-detail", args=[self.specialist.id]))
 
         self.request.user = self.specialist
-        customer_order = reverse("api:user-order-detail", request=self.request,
-                                 args=[self.specialist.id, self.specialist_order.id])
-        serializer = self.Serializer(self.specialist, context={"request": self.request})
-        self.assertEqual(serializer.data["specialist_orders"],
+        serializer = self.Detail_serializer(self.specialist, context={"request": self.request})
+        self.assertEqual(serializer.data["specialist_exist_orders"],
                          response.data["specialist_exist_orders"])
-        self.assertEqual(serializer.data["customer_orders"], [customer_order])
+        self.assertEqual(serializer.data["customer_exist_orders"],
+                         response.data["customer_exist_orders"])
         self.assertEqual(serializer.data["groups"], ["Specialist"])
 
     def test_deserialize_update_user_with_password(self):
