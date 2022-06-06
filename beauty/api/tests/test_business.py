@@ -89,13 +89,13 @@ class BusinessListCreateViewTest(TestCase):
 
         self.groups = GroupFactory.groups_for_test()
 
-        self.business1 = BusinessFactory.create()
-        self.business2 = BusinessFactory.create()
-
         self.customer = CustomUserFactory.create()
         self.owner = CustomUserFactory.create()
         self.groups.customer.user_set.add(self.customer)
         self.groups.owner.user_set.add(self.owner)
+
+        self.business1 = BusinessFactory.create(owner=self.owner)
+        self.business2 = BusinessFactory.create(owner=self.owner)
 
         self.valid_create_data = {
             "name": faker.word(), "business_type": faker.word(),
@@ -108,8 +108,11 @@ class BusinessListCreateViewTest(TestCase):
 
     def test_list_of_businesses(self) -> None:
         """Tests if view gives all businesses."""
+        self.client.force_authenticate(user=self.owner)
         response = self.client.get(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
         )
 
         self.assertEqual(response.status_code, 200)
@@ -122,7 +125,9 @@ class BusinessListCreateViewTest(TestCase):
         authentication
         """
         response = self.client.post(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
             data=self.valid_create_data,
         )
 
@@ -137,7 +142,9 @@ class BusinessListCreateViewTest(TestCase):
         self.client.force_authenticate(user=self.customer)
 
         response = self.client.post(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
             data=self.invalid_create_data,
         )
 
@@ -150,7 +157,9 @@ class BusinessListCreateViewTest(TestCase):
         self.client.force_authenticate(user=self.owner)
 
         response = self.client.post(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
             data=self.valid_create_data,
         )
 

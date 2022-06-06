@@ -24,13 +24,14 @@ from beauty.utils import ApprovingOrderEmail
 
 from .models import Business, CustomUser, Order, Service, Position
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOrderUser, IsOwner,
-                          ReadOnly, IsPositionOwner)
+from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrBusinessOwner,
+                          IsOrderUser, IsOwner, IsPositionOwner, ReadOnly,
+                          IsAdminOrThisBusinessOwner)
 
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
-                                               BusinessListCreateSerializer,
+                                               BusinessCreateSerializer,
                                                BusinessesSerializer,
-                                               BusinessesOwnerSerializer)
+                                               BusinessDetailSerializer)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -257,35 +258,30 @@ class OrderApprovingView(ListCreateAPIView):
         )
 
 
-class AllOrOwnerBusinessesListCreateView(ListCreateAPIView):
-    """List View for all businesses or businesses of certain owner."""
+class BusinessesListCreateAPIView(ListCreateAPIView):
+    """List View for all businesses of certain owner."""
 
-    permission_classes = (IsOwner | ReadOnly,)
+    permission_classes = (IsOwner & IsAdminOrBusinessOwner,)
 
     def get_serializer_class(self):
-        """Return specific Serializer for businesses creation."""
-        if self.request.method == "POST":
-            return BusinessListCreateSerializer
+        """Return specific Serializer.
 
-        if self.kwargs.get("owner_id"):
-            return BusinessesSerializer
-        return BusinessesOwnerSerializer
+        BusinessCreateSerializer For businesses creation or default for list.
+        """
+        if self.request.method == "POST":
+            return BusinessCreateSerializer
+        return BusinessesSerializer
 
     def get_queryset(self):
         """Filter businesses for owner."""
-        owner = self.kwargs.get("owner_id")
-        if owner:
-            logger.debug(
-                "A view to display list of businesses "
-                "of certain owner has opened",
-            )
-            return Business.objects.filter(owner=owner)
-        else:
-            logger.debug("A view to display list of all businesses has opened")
-            return Business.objects.all()
+        owner = get_object_or_404(
+            CustomUser, id=self.request.user.id,
+        )
+        logger.info(f"Got businesses from owner {owner}")
+        return owner.businesses.all()
 
     def post(self, request, *args, **kwargs):
-        """Create an business and add an authenticated owner to it."""
+        """Create a business and add an authenticated owner to it."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         business = serializer.save(owner=request.user)
@@ -294,27 +290,24 @@ class AllOrOwnerBusinessesListCreateView(ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class OwnerBusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
+class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     """RUD View for business editing."""
 
-    permission_classes = [IsAccountOwnerOrReadOnly]
+    permission_classes = (
+        IsAdminOrThisBusinessOwner | ReadOnly,
+    )
+
+    queryset = Business.objects.all()
     serializer_class = BusinessAllDetailSerializer
 
-    def get_queryset(self):
-        """Return all businesses or businesses of certain owner.
-
-        If owner_id is provided, display owner's businesses else all businesses
-        """
+    def get_serializer_class(self):
         try:
-            owner = get_object_or_404(
-                CustomUser, id=self.kwargs["owner_id"],
-            )
-            logger.info("Successfully got businesses from owner")
-            return owner.businesses.all()
-
-        except KeyError:
-            logger.info("Got all businesses")
-            return Business.objects.all()
+            is_owner = self.request.user.is_owner
+            if is_owner and (self.get_object().owner == self.request.user):
+                return BusinessAllDetailSerializer
+        except AttributeError:
+            logger.warning(f"{self.request.user} cannot reach content")
+        return BusinessDetailSerializer
 
 
 class ReviewAddView(GenericAPIView):

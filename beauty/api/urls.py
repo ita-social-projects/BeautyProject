@@ -2,10 +2,10 @@
 
 from django.urls import path
 
-from .views import (AllOrOwnerBusinessesListCreateView,
+from .views import (BusinessesListCreateAPIView,
                     CustomUserDetailRUDView, CustomUserListCreateView,
                     OrderApprovingView, OrderListCreateView,
-                    OrderRetrieveUpdateDestroyView, OwnerBusinessDetailRUDView,
+                    OrderRetrieveUpdateDestroyView, BusinessDetailRUDView,
                     ReviewAddView, ServiceUpdateView, AllServicesListView,
                     PositionListCreateView)
 
@@ -43,22 +43,12 @@ urlpatterns = [
     ),
     path(
         "businesses/",
-        AllOrOwnerBusinessesListCreateView.as_view(),
+        BusinessesListCreateAPIView.as_view(),
         name="businesses-list-create",
     ),
     path(
-        "owner_businesses/<int:owner_id>/",
-        AllOrOwnerBusinessesListCreateView.as_view(),
-        name="certain-owners-businesses-list",
-    ),
-    path(
-        "owner_business/<int:owner_id>/<int:pk>/",
-        OwnerBusinessDetailRUDView.as_view(),
-        name="owner-business-detail",
-    ),
-    path(
         "business/<int:pk>/",
-        OwnerBusinessDetailRUDView.as_view(),
+        BusinessDetailRUDView.as_view(),
         name="business-detail",
     ),
     path(
