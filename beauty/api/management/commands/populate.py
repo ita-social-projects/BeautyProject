@@ -1,6 +1,6 @@
 """This module provides a custom command 'populate'."""
 
-from random import randint
+from random import choices
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management import call_command
@@ -16,7 +16,8 @@ class Command(BaseCommand):
     Command can clear the whole database, create a superuser and populate db.
     """
 
-    help = "Populates database with Random data for testing."
+    user_ids = [num for num in range(1, 30)]
+    help = "Populates database with Random data for testing."   # noqa
 
     def add_arguments(self, parser):
         """This method adds optional arguments to the command."""
@@ -42,11 +43,12 @@ class Command(BaseCommand):
                 call_command("createsuperuser")
             CustomUserFactory.create_batch(15, is_active=True)
             OrderFactory.create_batch(15)
-            ReviewFactory.create_batch(
-                10,
-                from_user=CustomUser.objects.get(pk=randint(0, 30)),
-                to_user=CustomUser.objects.get(pk=randint(0, 30)),
-            )
+            for _ in range(15):
+                reviewer_id, reviewee_id = choices(self.user_ids, k=2)
+                ReviewFactory.create(
+                    from_user=CustomUser.objects.get(pk=reviewer_id),
+                    to_user=CustomUser.objects.get(pk=reviewee_id),
+                )
             self.stdout.write("Successfully populated database.")
         else:
             raise CommandError("Can't execute in production...")
