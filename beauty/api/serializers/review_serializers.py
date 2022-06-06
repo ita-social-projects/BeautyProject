@@ -29,12 +29,12 @@ class ReviewAddSerializer(serializers.ModelSerializer):
         if reviewer == reviewee:
             logger.info(f"User {reviewer} (id = {reviewer.id}) tried reviewing himself or herself.")
             raise serializers.ValidationError(
-                {"error": "You are not able to review yourself"},
+                {"error": "You are not able to review yourself."},
             )
         if not reviewee.is_specialist:
             logger.info(f"User {reviewer} (id = {reviewer.id}) tried reviewing a non "
                         f"specialist user {reviewee} (id = {reviewee.id}).")
             raise serializers.ValidationError(
-                {"error": "You are not able to review yourself"},
+                {"error": "You are not able to review a nonspecialist."},
             )
         return super().save(**kwargs)
