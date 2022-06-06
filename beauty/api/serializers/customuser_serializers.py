@@ -1,13 +1,15 @@
 """The module includes serializers for CustomUser model."""
+
+import logging
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
-
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
-from api.models import (CustomUser, Order)
-import logging
+from api.models import CustomUser
+from beauty.tokens import OrderApprovingTokenGenerator
+from beauty.utils import order_approve_decline_urls
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +19,7 @@ group_queryset = Group.objects.all()
 class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
     """Custom HyperlinkedRelatedField for user orders."""
 
-    view_name = "api:specialist-order-detail"
+    view_name = "api:user-order-detail"
     url_user_id = "specialist_id"
 
     def __init__(self, **kwargs):
@@ -38,7 +40,7 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
         """
         url_kwargs = {
             "user": getattr(obj, self.url_user_id),
-            "id": obj.pk,
+            "pk": obj.pk,
         }
 
         url = reverse(
@@ -47,6 +49,23 @@ class OrderUserHyperlink(serializers.HyperlinkedRelatedField):
 
         logger.debug(f"User order url: {url} was added to "
                      f"user with id={getattr(obj, self.url_user_id)}")
+        return url
+
+    def to_representation(self, order):
+        """Get order custom data for specialists.
+
+        Args:
+            order (Order): instance Order class
+
+        Returns:
+            data: dict or string for representation
+        """
+        url = super().to_representation(order)
+        request = self.context.get("request")
+        valid_token = OrderApprovingTokenGenerator().check_token(order, order.token)
+        if all([request.user.is_authenticated, request.user == order.specialist, valid_token,
+                self.url_user_id == "specialist_id"]):
+            return {"url": url} | order_approve_decline_urls(order, request=request)
         return url
 
 
@@ -67,7 +86,7 @@ class PasswordsValidation(serializers.Serializer):
         confirm_password = data.get("confirm_password")
         if password and confirm_password:
             if password != confirm_password:
-                logger.info(f"Password: Password confirmation does not match")
+                logger.info("Password: Password confirmation does not match")
 
                 raise serializers.ValidationError(
                     {"password": "Password confirmation does not match."},
@@ -77,7 +96,7 @@ class PasswordsValidation(serializers.Serializer):
             logger.info("Password: One of the password fields is empty")
 
             raise serializers.ValidationError(
-                {"confirm_password": "Didn`t enter the password confirmation."}
+                {"confirm_password": "Didn`t enter the password confirmation."},
             )
 
         logger.info("Password and Confirm password is checked")
@@ -96,9 +115,7 @@ class GroupListingField(serializers.RelatedField):
 
         Returns:
             object.name (str): attribute-name of an instance
-
         """
-
         logger.debug(f"Changed group representation from id={value.id}"
                      f" to name={value.name}")
 
@@ -112,9 +129,7 @@ class GroupListingField(serializers.RelatedField):
 
         Returns:
             id (int): instance id
-
         """
-
         logger.debug(f"Changed group lookup from name={data} to id")
 
         return self.get_queryset().get(name=data).id
@@ -179,6 +194,20 @@ class CustomUserSerializer(PasswordsValidation,
 
         return super().create(validated_data)
 
+    def to_representation(self, instance):
+        """Hide concrete specialist's orders from everybody.
+
+        Args:
+            instance (CustomUser): instance CustomUser class
+
+        Returns:
+            data (dict): data for representation
+        """
+        data = super().to_representation(instance)
+        if not instance.is_specialist or self.context.get("request").user != instance:
+            del data["specialist_orders"]
+        return data
+
 
 class CustomUserDetailSerializer(PasswordsValidation,
                                  serializers.ModelSerializer):
@@ -200,8 +229,8 @@ class CustomUserDetailSerializer(PasswordsValidation,
             "placeholder": "Confirmation Password",
         },
     )
-    specialist_orders = OrderUserHyperlink(many=True, read_only=True)
-    customer_orders = OrderUserHyperlink(
+    specialist_exist_orders = OrderUserHyperlink(many=True, read_only=True)
+    customer_exist_orders = OrderUserHyperlink(
         many=True,
         read_only=True,
         url_user_id="customer_id",
@@ -213,7 +242,7 @@ class CustomUserDetailSerializer(PasswordsValidation,
         model = CustomUser
         fields = ["id", "email", "first_name", "patronymic", "last_name",
                   "phone_number", "bio", "rating", "avatar", "is_active",
-                  "groups", "specialist_orders", "customer_orders",
+                  "groups", "specialist_exist_orders", "customer_exist_orders",
                   "password", "confirm_password"]
 
     def update(self, instance: object, validated_data: dict) -> object:
@@ -238,15 +267,19 @@ class CustomUserDetailSerializer(PasswordsValidation,
 
         return super().update(instance, validated_data)
 
+    def to_representation(self, instance):
+        """Hide concrete specialist's orders from everybody.
 
-class UserOrderDetailSerializer(serializers.ModelSerializer):
-    """Serializer to receive and update a specific order."""
+        Args:
+            instance (CustomUser): instance CustomUser class
 
-    class Meta:
-        """Class with a model and model fields for serialization."""
-
-        model = Order
-        fields = ["id", "customer_id", "specialist_id"]
+        Returns:
+            data (dict): data for representation
+        """
+        data = super().to_representation(instance)
+        if not instance.is_specialist or self.context.get("request").user != instance:
+            del data["specialist_exist_orders"]
+        return data
 
 
 class ResetPasswordSerializer(PasswordsValidation):
@@ -274,12 +307,14 @@ class ResetPasswordSerializer(PasswordsValidation):
     def validate(self, data: dict) -> dict:
         """Password validation."""
         if all([data.get("password"), data.get("confirm_password")]):
-          
-            logger.info(f"Password was reset")
-          
+
+            logger.info("Password was reset")
+
             return super().validate(data)
         else:
-          
+
             logger.info("Password: Fields should be valid")
-          
-            raise serializers.ValidationError({"password": "Fields should be valid"})
+
+            raise serializers.ValidationError(
+                {"password": "Fields should be valid"},
+            )
