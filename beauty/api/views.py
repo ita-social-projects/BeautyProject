@@ -17,6 +17,9 @@ from rest_framework.permissions import (IsAuthenticated,
 
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.decorators import action
+
+from djoser.views import UserViewSet as DjoserUserViewSet
 
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
@@ -26,7 +29,7 @@ from .models import Business, CustomUser, Order, Service, Position
 
 from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrBusinessOwner,
                           IsOrderUser, IsOwner, IsPositionOwner, ReadOnly,
-                          IsAdminOrThisBusinessOwner)
+                          IsAdminOrThisBusinessOwner, IsProfileOwner)
 
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessCreateSerializer,
@@ -108,23 +111,28 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy
     """
 
-    permission_classes = [IsAccountOwnerOrReadOnly]
+    permission_classes = [IsProfileOwner]
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserDetailSerializer
 
-    def perform_destroy(self, instance):
+    def destroy(self, request, *args, **kwargs):
         """Reimplementation of the DESTROY (DELETE) method.
 
-        Makes current user inactive by changing its field.
+        Instead of deleting a User, it makes User inactive by modifing
+        its 'is_active' field. Only an authentificated Users can change
+        themselves. Endpoint is used in the User Profile.
         """
+        instance = self.get_object()
+
         if instance.is_active:
             instance.is_active = False
             instance.save()
-
-            logger.info(f"User {instance} was deactivated")
-
+            logger.info(f"User {instance} was deactivated.")
             return Response(status=status.HTTP_200_OK)
+
+        logger.info(f"User {instance} (id={instance.id}) is already "
+                    f"deactivated, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -362,3 +370,12 @@ class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
     serializer_class = ServiceSerializer
 
     logger.debug("A view for retrieving, updating or deleting a service instance.")
+
+
+class UserViewSet(DjoserUserViewSet):
+    """This class is implemented to disable djoser DELETE method."""
+
+    @action(["get", "put", "patch"], detail=False)
+    def me(self, request, *args, **kwargs):
+        """Delete is now forbidden for this method."""
+        return super().me(request, *args, **kwargs)

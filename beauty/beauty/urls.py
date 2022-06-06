@@ -23,9 +23,10 @@ from django.urls import include, path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.routers import DefaultRouter
 from beauty.yasg import urlpatterns as doc_urls
 
-from api.views import ResetPasswordView, UserActivationView
+from api.views import (ResetPasswordView, UserActivationView, UserViewSet)
 
 
 @api_view(["GET"])
@@ -45,6 +46,9 @@ def api_root(request, reverse_format=None):
     )
 
 
+router = DefaultRouter()
+router.register("auth/users", UserViewSet)
+
 urlpatterns = [
     path("", api_root),
     path("admin/", admin.site.urls),
@@ -59,15 +63,10 @@ urlpatterns = [
         name="reset-password",
     ),
     path("api/v1/", include("api.urls", namespace="api")),
-    # path(
-    #    "api-auth/",
-    # include("rest_framework.urls", namespace="rest_framework")
-    # ),
-    path(r"auth/", include("djoser.urls")),
     path(r"auth/", include("djoser.urls.jwt")),
-
 ]
 
+urlpatterns += router.urls
 urlpatterns += doc_urls
 
 if settings.DEBUG:
