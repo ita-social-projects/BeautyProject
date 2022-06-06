@@ -9,7 +9,7 @@ from django.utils.translation import gettext as _
 
 from rest_framework import serializers
 
-from api.models import Business, CustomUser
+from api.models import (Business, CustomUser)
 
 
 User = get_user_model()
@@ -101,3 +101,21 @@ class BusinessDetailSerializer(serializers.ModelSerializer):
 
         model = Business
         fields = ("logo", "name", "business_type", "address", "description")
+
+
+class BusinessGetAllInfoSerializers(serializers.ModelSerializer):
+    """Serializer for getting all info about business."""
+
+    def to_representation(self, instance):
+        """Change the display of owner field data."""
+        data = super().to_representation(instance)
+        owner = CustomUser.objects.get(id=data["owner"])
+        data["owner"] = owner.get_full_name()
+        return data
+
+    class Meta:
+        """Meta for BusinessGetAllInfoSerializers class."""
+
+        model = Business
+        fields = ["owner", "name", "business_type", "logo", "owner", "address",
+                  "description", "created_at"]
