@@ -34,6 +34,11 @@ class TestReviewAddView(TestCase):
         self.reviewee = CustomUserFactory.create()
         self.nonspecialist = CustomUserFactory.create()
         self.groups.specialist.user_set.add(self.reviewee)
+        self.review = ReviewFactory.build()
+        self.data = {
+            "text_body": self.review.text_body,
+            "rating": self.review.rating,
+        }
 
         self.serializer = ReviewAddSerializer
         self.view = ReviewAddView
@@ -42,63 +47,62 @@ class TestReviewAddView(TestCase):
 
     def test_post_method_create_review_non_specialist(self):
         """A logged user can't review a nonspecialist."""
-        review = ReviewFactory()
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.nonspecialist.id}),
-            data={"text_body": review.text_body, "rating": review.rating},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 400)
 
     def test_post_method_create_review_not_logged_user(self):
         """Only a logged user can create a review."""
         self.client.force_authenticate(user=None)
-        review = ReviewFactory()
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.reviewee.id}),
-            data={"text_body": review.text_body, "rating": review.rating},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 401)
 
     def test_post_method_create_review_logged_user(self):
         """A logged user should be able to create a review."""
-        review = ReviewFactory()
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.reviewee.id}),
-            data={"text_body": review.text_body, "rating": review.rating},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 201)
 
     def test_post_method_create_review_wrong_rating_min(self):
         """Rating should not be less than 0."""
-        review = ReviewFactory(rating=-5)
+        self.data["rating"] = -5
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.reviewee.id}),
-            data={"text_body": review.text_body, "rating": review.rating},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 400)
 
     def test_post_method_create_review_wrong_rating_max(self):
         """Rating should not be more than 5."""
-        review = ReviewFactory(rating=6)
+        self.data["rating"] = 10
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.reviewee.id}),
-            data={"text_body": review.text_body, "rating": review.rating},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 400)
 
     def test_post_method_create_review_wrong_text_empty(self):
         """Text of the review should not be empty."""
+        self.data["text_body"] = ""
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.reviewee.id}),
-            data={"text_body": "", "rating": 2},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 400)
 
     def test_post_method_create_review_wrong_text_max(self):
         """Text of the review should not exceed 500 characters."""
+        self.data["text_body"] = "%" * 501
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.reviewee.id}),
-            data={"text_body": ("&" * 501), "rating": 2},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 400)
 
@@ -106,6 +110,6 @@ class TestReviewAddView(TestCase):
         """Users should not be able to review themselves."""
         response = self.client.post(
             path=reverse("api:review-add", kwargs={"user": self.reviewer.id}),
-            data={"text_body": "I am the best!", "rating": 2},
+            data=self.data,
         )
         self.assertEqual(response.status_code, 400)
