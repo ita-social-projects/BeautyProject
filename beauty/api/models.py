@@ -1,17 +1,17 @@
 """This module provides all needed models."""
 
+import logging
 from datetime import timedelta
 from address.models import AddressField
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.base_user import (AbstractBaseUser, BaseUserManager)
 from django.contrib.auth.models import PermissionsMixin
-from django.core.validators import validate_email, MinValueValidator,\
-    MaxValueValidator
+from django.core.validators import (validate_email, MinValueValidator, MaxValueValidator)
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
 from beauty.utils import ModelsUtils
-import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,6 @@ class MyUserManager(BaseUserManager):
         Saves user instance with given fields values.
         """
         if not email:
-
             logger.info("Users must have an email address")
 
             raise ValueError("Users must have an email address")
@@ -138,9 +137,9 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     is_admin = models.BooleanField(default=False)
 
-    objects = MyUserManager()
-
     USERNAME_FIELD = "email"
+
+    objects = MyUserManager()
 
     REQUIRED_FIELDS = ("password", "first_name", "phone_number")
 
@@ -155,6 +154,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
     def is_staff(self):
         """Determines whether user is admin."""
         return self.is_admin
+
+    @property
+    def is_specialist(self):
+        """Determines whether user is specialist."""
+        return self.groups.filter(name="Specialist").exists()
 
     @property
     def specialist_exist_orders(self):
@@ -495,6 +499,19 @@ class Order(models.Model):
         blank=True,
         null=True,
         verbose_name=_("Reason for cancellation"),
+    )
+
+    token = models.CharField(
+        max_length=64,
+        editable=False,
+        null=True,
+    )
+
+    note = models.TextField(
+        max_length=300,
+        null=True,
+        blank=True,
+        verbose_name=_("Additional note"),
     )
 
     def save(self, *args, **kwargs):
