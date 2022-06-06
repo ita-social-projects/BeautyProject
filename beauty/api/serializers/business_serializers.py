@@ -1,56 +1,37 @@
 """The module includes serializers for Business model."""
 
 import logging
-
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext as _
-
 from rest_framework import serializers
-
 from api.models import Business, CustomUser
 
 
-User = get_user_model()
 logger = logging.getLogger(__name__)
 
 
-class BusinessListCreateSerializer(serializers.ModelSerializer):
-    """Business serilalizer for list and create views."""
+class BaseBusinessSerializer(serializers.ModelSerializer):
+    """Base business serilalizer.
 
-    class Meta:
-        """Display 4 required fields for Business creation."""
-
-        model = Business
-        fields = ("name", "business_type", "owner", "description")
-
-    def validate_owner(self, value):
-        """Validates owner.
-
-        Checks if such user exists, validates if user belongs to
-        Specialist group
-        """
-        try:
-            value.groups.get(name="Owner")
-
-        except Group.DoesNotExist:
-            logger.error("Failed owner validation")
-
-            raise ValidationError(
-                _("Only Owners can create Business"), code="invalid",
-            )
-
-        logger.info("Sucessfully validated owner")
-
-        return value
+    Provides to_representation which display owner with his full_name
+    """
 
     def to_representation(self, instance):
         """Display owner full name."""
         data = super().to_representation(instance)
-        owner = User.objects.filter(id=data["owner"]).first()
-        data["owner"] = owner.get_full_name()
+        if "owner" in data:
+            owner = CustomUser.objects.get(id=data["owner"])
+            data["owner"] = owner.get_full_name()
         return data
+
+
+class BusinessCreateSerializer(BaseBusinessSerializer):
+    """Business serilalizer for list and create views."""
+
+    class Meta:
+        """Display 3 required fields for Business creation."""
+
+        model = Business
+        fields = ("name", "business_type", "owner", "description")
+        read_only_fields = ("owner", )
 
 
 class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
@@ -58,40 +39,31 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     business_url = serializers.HyperlinkedIdentityField(
         view_name="api:business-detail", lookup_field="pk",
     )
-    owner_url = serializers.HyperlinkedIdentityField(
-        view_name="api:certain-owners-businesses-list", lookup_field="owner_id",
-    )
     address = serializers.CharField(max_length=500)
 
     class Meta:
         """Display main field & urls for businesses."""
 
         model = Business
-        fields = ("business_url", "owner_url", "name", "business_type", "address")
+        fields = (
+            "business_url", "name", "business_type", "address",
+        )
 
 
-class BusinessAllDetailSerializer(serializers.ModelSerializer):
+class BusinessAllDetailSerializer(BaseBusinessSerializer):
     """Serializer for specific business."""
 
     created_at = serializers.ReadOnlyField()
     address = serializers.CharField(max_length=500)
 
-    def to_representation(self, instance):
-        """Change the display of owner field data."""
-        data = super().to_representation(instance)
-        owner = CustomUser.objects.get(id=data["owner"])
-        data["owner"] = owner.get_full_name()
-        return data
-
     class Meta:
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        fields = ("owner", "created_at", "logo", "name", "business_type", "address",
-                  "description")
+        fields = "__all__"
 
 
-class BusinessDetailSerializer(serializers.ModelSerializer):
+class BusinessDetailSerializer(BaseBusinessSerializer):
     """Serializer for specific business."""
 
     address = serializers.CharField(max_length=500)
@@ -100,4 +72,4 @@ class BusinessDetailSerializer(serializers.ModelSerializer):
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        fields = ("logo", "name", "business_type", "address", "description")
+        exclude = ("created_at", "id", "owner")
