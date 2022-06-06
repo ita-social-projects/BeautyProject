@@ -78,7 +78,7 @@ class IsPositionOwner(permissions.BasePermission):
             return False
 
 
-class IsProfileOwner(permissions.BasePermission):
+class IsProfileOwner(permissions.IsAuthenticated):
     """Permission used in Users profile."""
 
     def has_object_permission(self, request, view, obj):
@@ -92,4 +92,4 @@ class IsProfileOwner(permissions.BasePermission):
 
         if request.method in permissions.SAFE_METHODS:
             return True
-        return request.user.is_authenticated and (request.user.is_admin or obj == request.user)
+        return request.user.is_admin or obj == request.user
