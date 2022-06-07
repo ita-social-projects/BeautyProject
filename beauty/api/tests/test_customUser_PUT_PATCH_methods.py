@@ -137,8 +137,6 @@ class TestCustomUserDetailRUDView(TestCase):
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps({}),
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, 400)
 
@@ -149,7 +147,5 @@ class TestCustomUserDetailRUDView(TestCase):
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps({}),
-            content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
