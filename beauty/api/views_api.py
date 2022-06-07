@@ -21,7 +21,7 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 
 from .models import Business, CustomUser, Order, Service, Position
 
-from .permissions import (IsAccountOwnerOrReadOnly,
+from .permissions import (IsAccountOwnerOrReadOnly, IsOwner,
                           IsPositionOwner, ReadOnly,
                           IsAdminOrThisBusinessOwner, IsProfileOwner)
 
@@ -206,17 +206,17 @@ class OrderApprovingView(ListCreateAPIView):
 class BusinessesListCreateAPIView(ListCreateAPIView):
     """List View for all businesses of current user(owner) & new business creation."""
 
-    permission_classes = (IsAdminOrThisBusinessOwner,)
+    permission_classes = (IsAdminOrThisBusinessOwner & IsOwner,)
 
     def get_serializer_class(self):
         """Return specific Serializer.
 
-        BusinessCreateSerializer For businesses creation or default for list.
+        BusinessCreateSerializer for businesses creation or BusinessesSerializer
+        for list.
         """
         if self.request.method == "POST":
             return BusinessCreateSerializer
-        else:
-            return BusinessesSerializer
+        return BusinessesSerializer
 
     def get_queryset(self):
         """Filter businesses of current user(owner)."""
@@ -245,7 +245,11 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
-        """Get different serializers for owner of current business or other person."""
+        """Gets different serializers depending on current user roles.
+        
+        BusinessAllDetailSerializer for owner of current business or
+        BusinessDetailSerializer for others.
+        """
         try:
             is_owner = self.request.user.is_owner
             if is_owner and (self.get_object().owner == self.request.user):
