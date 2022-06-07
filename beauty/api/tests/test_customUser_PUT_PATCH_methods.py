@@ -17,7 +17,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.models import CustomUser
-from api.views import CustomUserDetailRUDView
+from api.views_api import CustomUserDetailRUDView
 from api.serializers.customuser_serializers import CustomUserDetailSerializer
 from .factories import CustomUserFactory
 
@@ -40,7 +40,7 @@ class TestCustomUserDetailRUDView(TestCase):
         self.pk = self.customer_testing.id
 
     def test_custom_user_no_authorized(self):
-        """Put requests with authenticate None."""
+        """PATCH requests with authenticate None."""
         self.client.force_authenticate(user=None)
         response = self.client.patch(
             path=reverse(
@@ -53,7 +53,7 @@ class TestCustomUserDetailRUDView(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_custom_user_patch_other(self):
-        """Put requests with authenticate None."""
+        """PATCH requests to other id."""
         response = self.client.put(
             path=reverse(
                 self.url,
@@ -77,7 +77,7 @@ class TestCustomUserDetailRUDView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_custom_user_patch_dublicate(self):
-        """PATCH requests with valid data should change data."""
+        """PATCH requests with dublicate email shouldn't change it."""
         response = self.client.patch(
             path=reverse(
                 self.url,
@@ -110,7 +110,7 @@ class TestCustomUserDetailRUDView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_custom_user_put_invalid(self):
-        """PUT requests with invalid data should change data."""
+        """PUT requests with invalid data shouldn't change data."""
         self.customer_put = CustomUserFactory.build()
         self.data = {
             "email": self.customer.email,
