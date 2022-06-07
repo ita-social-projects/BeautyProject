@@ -116,7 +116,7 @@ class BusinessListCreateViewTest(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data["results"]), 2)
 
     def test_create_business_no_auth(self) -> None:
         """Tests view for creation Business.

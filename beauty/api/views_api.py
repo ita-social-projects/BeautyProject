@@ -227,7 +227,10 @@ class BusinessesListCreateAPIView(ListCreateAPIView):
         return owner.businesses.all()
 
     def post(self, request, *args, **kwargs):
-        """Create an business and add an authenticated user(owner) as an owner to it."""
+        """Creates a business.
+
+        Creates business and adds an authenticated user as an owner to it.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         business = serializer.save(owner=request.user)
