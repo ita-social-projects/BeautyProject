@@ -1,6 +1,7 @@
 """The module includes serializers for Position model."""
 
 import logging
+from datetime import datetime
 from rest_framework import serializers
 from api.models import Position
 
@@ -30,7 +31,12 @@ class PositionSerializer(serializers.ModelSerializer):
         start_time = data.get("start_time")
         end_time = data.get("end_time")
 
-        if end_time < start_time:
+        if isinstance(start_time, str):
+            start_time = datetime.strptime(start_time, "%H:%M:%S").time()
+        if isinstance(end_time, str):
+            start_time = datetime.strptime(start_time, "%H:%M:%S").time()
+
+        if end_time <= start_time:
             logger.info("Postion_serializer: end time should go after start time")
             raise serializers.ValidationError(
                 {"end_time": "end time should go after start time"},
