@@ -161,6 +161,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return self.groups.filter(name="Specialist").exists()
 
     @property
+    def is_owner(self):
+        """Determines whether user is an owner."""
+        return self.groups.filter(name="Owner").exists()
+
+    @property
     def specialist_exist_orders(self):
         """Show only existing orders for the user where he is specialist."""
         return self.specialist_orders.exclude(status__in=[2, 4])

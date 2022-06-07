@@ -14,7 +14,7 @@ from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.serializers.position_serializer import PositionSerializer
 from api.models import Position
-from api.views import PositionListCreateView
+from api.views_api import PositionListCreateView
 from .factories import (BusinessFactory,
                         CustomUserFactory,
                         GroupFactory,

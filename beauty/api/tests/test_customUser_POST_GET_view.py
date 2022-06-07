@@ -16,7 +16,7 @@ from rest_framework.reverse import reverse
 from api.serializers.customuser_serializers import CustomUserSerializer
 
 from api.models import CustomUser
-from api.views import CustomUserListCreateView
+from api.views_api import CustomUserListCreateView
 from .factories import CustomUserFactory
 
 
