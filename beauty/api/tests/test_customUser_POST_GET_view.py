@@ -43,12 +43,12 @@ class TestCustomUserListCreateView(TestCase):
     def test_get_custom_user_list_create_view(self):
         """GET requests to ListCreateAPIView should return list of objects."""
         self.customer_get = CustomUserFactory.create(first_name="Aha")
-        resp = self.client.generic(
+        response = self.client.generic(
             method="GET",
             path=reverse("api:user-list-create"),
         )
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(len(resp.data), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_post_custom_user_list_create_view(self):
         """POST requests to ListCreateAPIView should create a new object."""
