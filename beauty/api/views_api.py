@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
-                                     RetrieveUpdateDestroyAPIView, ListAPIView,
+                                     RetrieveUpdateDestroyAPIView,
                                      get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
 
@@ -21,8 +21,8 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 
 from .models import Business, CustomUser, Position, Service
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrThisBusinessOwner,
-                          IsOwner, IsPositionOwner, IsProfileOwner, ReadOnly)
+from .permissions import (IsAdminOrThisBusinessOwner, IsOwner,
+                          IsPositionOwner, IsProfileOwner, ReadOnly)
 
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessCreateSerializer,
@@ -231,8 +231,10 @@ class ReviewAddView(GenericAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class AllServicesListView(ListAPIView):
-    """ListView for all Services."""
+class AllServicesListCreateView(ListCreateAPIView):
+    """ListView to display all services or service creation."""
+
+    permission_classes = [IsOwner | ReadOnly]
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
@@ -243,7 +245,7 @@ class AllServicesListView(ListAPIView):
 class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
     """View for retrieving, updating or deleting service info."""
 
-    permission_classes = [IsAccountOwnerOrReadOnly]
+    permission_classes = [IsOwner | ReadOnly]
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer

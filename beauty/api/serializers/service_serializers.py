@@ -15,4 +15,4 @@ class ServiceSerializer(serializers.ModelSerializer):
         """Class with a model and model fields for serialization."""
 
         model = Service
-        fields = ["id", "name", "price", "description", "duration"]
+        fields = ["position", "name", "price", "description", "duration"]

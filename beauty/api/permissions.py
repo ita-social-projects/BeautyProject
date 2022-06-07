@@ -82,6 +82,7 @@ class IsPositionOwner(permissions.BasePermission):
 
     Allows only position owners and specialist to work with it.
     """
+
     def has_object_permission(self, request, view, obj):
         """Object permission check."""
         logger.debug(f"Object {obj.id} permission check. Is position owner")
