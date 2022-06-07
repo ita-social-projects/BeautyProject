@@ -1,13 +1,14 @@
 """This module provides all needed api urls."""
 
 from django.urls import path
+
 from api.views.order_views import (OrderApprovingView, OrderListCreateView,
                                    OrderRetrieveCancelView)
+from .views_api import (AllServicesListView, BusinessDetailRUDView,
+                        BusinessesListCreateAPIView, CustomUserDetailRUDView,
+                        CustomUserListCreateView, PositionListCreateView, ReviewAddView,
+                        ServiceUpdateView)
 
-from .views_api import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetrieveAPIView,
-                        CustomUserDetailRUDView, CustomUserListCreateView,
-                        OwnerBusinessDetailRUDView, PositionListCreateView, ReviewAddView,
-                        ServiceUpdateView, AllServicesListView)
 
 app_name = "api"
 
@@ -43,22 +44,12 @@ urlpatterns = [
     ),
     path(
         "businesses/",
-        AllOrOwnerBusinessesListCreateAPIView.as_view(),
+        BusinessesListCreateAPIView.as_view(),
         name="businesses-list-create",
     ),
     path(
-        "businesses/<int:owner_id>/",
-        AllOrOwnerBusinessesListCreateAPIView.as_view(),
-        name="certain-owners-businesses-list",
-    ),
-    path(
-        "businesses/<int:owner_id>/<int:pk>/",
-        OwnerBusinessDetailRUDView.as_view(),
-        name="owner-business-detail",
-    ),
-    path(
         "business/<int:pk>/",
-        BusinessDetailRetrieveAPIView.as_view(),
+        BusinessDetailRUDView.as_view(),
         name="business-detail",
     ),
     path(
