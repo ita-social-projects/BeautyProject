@@ -50,19 +50,6 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class BusinessAllDetailSerializer(BaseBusinessSerializer):
-    """Serializer for specific business."""
-
-    created_at = serializers.ReadOnlyField()
-    address = serializers.CharField(max_length=500)
-
-    class Meta:
-        """Meta for BusinessDetailSerializer class."""
-
-        model = Business
-        fields = "__all__"
-
-
 class BusinessDetailSerializer(BaseBusinessSerializer):
     """Serializer for specific business."""
 
@@ -75,15 +62,8 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
         exclude = ("created_at", "id", "owner")
 
 
-class BusinessGetAllInfoSerializers(serializers.ModelSerializer):
+class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
     """Serializer for getting all info about business."""
-
-    def to_representation(self, instance):
-        """Change the display of owner field data."""
-        data = super().to_representation(instance)
-        owner = CustomUser.objects.get(id=data["owner"])
-        data["owner"] = owner.get_full_name()
-        return data
 
     class Meta:
         """Meta for BusinessGetAllInfoSerializers class."""
