@@ -25,14 +25,13 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from api.serializers.order_serializers import OrderSerializer
-from api.views import (OrderListCreateView,
-                       OrderApprovingTokenGenerator)
+from api.views.order_views import (OrderListCreateView,
+                                   OrderApprovingTokenGenerator)
 from .factories import (GroupFactory,
                         CustomUserFactory,
                         PositionFactory,
                         ServiceFactory,
                         OrderFactory)
-
 
 CET = pytz.timezone("Europe/Kiev")
 

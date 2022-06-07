@@ -6,9 +6,7 @@ from typing import Tuple
 import pytz
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
-from beauty.tokens import OrderApprovingTokenGenerator
 from faker import Faker
-
 
 faker = Faker()
 
@@ -68,24 +66,12 @@ class ApprovingOrderEmail(BaseEmailMessage):
 
     def get_context_data(self):
         """Get context data for rendering HTML messages."""
-        from djoser.utils import encode_uid
         context = super().get_context_data()
 
         order = context.get("order")
-        token = OrderApprovingTokenGenerator().make_token(order)
 
-        params = {"uid": encode_uid(order.pk), "token": token}
+        context.update(order_approve_decline_urls(order))
 
-        url_approved_params = params | {"status": encode_uid("approved")}
-        context["url_approved"] = reverse("api:order-approving",
-                                          kwargs=url_approved_params)
-
-        url_declined_params = params | {"status": encode_uid("declined")}
-        context["url_approved"] = reverse("api:order-approving",
-                                          kwargs=url_approved_params)
-
-        context["url_declined"] = reverse("api:order-approving",
-                                          kwargs=url_declined_params)
         return context
 
 
@@ -93,3 +79,31 @@ class StatusOrderEmail(BaseEmailMessage):
     """Class for sending an email message which renders HTML for it."""
 
     template_name = "email/customer_order_status.html"
+
+
+def order_approve_decline_urls(order: object, approve_name="url_for_approve",
+                               decline_name="url_for_decline", request=None) -> dict:
+    """Get URLs for approving and declining orders.
+
+    Args:
+        approve_name (str): key name for approving URL
+        decline_name (str): key name for declining URL
+        request: request data
+        order (Order): Order instance
+
+    Returns:
+        urls(dict): dict with URLs
+    """
+    from djoser.utils import encode_uid
+
+    urls = {}
+    params = {"uid": encode_uid(order.pk), "token": order.token}
+
+    url_approved_params = params | {"status": encode_uid("approved")}
+    urls[approve_name] = reverse("api:order-approving",
+                                 kwargs=url_approved_params, request=request)
+
+    url_declined_params = params | {"status": encode_uid("declined")}
+    urls[decline_name] = reverse("api:order-approving",
+                                 kwargs=url_declined_params, request=request)
+    return urls
