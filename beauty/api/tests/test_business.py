@@ -97,6 +97,12 @@ class BusinessListCreateViewTest(TestCase):
         self.business1 = BusinessFactory.create(owner=self.owner)
         self.business2 = BusinessFactory.create(owner=self.owner)
 
+        self.valid_create_data = {
+            "name": faker.word(),
+            "business_type": faker.word(),
+            "description": faker.text(),
+        }
+
     def test_list_of_businesses(self) -> None:
         """Tests if view gives all businesses."""
         self.client.force_authenticate(user=self.owner)
@@ -115,11 +121,6 @@ class BusinessListCreateViewTest(TestCase):
         Checks if view does not allow user to create business without
         authentication
         """
-        self.valid_create_data = {
-            "name": faker.word(),
-            "business_type": faker.word(),
-            "description": faker.text(),
-        }
 
         response = self.client.post(
             path=reverse(

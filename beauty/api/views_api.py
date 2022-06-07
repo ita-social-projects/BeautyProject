@@ -140,6 +140,9 @@ class BusinessesListCreateAPIView(ListCreateAPIView):
 
     permission_classes = (IsAdminOrThisBusinessOwner & IsOwner,)
 
+    def get_permissions(self):
+        return super().get_permissions()
+
     def get_serializer_class(self):
         """Return specific Serializer.
 
