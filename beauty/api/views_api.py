@@ -137,15 +137,15 @@ class PositionListCreateView(ListCreateAPIView):
 
 
 class BusinessesListCreateAPIView(ListCreateAPIView):
-    """List View for all businesses of current user(owner) & new business creation."""
+    """List View for all businesses of current user & new business creation."""
 
     permission_classes = (IsAdminOrThisBusinessOwner & IsOwner,)
 
     def get_serializer_class(self):
         """Return specific Serializer.
 
-        BusinessCreateSerializer for businesses creation or BusinessesSerializer
-        for list.
+        BusinessCreateSerializer for businesses creation or 
+        BusinessesSerializer for list.
         """
         if self.request.method == "POST":
             return BusinessCreateSerializer
@@ -182,7 +182,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     def get_serializer_class(self):
         """Gets different serializers depending on current user roles.
-        
+
         BusinessAllDetailSerializer for owner of current business or
         BusinessDetailSerializer for others.
         """
@@ -191,7 +191,9 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
             if is_owner and (self.get_object().owner == self.request.user):
                 return BusinessAllDetailSerializer
         except AttributeError:
-            logger.warning(f"{self.request.user} is not authorised to access this content")
+            logger.warning(
+                f"{self.request.user} is not authorised to access this content"
+        )
         return BusinessDetailSerializer
 
 
