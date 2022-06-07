@@ -18,7 +18,7 @@ from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from .factories import CustomUserFactory, ReviewFactory
 from api.serializers.review_serializers import ReviewAddSerializer
-from api.views import ReviewAddView
+from api.views_api import ReviewAddView
 
 
 class TestReviewAddView(TestCase):
