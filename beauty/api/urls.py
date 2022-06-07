@@ -1,15 +1,16 @@
 """This module provides all needed api urls."""
 
 from django.urls import path
+from api.views.order_views import (OrderApprovingView, OrderListCreateView,
+                                   OrderRetrieveCancelView)
 
-from .views import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetrieveAPIView,
-                    CustomUserDetailRUDView, CustomUserListCreateView,
-                    OrderApprovingView, OrderListCreateView, OrderRetrieveUpdateDestroyView,
-                    OwnerBusinessDetailRUDView, PositionListCreateView, ReviewAddView,
-                    ServiceUpdateView, AllServicesListView)
-
+from .views_api import (AllOrOwnerBusinessesListCreateAPIView, BusinessDetailRetrieveAPIView,
+                        CustomUserDetailRUDView, CustomUserListCreateView,
+                        OwnerBusinessDetailRUDView, PositionListCreateView, ReviewAddView,
+                        ServiceUpdateView, AllServicesListView)
 
 app_name = "api"
+
 urlpatterns = [
     path(
         "users/",
@@ -23,7 +24,7 @@ urlpatterns = [
     ),
     path(
         "user/<int:user>/order/<int:pk>/",
-        OrderRetrieveUpdateDestroyView.as_view(),
+        OrderRetrieveCancelView.as_view(),
         name="user-order-detail",
     ),
     path(
@@ -32,7 +33,7 @@ urlpatterns = [
     ),
     path(
         "order/<int:pk>/",
-        OrderRetrieveUpdateDestroyView.as_view(),
+        OrderRetrieveCancelView.as_view(),
         name="order-detail",
     ),
     path(
