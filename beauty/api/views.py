@@ -376,7 +376,6 @@ class ReviewDisplayView(GenericAPIView):
     def get(self, request, to_user):
         """Method for retrieving reviews from the database."""
         queryset = self.queryset.filter(to_user=to_user)
-        queryset = super().filter_queryset(queryset)
 
         if not queryset:
             logger.info(f"Failed to get reviews for user with id {to_user}")
