@@ -31,7 +31,10 @@ class TestReviewDisplayView(TestCase):
     def test_get_method_to_obtain_all_reviews_of_specified_specialist(self) -> None:
         """Get all reviews of specified specialist."""
         response = self.client.generic(method="GET",
-                                       path=reverse("api:review-get", kwargs={"to_user": 2}),
+                                       path=reverse(
+                                           "api:review-get",
+                                           kwargs={"to_user": self.first_responder.id},
+                                       ),
                                        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 3)
