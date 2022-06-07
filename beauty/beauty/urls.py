@@ -38,11 +38,6 @@ def api_root(request, reverse_format=None):
             request=request,
             format=reverse_format,
         ),
-        "businesses": reverse(
-            "api:businesses-list-create",
-            request=request,
-            format=reverse_format,
-        ),
         "orders": reverse(
             "api:order-list-create",
             request=request,
