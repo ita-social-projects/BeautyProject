@@ -19,11 +19,10 @@ from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
-from .models import Business, CustomUser, Service, Position
+from .models import Business, CustomUser, Position, Service
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsOwner,
-                          IsPositionOwner, ReadOnly,
-                          IsAdminOrThisBusinessOwner, IsProfileOwner)
+from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrThisBusinessOwner,
+                          IsOwner, IsPositionOwner, IsProfileOwner, ReadOnly)
 
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessCreateSerializer,
@@ -144,7 +143,7 @@ class BusinessesListCreateAPIView(ListCreateAPIView):
     def get_serializer_class(self):
         """Return specific Serializer.
 
-        BusinessCreateSerializer for businesses creation or 
+        BusinessCreateSerializer for businesses creation or
         BusinessesSerializer for list.
         """
         if self.request.method == "POST":
@@ -192,8 +191,9 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
                 return BusinessAllDetailSerializer
         except AttributeError:
             logger.warning(
-                f"{self.request.user} is not authorised to access this content"
-        )
+                f"{self.request.user} is not a"
+                "uthorised to access this content",
+            )
         return BusinessDetailSerializer
 
 
