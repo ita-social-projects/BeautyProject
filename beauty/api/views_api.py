@@ -29,7 +29,8 @@ from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessesSerializer)
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
-                                                 ResetPasswordSerializer)
+                                                 ResetPasswordSerializer,
+                                                 SpecialistInformationSerializer)
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
@@ -101,7 +102,18 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsProfileOwner]
 
     queryset = CustomUser.objects.all()
-    serializer_class = CustomUserDetailSerializer
+
+    def get_serializer_class(self):
+        """Return a needed serializer_class for specific object.
+
+        If the user is a Specialist, return SpecialistInformationSerializer.
+        If the user is a User, return a CustomUserSerializer.
+        """
+        if CustomUser.objects.filter(id=self.kwargs.get("pk"),
+                                     groups__name__icontains="specialist"):
+            return SpecialistInformationSerializer
+
+        return CustomUserDetailSerializer
 
     def destroy(self, request, *args, **kwargs):
         """Reimplementation of the DESTROY (DELETE) method.

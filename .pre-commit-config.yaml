@@ -18,3 +18,4 @@ repos:
         flake8-mock,
         flake8-assertive,
       ]
+      language: python
