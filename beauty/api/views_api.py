@@ -19,7 +19,7 @@ from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
-from .models import Business, CustomUser, Order, Service, Position
+from .models import Business, CustomUser, Service, Position
 
 from .permissions import (IsAccountOwnerOrReadOnly, IsOwner,
                           IsPositionOwner, ReadOnly,
@@ -34,14 +34,9 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
 
-from .serializers.order_serializers import OrderSerializer
-
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
-
-from beauty import signals
-from beauty.tokens import OrderApprovingTokenGenerator
 
 
 logger = logging.getLogger(__name__)
@@ -139,68 +134,6 @@ class PositionListCreateView(ListCreateAPIView):
     serializer_class = PositionSerializer
     permission_classes = (IsAuthenticated,
                           IsPositionOwner)
-
-
-class OrderApprovingView(ListCreateAPIView):
-    """Approving orders custom GET method."""
-
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-
-    def get(self, request, *args, **kwargs):
-        """Get an answer from a specialist according to order and implement it."""
-        token, order_id, order_status = self.decode_params(kwargs).values()
-        order = get_object_or_404(self.get_queryset(), id=order_id)
-        if OrderApprovingTokenGenerator().check_token(order, token):
-            if order_status == "approved":
-                order.mark_as_approved()
-
-                logger.info(f"{order} was approved by the specialist "
-                            f"{order.specialist.get_full_name()}")
-
-                self.send_signal(order, request)
-                return redirect(reverse("api:user-order-detail",
-                                        kwargs={"user": order.specialist.id,
-                                                "pk": order.id}))
-            elif order_status == "declined":
-                order.mark_as_declined()
-
-                logger.info(f"{order} was declined by specialist "
-                            f"{order.specialist.get_full_name()}")
-
-                self.send_signal(order, request)
-        logger.info(f"Token for {order} is not valid")
-
-        return redirect(
-            reverse("api:user-detail", args=[order.specialist.id]))
-
-    def decode_params(self, kwargs: dict) -> dict:
-        """Decode params from url.
-
-        Args:
-            kwargs(dict): coded params from URL
-
-        Returns(dict): decoded params from URL
-        """
-        return {"token": kwargs["token"],
-                "order_id": int(force_str(urlsafe_base64_decode(kwargs["uid"]))),
-                "order_status": force_str(urlsafe_base64_decode(kwargs["status"]))}
-
-    def send_signal(self, order: object, request: dict) -> None:
-        """Send signal.
-
-        Send signal for sending an email message to the customer
-        with the specialist's order status decision.
-
-        Args:
-            order: instance order
-            request: metadata about the request
-        """
-        logger.info(f"Signal was sent with {order}")
-
-        signals.order_status_changed.send(
-            sender=self.__class__, order=order, request=request,
-        )
 
 
 class BusinessesListCreateAPIView(ListCreateAPIView):
