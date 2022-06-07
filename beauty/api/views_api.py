@@ -1,7 +1,8 @@
 """This module provides all needed api views."""
 
 import logging
-
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
@@ -17,6 +18,7 @@ from rest_framework.reverse import reverse
 from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
+from rest_framework.views import APIView
 
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
@@ -40,7 +42,6 @@ from .serializers.order_serializers import (OrderDeleteSerializer, OrderSerializ
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
-
 
 logger = logging.getLogger(__name__)
 
@@ -155,11 +156,14 @@ class OrderListCreateView(ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+class OrderRetrieveUpdateDestroyView(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
     """Generic API for orders custom GET, PUT and DELETE methods.
 
     RUD - Retrieve, Update, Destroy.
     """
+
+    login_url = settings.LOGIN_URL
+    redirect_field_name = 'redirect_to'
 
     queryset = Order.objects.exclude(status__in=[2, 4])
     serializer_class = OrderDeleteSerializer
