@@ -161,6 +161,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return self.groups.filter(name="Specialist").exists()
 
     @property
+    def is_owner(self):
+        """Determines whether user is an owner."""
+        return self.groups.filter(name="Owner").exists()
+
+    @property
     def specialist_exist_orders(self):
         """Show only existing orders for the user where he is specialist."""
         return self.specialist_orders.exclude(status__in=[2, 4])
@@ -172,7 +177,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     def get_full_name(self):
         """Shows full name of the user."""
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}".strip()
 
     def __str__(self):
         """str: Returns full name of the user."""

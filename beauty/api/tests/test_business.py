@@ -89,31 +89,31 @@ class BusinessListCreateViewTest(TestCase):
 
         self.groups = GroupFactory.groups_for_test()
 
-        self.business1 = BusinessFactory.create()
-        self.business2 = BusinessFactory.create()
-
         self.customer = CustomUserFactory.create()
         self.owner = CustomUserFactory.create()
         self.groups.customer.user_set.add(self.customer)
         self.groups.owner.user_set.add(self.owner)
 
+        self.business1 = BusinessFactory.create(owner=self.owner)
+        self.business2 = BusinessFactory.create(owner=self.owner)
+
         self.valid_create_data = {
-            "name": faker.word(), "business_type": faker.word(),
-            "description": faker.text(), "owner": self.owner.id,
-        }
-        self.invalid_create_data = {
-            "name": faker.word(), "business_type": faker.word(),
-            "description": faker.text(), "owner": self.customer.id,
+            "name": faker.word(),
+            "business_type": faker.word(),
+            "description": faker.text(),
         }
 
     def test_list_of_businesses(self) -> None:
         """Tests if view gives all businesses."""
+        self.client.force_authenticate(user=self.owner)
         response = self.client.get(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data["results"]), 2)
 
     def test_create_business_no_auth(self) -> None:
         """Tests view for creation Business.
@@ -121,8 +121,11 @@ class BusinessListCreateViewTest(TestCase):
         Checks if view does not allow user to create business without
         authentication
         """
+
         response = self.client.post(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
             data=self.valid_create_data,
         )
 
@@ -136,21 +139,31 @@ class BusinessListCreateViewTest(TestCase):
         """
         self.client.force_authenticate(user=self.customer)
 
+        self.invalid_create_data = {
+            "name": faker.word(), 
+            "business_type": faker.word(),
+            "description": faker.text(),
+        }
+
         response = self.client.post(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
             data=self.invalid_create_data,
         )
 
         self.client.force_authenticate(user=None)
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 403)
 
     def test_create_business_valid_owner(self) -> None:
         """Checks business creation with authenticated user and valid data."""
-        self.client.force_authenticate(user=self.customer)
+        self.client.force_authenticate(user=self.owner)
 
         response = self.client.post(
-            path=reverse("api:businesses-list-create"),
+            path=reverse(
+                "api:businesses-list-create",
+            ),
             data=self.valid_create_data,
         )
 

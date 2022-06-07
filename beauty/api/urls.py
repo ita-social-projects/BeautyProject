@@ -2,14 +2,18 @@
 
 from django.urls import path
 
-from .views import (AllOrOwnerBusinessesListCreateAPIView, CustomUserDetailRUDView,
-                    CustomUserListCreateView, OrderApprovingView, OrderListCreateView,
-                    OrderRetrieveUpdateDestroyView, OwnerBusinessDetailRUDView,
-                    PositionListCreateView, ReviewAddView, ServiceUpdateView, AllServicesListView,
-                    BusinessDetailRUDView)
+from api.views.order_views import (OrderApprovingView, OrderListCreateView,
+                                   OrderRetrieveCancelView)
 
+from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
+
+from .views_api import (AllServicesListView, BusinessesListCreateAPIView,
+                        BusinessDetailRUDView, CustomUserDetailRUDView,
+                        CustomUserListCreateView, PositionListCreateView,
+                        ReviewAddView, ServiceUpdateView)
 
 app_name = "api"
+
 urlpatterns = [
     path(
         "users/",
@@ -23,7 +27,7 @@ urlpatterns = [
     ),
     path(
         "user/<int:user>/order/<int:pk>/",
-        OrderRetrieveUpdateDestroyView.as_view(),
+        OrderRetrieveCancelView.as_view(),
         name="user-order-detail",
     ),
     path(
@@ -32,7 +36,7 @@ urlpatterns = [
     ),
     path(
         "order/<int:pk>/",
-        OrderRetrieveUpdateDestroyView.as_view(),
+        OrderRetrieveCancelView.as_view(),
         name="order-detail",
     ),
     path(
@@ -42,18 +46,8 @@ urlpatterns = [
     ),
     path(
         "businesses/",
-        AllOrOwnerBusinessesListCreateAPIView.as_view(),
+        BusinessesListCreateAPIView.as_view(),
         name="businesses-list-create",
-    ),
-    path(
-        "businesses/<int:owner_id>/",
-        AllOrOwnerBusinessesListCreateAPIView.as_view(),
-        name="certain-owners-businesses-list",
-    ),
-    path(
-        "businesses/<int:owner_id>/<int:pk>/",
-        OwnerBusinessDetailRUDView.as_view(),
-        name="owner-business-detail",
     ),
     path(
         "business/<int:pk>/",
@@ -69,6 +63,16 @@ urlpatterns = [
         r"<int:user>/reviews/add/",
         ReviewAddView.as_view(),
         name="review-add",
+    ),
+    path(
+        r"reviews/<int:to_user>/",
+        ReviewDisplayView.as_view(),
+        name="review-get",
+    ),
+    path(
+        r"review/<int:pk>/",
+        ReviewDisplayDetailView.as_view(),
+        name="review-detail",
     ),
     path(
         "services/",

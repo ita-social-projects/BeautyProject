@@ -7,9 +7,6 @@ Tests for CustomUser serializers:
 - Check serializer with invalid data type;
 - Check serializer without data;
 - Check serializer with data equal None;
-- Check Custom User Serializer with users' queryset data when a specialist is logged;
-- Check Custom User Serializer with users' queryset data when a customer is logged;
-- Check Custom User Serializer with users' queryset data when a user is not logged;
 - Check serializer with customer instance data;
 - Check serializer with specialist instance data;
 - Deserializing a data and updating a user data with password data;
@@ -21,17 +18,21 @@ Passwords validation tests:
 - Checking valid data;
 - Checking invalid data;
 - Checking when password or password confirmation is null.
+
+Password resetting tests:
+- This method adds needed info for tests;
+- Checking valid data;
+- Checking invalid data;
+- Checking when password or password confirmation is null.
 """
 
 from django.contrib.auth.hashers import (check_password, make_password)
-from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.reverse import reverse
-
-from api.models import CustomUser
 from api.serializers.customuser_serializers import (CustomUserSerializer,
-                                                    PasswordsValidation, CustomUserDetailSerializer)
+                                                    PasswordsValidation, CustomUserDetailSerializer,
+                                                    ResetPasswordSerializer)
 from rest_framework.test import (APIRequestFactory, APIClient)
 from rest_framework.serializers import ValidationError
 from api.tests.factories import (CustomUserFactory, GroupFactory, OrderFactory)
@@ -76,7 +77,6 @@ class CustomUserSerializerTestCase(TestCase):
         self.request = self.factory.get("/")
 
         self.client = APIClient()
-
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
@@ -137,36 +137,6 @@ class CustomUserSerializerTestCase(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertEqual(serializer.errors, {"non_field_errors": ["No data provided"]})
 
-    def test_customuserserialize_customer_logged(self):
-        """Check Custom User Serializer with users' queryset data when a customer is logged."""
-        self.client.force_authenticate(user=self.customer)
-        queryset = CustomUser.objects.all()
-        response = self.client.get(path=reverse("api:user-list-create"))
-
-        self.request.user = self.customer
-        serializer = self.Serializer(queryset, many=True, context={"request": self.request})
-        self.assertEqual(serializer.data, response.data)
-
-    def test_customuserserialize_specialist_logged(self):
-        """Check Custom User Serializer with users' queryset data when a specialist is logged."""
-        self.client.force_authenticate(user=self.specialist)
-        queryset = CustomUser.objects.all()
-        response = self.client.get(path=reverse("api:user-list-create"))
-
-        self.request.user = self.specialist
-        serializer = self.Serializer(queryset, many=True, context={"request": self.request})
-        self.assertEqual(serializer.data, response.data)
-
-    def test_customuserserialize_user_no_logged(self):
-        """Check Custom User Serializer with users' queryset data when a user is not logged."""
-        self.client.force_authenticate(user=None)
-        queryset = CustomUser.objects.all()
-        response = self.client.get(path=reverse("api:user-list-create"))
-
-        self.request.user = AnonymousUser()
-        serializer = self.Serializer(queryset, many=True, context={"request": self.request})
-        self.assertEqual(serializer.data, response.data)
-
     def test_serialize_customer_instance(self):
         """Check serializer with customer instance data."""
         self.client.force_authenticate(self.customer)
@@ -176,7 +146,6 @@ class CustomUserSerializerTestCase(TestCase):
         serializer = self.Detail_serializer(self.customer, context={"request": self.request})
         self.assertEqual(serializer.data["customer_exist_orders"],
                          response.data["customer_exist_orders"])
-        
         self.assertEqual(serializer.data["groups"], ["Customer"])
         with self.assertRaises(KeyError):
             serializer.data["password"]
@@ -276,3 +245,36 @@ class PasswordsValidationTest(TestCase):
             {"confirm_password": "Didn`t enter the password confirmation."},
             ex.exception.args[0],
         )
+
+
+class ResetPasswordSerializerTest(TestCase):
+    """Password resetting tests.
+
+    Tests for checking password and password confirmation when user
+    resets password.
+    """
+
+    valid_data = {"password": "0967478911m", "confirm_password": "0967478911m"}
+    invalid_data = {"password": "0967478911m", "confirm_password": "096747891"}
+    null_data_one = {"password": "", "confirm_password": "096747891"}
+    null_data_two = {"password": "0967478911m", "confirm_password": ""}
+
+    def setUp(self):
+        """This method adds needed info for tests."""
+        self.Serializer = ResetPasswordSerializer()
+
+    def test_valid_data(self):
+        """Checking valid data."""
+        data = self.Serializer.validate(self.valid_data)
+        self.assertEqual(data, self.valid_data)
+
+    def test_invalid_data(self):
+        """Checking invalid data."""
+        with self.assertRaises(ValidationError):
+            self.Serializer.validate(self.invalid_data)
+
+    def test_password_null(self):
+        """Checking when password or password confirmation is null."""
+        with self.assertRaises(ValidationError):
+            self.Serializer.validate(self.null_data_one)
+            self.Serializer.validate(self.null_data_two)
