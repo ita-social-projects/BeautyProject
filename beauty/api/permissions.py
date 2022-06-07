@@ -109,7 +109,8 @@ class IsAdminOrThisBusinessOwner(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         """Verify that the current user is selected business owner or administrator."""
         logger.info(f"User {request.user} permission check")
-        return (obj.owner == request.user) or request.user.is_admin
+        if request.user.is_authenticated:
+            return (obj.owner == request.user) or request.user.is_admin
 
 
 class IsProfileOwner(permissions.IsAuthenticated):

@@ -17,8 +17,9 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Display owner full name."""
         data = super().to_representation(instance)
-        owner = CustomUser.objects.get(id=data["owner"])
-        data["owner"] = owner.get_full_name()
+        if "owner" in data:
+            owner = CustomUser.objects.get(id=data["owner"])
+            data["owner"] = owner.get_full_name()
         return data
 
 
@@ -71,4 +72,4 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        exclude = ("created_at", )
+        exclude = ("created_at", "id", "owner")
