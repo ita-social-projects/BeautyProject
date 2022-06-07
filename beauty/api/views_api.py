@@ -1,6 +1,7 @@
 """This module provides all needed api views."""
 
 import logging
+
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -20,8 +21,8 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 
 from .models import Business, CustomUser, Order, Service, Position
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrBusinessOwner,
-                          IsOwner, IsPositionOwner, ReadOnly,
+from .permissions import (IsAccountOwnerOrReadOnly,
+                          IsPositionOwner, ReadOnly,
                           IsAdminOrThisBusinessOwner, IsProfileOwner)
 
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
@@ -202,10 +203,10 @@ class OrderApprovingView(ListCreateAPIView):
         )
 
 
-class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
-    """List View for all businesses or businesses of certain owner."""
+class BusinessesListCreateAPIView(ListCreateAPIView):
+    """List View for all businesses of current user(owner) & new business creation."""
 
-    permission_classes = (IsOwner & IsAdminOrBusinessOwner,)
+    permission_classes = (IsAdminOrThisBusinessOwner,)
 
     def get_serializer_class(self):
         """Return specific Serializer.
@@ -214,18 +215,19 @@ class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
         """
         if self.request.method == "POST":
             return BusinessCreateSerializer
-        return BusinessesSerializer
+        else:
+            return BusinessesSerializer
 
     def get_queryset(self):
-        """Filter businesses for owner."""
-        owner = get_object_or_404(
-            CustomUser, id=self.request.user.id,
-        )
+        """Filter businesses of current user(owner)."""
+        owner = get_object_or_404(CustomUser, id=self.request.user.id)
+
         logger.info(f"Got businesses from owner {owner}")
+
         return owner.businesses.all()
 
     def post(self, request, *args, **kwargs):
-        """Create a business and add an authenticated owner to it."""
+        """Create an business and add an authenticated user(owner) as an owner to it."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         business = serializer.save(owner=request.user)
@@ -235,22 +237,21 @@ class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
 
 
 class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
-    """RUD View for business editing."""
+    """RUD View for access business detail information or/and edit it.
 
-    permission_classes = (
-        IsAdminOrThisBusinessOwner | ReadOnly,
-    )
-
+    RUD - Retrieve, Update, Destroy.
+    """
+    permission_classes = (IsAdminOrThisBusinessOwner | ReadOnly,)
     queryset = Business.objects.all()
-    serializer_class = BusinessAllDetailSerializer
 
     def get_serializer_class(self):
+        """Get different serializers for owner of current business or other person."""
         try:
             is_owner = self.request.user.is_owner
             if is_owner and (self.get_object().owner == self.request.user):
                 return BusinessAllDetailSerializer
         except AttributeError:
-            logger.warning(f"{self.request.user} cannot reach content")
+            logger.warning(f"{self.request.user} is not authorised to access this content")
         return BusinessDetailSerializer
 
 

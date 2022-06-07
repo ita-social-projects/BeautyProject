@@ -1,10 +1,11 @@
 """This module provides all needed api urls."""
 
 from django.urls import path
+
 from api.views.order_views import (OrderApprovingView, OrderListCreateView,
                                    OrderRetrieveCancelView)
 
-from .views_api import (AllOrOwnerBusinessesListCreateAPIView,
+from .views_api import (BusinessesListCreateAPIView,
                         CustomUserDetailRUDView, CustomUserListCreateView,
                         BusinessDetailRUDView,
                         ReviewAddView, ServiceUpdateView, AllServicesListView,
@@ -44,7 +45,7 @@ urlpatterns = [
     ),
     path(
         "businesses/",
-        AllOrOwnerBusinessesListCreateAPIView.as_view(),
+        BusinessesListCreateAPIView.as_view(),
         name="businesses-list-create",
     ),
     path(
