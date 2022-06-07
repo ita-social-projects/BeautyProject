@@ -1,4 +1,4 @@
-"""Module with permissions for api appliaction."""
+"""Module with permissions for api application."""
 
 import logging
 
@@ -37,8 +37,7 @@ class IsAdminOrThisBusinessOwner(permissions.IsAuthenticated):
         """Verify that the current user is selected business owner or administrator."""
         logger.info(f"User {request.user} permission check")
         try:
-            request.user.is_admin
-            return obj.owner == request.user
+            return request.user.is_admin or (obj.owner == request.user)
         except AttributeError:
             logger.warning(f"User {request.user} is not authorised to view this information")
 
