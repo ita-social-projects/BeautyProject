@@ -15,14 +15,14 @@ class TestReviewDisplayView(TestCase):
 
     def setUp(self) -> None:
         """This method adds needed info for tests."""
-        self.user = CustomUserFactory.create(is_active=True)
+        self.user = CustomUserFactory.create()
         self.first_responder = CustomUserFactory(first_name="UserSpecialist")
         self.second_responder = CustomUserFactory(first_name="UserSpecialist2")
 
-        self.review = ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
-        self.review = ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
-        self.review = ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
-        self.review = ReviewFactory.create(from_user=self.user, to_user=self.second_responder)
+        ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
+        ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
+        ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
+        ReviewFactory.create(from_user=self.user, to_user=self.second_responder)
 
         self.serializer = ReviewDisplaySerializer
         self.client = APIClient()
