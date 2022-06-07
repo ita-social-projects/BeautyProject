@@ -20,7 +20,7 @@ from .models import (Business, CustomUser, Service, Position)
 from .permissions import (IsAdminOrThisBusinessOwner,
                           IsPositionOwner,
                           IsProfileOwner,
-                          ReadOnly, IsOwnerOrReadOnly)
+                          ReadOnly, IsOwner)
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessCreateSerializer,
                                                BusinessDetailSerializer,
@@ -31,7 +31,6 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
-
 
 logger = logging.getLogger(__name__)
 
@@ -216,7 +215,7 @@ class ReviewAddView(GenericAPIView):
 class AllServicesListCreateView(ListCreateAPIView):
     """ListView to display all services or service creation."""
 
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwner | ReadOnly]
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
@@ -227,7 +226,7 @@ class AllServicesListCreateView(ListCreateAPIView):
 class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
     """View for retrieving, updating or deleting service info."""
 
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsOwner | ReadOnly]
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer

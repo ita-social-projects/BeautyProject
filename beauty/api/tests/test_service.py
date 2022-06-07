@@ -55,7 +55,7 @@ class ServiceModelTest(TestCase):
         self.groups.owner.user_set.add(self.owner)
 
         self.data = {
-            "position": 1,
+            "position": self.position.id,
             "name": "Service_2",
             "price": "33.00",
             "description": "",

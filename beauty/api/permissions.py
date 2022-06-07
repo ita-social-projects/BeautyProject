@@ -109,29 +109,3 @@ class IsOwner(permissions.BasePermission):
                 logger.error("Current user is not an owner")
 
         return False
-
-
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    """Permission class which checks if current user is an owner.
-
-    Object-level permission to access users with owner group , still
-    it allows to view an object for non-owners.
-    """
-
-    def has_permission(self, request, view):
-        """Checks if user belongs to owner group."""
-        user = request.user
-
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        if user.is_authenticated:
-            try:
-                user.groups.get(name="Owner")
-                logger.error("User have owner permission")
-                return True
-
-            except Group.DoesNotExist:
-                logger.error("Current user is not an owner")
-
-        return False
