@@ -8,6 +8,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+class ReviewDisplaySerializer(serializers.ModelSerializer):
+    """This is a serializer for review display."""
+
+    class Meta:
+        """This is a class Meta that keeps settings for serializer."""
+
+        model = Review
+        fields = "__all__"
+
+
 class ReviewAddSerializer(serializers.ModelSerializer):
     """This is a serializer for creating a Review."""
 
