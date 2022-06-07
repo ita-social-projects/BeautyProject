@@ -9,7 +9,7 @@ from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
 
 from .views_api import (AllServicesListView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
-                        CustomUserListCreateView, PositionListCreateView, 
+                        CustomUserListCreateView, PositionListCreateView,
                         ReviewAddView, ServiceUpdateView)
 
 app_name = "api"
