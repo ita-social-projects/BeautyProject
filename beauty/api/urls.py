@@ -2,13 +2,16 @@
 
 from django.urls import path
 
-from .views import (BusinessesListCreateAPIView, BusinessDetailRUDView,
-                    CustomUserDetailRUDView, CustomUserListCreateView,
-                    OrderApprovingView, OrderListCreateView, OrderRetrieveUpdateDestroyView,
-                    PositionListCreateView, ReviewAddView, ServiceUpdateView, AllServicesListView)
+from api.views.order_views import (OrderApprovingView, OrderListCreateView,
+                                   OrderRetrieveCancelView)
+from .views_api import (AllServicesListView, BusinessDetailRUDView,
+                        BusinessesListCreateAPIView, CustomUserDetailRUDView,
+                        CustomUserListCreateView, PositionListCreateView, ReviewAddView,
+                        ServiceUpdateView)
 
 
 app_name = "api"
+
 urlpatterns = [
     path(
         "users/",
@@ -22,7 +25,7 @@ urlpatterns = [
     ),
     path(
         "user/<int:user>/order/<int:pk>/",
-        OrderRetrieveUpdateDestroyView.as_view(),
+        OrderRetrieveCancelView.as_view(),
         name="user-order-detail",
     ),
     path(
@@ -31,7 +34,7 @@ urlpatterns = [
     ),
     path(
         "order/<int:pk>/",
-        OrderRetrieveUpdateDestroyView.as_view(),
+        OrderRetrieveCancelView.as_view(),
         name="order-detail",
     ),
     path(
