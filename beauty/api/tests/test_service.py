@@ -3,14 +3,15 @@
 It tests ServiceListCreateView and ServiceUpdateView.
 
 Tests:
-    *   Test that view gives all services
-    *   Test that user can create service without owner access
+    *   Test that view displays all services
+    *   Test that user can't create service without owner access
     *   Test that user can create service with owner access
+    *   Test that service can't be created with empty data
+    *   Test that service can't be created with invalid data
     *   Test that user can edit service without owner access
     *   Test that user can edit service with owner access
-    *   Test that
-    *   Test that
-    *   Test that
+    *   Test that user can't delete service without owner access
+    *   Test that user can delete service with owner access
 
 """
 
@@ -39,7 +40,7 @@ class ServiceModelTest(TestCase):
     def setUp(self) -> None:
         """Sets up instances for tests.
 
-        Preparing owner, position, services and data for the tests
+        Preparing owner, position, services and other data for the tests.
         """
         self.client = APIClient()
 
