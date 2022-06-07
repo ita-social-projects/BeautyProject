@@ -19,7 +19,7 @@ from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
-from .models import Business, CustomUser, Position, Service
+from .models import (Business, CustomUser, Position, Service)
 
 from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrThisBusinessOwner,
                           IsOwner, IsPositionOwner, IsProfileOwner, ReadOnly)
@@ -27,7 +27,7 @@ from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrThisBusinessOwner,
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
                                                BusinessCreateSerializer,
                                                BusinessesSerializer,
-                                               BusinessDetailSerializer)
+                                               BusinessGetAllInfoSerializers)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -194,7 +194,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
                 f"{self.request.user} is not a"
                 "uthorised to access this content",
             )
-        return BusinessDetailSerializer
+        return BusinessGetAllInfoSerializers
 
 
 class ReviewAddView(GenericAPIView):

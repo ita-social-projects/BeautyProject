@@ -2,7 +2,7 @@
 
 import logging
 from rest_framework import serializers
-from api.models import Business, CustomUser
+from api.models import (Business, CustomUser)
 
 
 logger = logging.getLogger(__name__)
@@ -73,3 +73,21 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
 
         model = Business
         exclude = ("created_at", "id", "owner")
+
+
+class BusinessGetAllInfoSerializers(serializers.ModelSerializer):
+    """Serializer for getting all info about business."""
+
+    def to_representation(self, instance):
+        """Change the display of owner field data."""
+        data = super().to_representation(instance)
+        owner = CustomUser.objects.get(id=data["owner"])
+        data["owner"] = owner.get_full_name()
+        return data
+
+    class Meta:
+        """Meta for BusinessGetAllInfoSerializers class."""
+
+        model = Business
+        fields = ("owner", "name", "business_type", "logo", "owner", "address",
+                  "description", "created_at")
