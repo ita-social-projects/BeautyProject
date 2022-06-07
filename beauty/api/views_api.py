@@ -24,8 +24,7 @@ from .models import (Business, CustomUser, Position, Service)
 from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrThisBusinessOwner,
                           IsOwner, IsPositionOwner, IsProfileOwner, ReadOnly)
 
-from .serializers.business_serializers import (BusinessAllDetailSerializer,
-                                               BusinessCreateSerializer,
+from .serializers.business_serializers import (BusinessCreateSerializer,
                                                BusinessesSerializer,
                                                BusinessGetAllInfoSerializers)
 
@@ -188,7 +187,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
         try:
             is_owner = self.request.user.is_owner
             if is_owner and (self.get_object().owner == self.request.user):
-                return BusinessAllDetailSerializer
+                return BusinessGetAllInfoSerializers
         except AttributeError:
             logger.warning(
                 f"{self.request.user} is not a"
