@@ -29,7 +29,7 @@ class PositionSerializer(serializers.ModelSerializer):
         """
         start_time = data.get("start_time")
         end_time = data.get("end_time")
-        # If end time is bigger then start time of position
+
         if end_time < start_time:
             logger.info("Postion_serializer: end time should go after start time")
             raise serializers.ValidationError(

@@ -86,7 +86,7 @@ class PositionFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Position_{n}")
     business = factory.SubFactory(BusinessFactory)
     start_time = factory.LazyFunction(timezone.now)
-    end_time = factory.LazyAttribute(lambda o: o.start_time - timezone.timedelta(hours=8))
+    end_time = factory.LazyAttribute(lambda o: o.start_time + timezone.timedelta(hours=4))
 
     @factory.post_generation
     def specialist(self, create, extracted, **kwargs):
