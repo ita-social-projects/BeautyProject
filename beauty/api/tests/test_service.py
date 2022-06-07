@@ -16,12 +16,9 @@ Tests:
 """
 
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from rest_framework.test import APIClient
-
-from faker import Faker
 
 from .factories import (
     CustomUserFactory,
@@ -29,9 +26,6 @@ from .factories import (
     GroupFactory,
     ServiceFactory,
 )
-
-User = get_user_model()
-faker = Faker()
 
 
 class ServiceModelTest(TestCase):
