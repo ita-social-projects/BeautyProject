@@ -1,4 +1,4 @@
-"""This module provides all needed api views."""
+"""This module provides all order's views."""
 
 import logging
 from django.conf import settings
@@ -12,7 +12,7 @@ from rest_framework import status
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      get_object_or_404)
-from rest_framework.permissions import (IsAuthenticated, IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
@@ -62,7 +62,7 @@ class OrderRetrieveCancelView(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
     """
 
     login_url = settings.LOGIN_URL
-    redirect_field_name = 'redirect_to'
+    redirect_field_name = "redirect_to"
 
     queryset = Order.objects.exclude(status__in=[2, 4])
     serializer_class = OrderDeleteSerializer
