@@ -4,7 +4,7 @@ from django.urls import path
 
 from api.views.order_views import (OrderApprovingView, OrderListCreateView,
                                    OrderRetrieveCancelView)
-from .views_api import (AllServicesListView, BusinessDetailRUDView,
+from .views_api import (AllServicesListCreateView, BusinessDetailRUDView,
                         BusinessesListCreateAPIView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView, ReviewAddView,
                         ServiceUpdateView)
@@ -64,8 +64,8 @@ urlpatterns = [
     ),
     path(
         "services/",
-        AllServicesListView.as_view(),
-        name="service-list",
+        AllServicesListCreateView.as_view(),
+        name="service-list-create",
     ),
     path("service/<int:pk>/",
          ServiceUpdateView.as_view(),
