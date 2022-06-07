@@ -1,8 +1,6 @@
 """This module provides all needed api views."""
 
 import logging
-
-from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -12,8 +10,7 @@ from rest_framework import status
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView, ListAPIView,
                                      get_object_or_404)
-from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -21,14 +18,10 @@ from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
-from beauty import signals
-from beauty.tokens import OrderApprovingTokenGenerator
-from beauty.utils import ApprovingOrderEmail
-
 from .models import Business, CustomUser, Order, Service, Position
 
 from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrBusinessOwner,
-                          IsOrderUser, IsOwner, IsPositionOwner, ReadOnly,
+                          IsOwner, IsPositionOwner, ReadOnly,
                           IsAdminOrThisBusinessOwner, IsProfileOwner)
 
 from .serializers.business_serializers import (BusinessAllDetailSerializer,
@@ -40,12 +33,14 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
 
-from .serializers.order_serializers import (OrderDeleteSerializer,
-                                            OrderSerializer)
+from .serializers.order_serializers import OrderSerializer
 
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
+
+from beauty import signals
+from beauty.tokens import OrderApprovingTokenGenerator
 
 
 logger = logging.getLogger(__name__)
@@ -108,7 +103,7 @@ class ResetPasswordView(GenericAPIView):
 class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
     """Generic API for users custom GET, PUT and DELETE methods.
 
-    RUD - Retrieve, Update, Destroy
+    RUD - Retrieve, Update, Destroy.
     """
 
     permission_classes = [IsProfileOwner]
@@ -134,65 +129,6 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"User {instance} (id={instance.id}) is already "
                     f"deactivated, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class OrderListCreateView(ListCreateAPIView):
-    """Generic API for orders custom POST method."""
-
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    def post(self, request, *args, **kwargs):
-        """Create an order and add an authenticated customer to it."""
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        order = serializer.save(customer=request.user)
-
-        logger.info(f"{order} with {order.service.name} was created")
-
-        context = {"order": order}
-        to = [order.specialist.email]
-        ApprovingOrderEmail(request, context).send(to)
-
-        logger.info(f"{order}: approving email was sent to the specialist "
-                    f"{order.specialist.get_full_name()}")
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
-    """Generic API for orders custom GET, PUT and DELETE methods.
-
-    RUD - Retrieve, Update, Destroy.
-    """
-
-    queryset = Order.objects.exclude(status__in=[2, 4])
-    serializer_class = OrderDeleteSerializer
-    permission_classes = (IsAuthenticated, IsOrderUser)
-
-    def get_object(self):
-        """Get object.
-
-        Method for getting order objects by using both order user id
-        and order id lookup fields.
-        """
-        user = self.kwargs["user"]
-        if len(self.kwargs) > 1:
-            obj = get_object_or_404(
-                self.get_queryset(),
-                Q(customer=user) | Q(specialist=user),
-                id=self.kwargs["pk"],
-            )
-            self.check_object_permissions(self.request, obj)
-
-            logger.info(f"{obj} was got from user page")
-
-            return obj
-
-        logger.info(f"{super().get_object()} was got")
-
-        return super().get_object()
 
 
 class PositionListCreateView(ListCreateAPIView):
@@ -266,8 +202,8 @@ class OrderApprovingView(ListCreateAPIView):
         )
 
 
-class BusinessesListCreateAPIView(ListCreateAPIView):
-    """List View for all businesses of certain owner."""
+class AllOrOwnerBusinessesListCreateAPIView(ListCreateAPIView):
+    """List View for all businesses or businesses of certain owner."""
 
     permission_classes = (IsOwner & IsAdminOrBusinessOwner,)
 
@@ -368,7 +304,6 @@ class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
-
     logger.debug("A view for retrieving, updating or deleting a service instance.")
 
 

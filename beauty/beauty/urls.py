@@ -26,7 +26,7 @@ from rest_framework.reverse import reverse
 from rest_framework.routers import DefaultRouter
 from beauty.yasg import urlpatterns as doc_urls
 
-from api.views import (ResetPasswordView, UserActivationView, UserViewSet)
+from api.views_api import (ResetPasswordView, UserActivationView, UserViewSet)
 
 
 @api_view(["GET"])

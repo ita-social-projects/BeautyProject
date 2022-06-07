@@ -77,6 +77,7 @@ class CustomUserSerializerTestCase(TestCase):
 
         self.client = APIClient()
 
+
     def test_valid_serializer(self):
         """Check serializer with valid data."""
         serializer = self.Serializer(data=self.valid_data)
@@ -175,6 +176,7 @@ class CustomUserSerializerTestCase(TestCase):
         serializer = self.Detail_serializer(self.customer, context={"request": self.request})
         self.assertEqual(serializer.data["customer_exist_orders"],
                          response.data["customer_exist_orders"])
+        
         self.assertEqual(serializer.data["groups"], ["Customer"])
         with self.assertRaises(KeyError):
             serializer.data["password"]
