@@ -128,10 +128,15 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
 class PositionListCreateView(ListCreateAPIView):
     """Generic API for position POST methods."""
 
-    queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated,
-                          IsPositionOwner)
+    permission_classes = (IsAuthenticated, IsPositionOwner)
+
+    def get_queryset(self):
+        """Filter position for current owner."""
+        positions = Position.objects.filter(business__owner=self.request.user)
+        logger.info(f"Got positions for owner id = {self.request.user.id}")
+
+        return positions
 
 
 class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
