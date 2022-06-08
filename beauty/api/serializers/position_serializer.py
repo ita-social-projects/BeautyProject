@@ -36,11 +36,23 @@ class PositionSerializer(serializers.ModelSerializer):
         if isinstance(end_time, str):
             start_time = datetime.strptime(start_time, "%H:%M:%S").time()
 
-        if end_time <= start_time:
-            logger.info("Postion_serializer: end time should go after start time")
-            raise serializers.ValidationError(
-                {"end_time": "end time should go after start time"},
-            )
+        if self.instance:
+            if start_time and start_time >= self.instance.end_time:
+                raise serializers.ValidationError(
+                    {"start_time": "end time should go after start time"},
+                )
+            if end_time and end_time <= self.instance.start_time:
+                raise serializers.ValidationError(
+                    {"end_time": "end time should go after start time"},
+                )
+
+        # If end time is bigger then start time of position
+        if start_time and end_time:
+            if end_time <= start_time:
+                logger.info("Postion_serializer: end time should go after start time")
+                raise serializers.ValidationError(
+                    {"end_time": "end time should go after start time"},
+                )
 
         logger.info("Position_serializer: successfully set time")
 

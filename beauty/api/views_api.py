@@ -132,6 +132,20 @@ class PositionListCreateView(ListCreateAPIView):
                           IsPositionOwner)
 
 
+class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """Generic API for position PUT, GET, DELTE methods."""
+
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated,
+                          IsPositionOwner)
+
+    def put(self, request, *args, **kwargs):
+        """Posibility to modify certain fields in PUT."""
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
+
 class BusinessesListCreateAPIView(ListCreateAPIView):
     """List View for all businesses of current user(owner) & new business creation."""
 
