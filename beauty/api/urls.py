@@ -10,7 +10,8 @@ from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView,
-                        ReviewAddView, ServiceUpdateView)
+                        PositionRetrieveUpdateDestroyView, ReviewAddView,
+                        ServiceUpdateView)
 
 app_name = "api"
 
@@ -58,6 +59,11 @@ urlpatterns = [
         "position/",
         PositionListCreateView.as_view(),
         name="position-list",
+    ),
+    path(
+        "position/<int:pk>",
+        PositionRetrieveUpdateDestroyView.as_view(),
+        name="position-detail-list",
     ),
     path(
         r"<int:user>/reviews/add/",
