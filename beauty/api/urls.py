@@ -4,13 +4,14 @@ from django.urls import path
 
 from api.views.order_views import (OrderApprovingView, OrderListCreateView,
                                    OrderRetrieveCancelView)
-from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
-from .views_api import (AllServicesListView, BusinessDetailRUDView,
-                        BusinessesListCreateAPIView, CustomUserDetailRUDView,
-                        CustomUserListCreateView, PositionListCreateView,
-                        PositionRetrieveUpdateDestroyView,
-                        ReviewAddView, ServiceUpdateView)
 
+from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
+
+from .views_api import (AllServicesListView, BusinessesListCreateAPIView,
+                        BusinessDetailRUDView, CustomUserDetailRUDView,
+                        CustomUserListCreateView, PositionListCreateView,
+                        ReviewAddView, ServiceUpdateView,
+                        PositionRetrieveUpdateDestroyView)
 
 app_name = "api"
 

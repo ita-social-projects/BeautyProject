@@ -21,17 +21,19 @@ import pytz
 from django.utils import timezone
 from django.test import TestCase
 from djoser.utils import encode_uid
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
-
+from django.conf import settings
 from api.serializers.order_serializers import OrderSerializer
 from api.views.order_views import (OrderListCreateView,
-                                   OrderApprovingTokenGenerator)
+                                   OrderApprovingTokenGenerator, OrderRetrieveCancelView)
 from .factories import (GroupFactory,
                         CustomUserFactory,
                         PositionFactory,
                         ServiceFactory,
                         OrderFactory)
+
 
 CET = pytz.timezone("Europe/Kiev")
 
@@ -154,3 +156,66 @@ class TestOrderApprovingView(TestCase):
         self.assertEqual(response.url, reverse("api:user-order-detail",
                                                kwargs={"user": self.order.specialist.id,
                                                        "pk": self.order.id}))
+
+
+class TestOrderRetrieveCancelView(TestCase):
+    """This class represents a Test case and has all the tests for OrderRetrieveCancelView."""
+
+    def setUp(self) -> None:
+        """This method adds needed info for tests."""
+        self.specialist = CustomUserFactory(first_name="UserSpecialist")
+        self.customer = CustomUserFactory(first_name="UserCustomer")
+        self.position = PositionFactory(name="Position_1", specialist=[self.specialist])
+        self.service = ServiceFactory(name="Service_1", position=self.position)
+
+        self.order = OrderFactory(specialist=self.specialist, customer=self.customer)
+
+        self.specialist_order_url = reverse("api:user-order-detail",
+                                            args=[self.specialist.id, self.order.id])
+        self.customer_order_url = reverse("api:user-order-detail",
+                                          args=[self.customer.id, self.order.id])
+        self.order_url = reverse("api:order-detail", args=[self.order.id])
+
+        self.view = OrderRetrieveCancelView.as_view()
+
+        self.client = APIClient()
+
+    def test_get_method_retrieve_order_not_logged_user(self):
+        """Only a logged user from order (customer, specialist) can retrieve an order."""
+        order_response = self.client.get(path=self.order_url)
+        specialist_response = self.client.get(path=self.specialist_order_url)
+        customer_response = self.client.get(path=self.customer_order_url)
+
+        self.assertEqual(order_response.status_code, 302)
+        self.assertEqual(specialist_response.status_code, 302)
+        self.assertEqual(customer_response.status_code, 302)
+        self.assertEqual(order_response.url.split("?redirect_to="),
+                         [settings.LOGIN_URL, self.order_url])
+
+    def test_get_method_retrieve_order_logged_customer(self):
+        """Logged order customer can retrieve an order."""
+        self.client.force_authenticate(user=self.customer)
+        refresh = RefreshToken.for_user(self.customer)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        specialist_response = self.client.get(path=self.specialist_order_url)
+        customer_response = self.client.get(path=self.customer_order_url)
+        order_response = self.client.get(path=self.order_url)
+
+        self.assertEqual(specialist_response.status_code, 200)
+        self.assertEqual(customer_response.status_code, 200)
+        self.assertEqual(order_response.status_code, 200)
+
+    def test_get_method_retrieve_order_logged_specialist(self):
+        """Logged order specialist can retrieve an order."""
+        self.client.force_authenticate(user=self.specialist)
+        refresh = RefreshToken.for_user(self.specialist)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        specialist_response = self.client.get(path=self.specialist_order_url)
+        customer_response = self.client.get(path=self.customer_order_url)
+        order_response = self.client.get(path=self.order_url)
+
+        self.assertEqual(specialist_response.status_code, 200)
+        self.assertEqual(customer_response.status_code, 200)
+        self.assertEqual(order_response.status_code, 200)

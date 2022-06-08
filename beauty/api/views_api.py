@@ -7,29 +7,31 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
 from rest_framework import status
+
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
-                                     RetrieveUpdateDestroyAPIView, get_object_or_404,
-                                     ListAPIView)
+                                     RetrieveUpdateDestroyAPIView, ListAPIView,
+                                     get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
+
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
-from .models import (Business, CustomUser, Service, Position)
-from .permissions import (IsAccountOwnerOrReadOnly,
-                          IsAdminOrThisBusinessOwner,
-                          IsPositionOwner,
-                          IsProfileOwner,
-                          ReadOnly)
-from .serializers.business_serializers import (BusinessAllDetailSerializer,
-                                               BusinessCreateSerializer,
-                                               BusinessDetailSerializer,
-                                               BusinessesSerializer)
+from .models import (Business, CustomUser, Position, Service)
+
+from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrThisBusinessOwner,
+                          IsOwner, IsPositionOwner, IsProfileOwner, ReadOnly)
+
+from .serializers.business_serializers import (BusinessCreateSerializer,
+                                               BusinessesSerializer,
+                                               BusinessGetAllInfoSerializers)
+
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer)
+
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
@@ -140,23 +142,21 @@ class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated,
                           IsPositionOwner)
 
-    def put(self, request, *args, **kwargs):
-        """Posibility to modify certain fields in PUT."""
-        kwargs["partial"] = True
-        return self.update(request, *args, **kwargs)
-
 
 class BusinessesListCreateAPIView(ListCreateAPIView):
-    """List View for all businesses of current user(owner) & new business creation."""
+    """List View for all businesses of current user & new business creation."""
 
-    permission_classes = (IsAdminOrThisBusinessOwner,)
+    permission_classes = (IsAdminOrThisBusinessOwner & IsOwner,)
 
     def get_serializer_class(self):
-        """Return specific Serializer for businesses creation."""
+        """Return specific Serializer.
+
+        BusinessCreateSerializer for businesses creation or
+        BusinessesSerializer for list.
+        """
         if self.request.method == "POST":
             return BusinessCreateSerializer
-        else:
-            return BusinessesSerializer
+        return BusinessesSerializer
 
     def get_queryset(self):
         """Filter businesses of current user(owner)."""
@@ -167,13 +167,15 @@ class BusinessesListCreateAPIView(ListCreateAPIView):
         return owner.businesses.all()
 
     def post(self, request, *args, **kwargs):
-        """Create an business and add an authenticated user(owner) as an owner to it."""
+        """Creates a business.
+
+        Creates business and adds an authenticated user as an owner to it.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         business = serializer.save(owner=request.user)
 
         logger.info(f"{business} was created")
-
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -186,14 +188,21 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
-        """Get different serializers for owner of current business or other person."""
+        """Gets different serializers depending on current user roles.
+
+        BusinessAllDetailSerializer for owner of current business or
+        BusinessDetailSerializer for others.
+        """
         try:
             is_owner = self.request.user.is_owner
             if is_owner and (self.get_object().owner == self.request.user):
-                return BusinessAllDetailSerializer
+                return BusinessGetAllInfoSerializers
         except AttributeError:
-            logger.warning(f"{self.request.user} is not authorised to access this content")
-        return BusinessDetailSerializer
+            logger.warning(
+                f"{self.request.user} is not a"
+                "uthorised to access this content",
+            )
+        return BusinessGetAllInfoSerializers
 
 
 class ReviewAddView(GenericAPIView):
@@ -224,7 +233,8 @@ class ReviewAddView(GenericAPIView):
             return Response(status=status.HTTP_201_CREATED)
         else:
             logger.info(
-                f"Error validating review: Field {serializer.errors.popitem()}",
+                "Error validating review: "
+                f"Field {serializer.errors.popitem()}",
             )
             return Response(status=status.HTTP_400_BAD_REQUEST)
 

@@ -2,8 +2,6 @@
 
 import logging
 
-from django.contrib.auth.models import Group
-
 from rest_framework import permissions
 
 
@@ -23,7 +21,11 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
 
         if request.method in permissions.SAFE_METHODS:
             return True
-        return request.user.is_authenticated and (request.user.is_admin or (obj == request.user))
+        return (
+            request.user.is_authenticated and (
+                request.user.is_admin or (obj == request.user)
+            )
+        )
 
 
 class IsAdminOrThisBusinessOwner(permissions.IsAuthenticated):
@@ -34,12 +36,18 @@ class IsAdminOrThisBusinessOwner(permissions.IsAuthenticated):
     """
 
     def has_object_permission(self, request, view, obj):
-        """Verify that the current user is selected business owner or administrator."""
+        """Verify that the current user is business owner or administrator.
+
+        Checks if user is admin or if he is an owner of selected business
+        """
         logger.info(f"User {request.user} permission check")
         try:
             return request.user.is_admin or (obj.owner == request.user)
         except AttributeError:
-            logger.warning(f"User {request.user} is not authorised to view this information")
+            logger.warning(
+                f"User {request.user} is not "
+                "authorised to view this information",
+            )
 
 
 class IsOrderUser(permissions.BasePermission):
@@ -50,6 +58,23 @@ class IsOrderUser(permissions.BasePermission):
         logger.debug(f"Object {obj.id} permission check")
 
         return obj.specialist == request.user or obj.customer == request.user
+
+
+class IsOwner(permissions.BasePermission):
+    """Permission class which checks if current user is an owner."""
+
+    def has_permission(self, request, view):
+        """Checks if user belongs to owner group."""
+        if request.user.is_authenticated:
+            return request.user.is_owner
+
+
+class ReadOnly(permissions.BasePermission):
+    """Permission which gives access for SAFE_METHODS."""
+
+    def has_permission(self, request, view):
+        """Checks if method in SAFE_METHODS."""
+        return request.method in permissions.SAFE_METHODS
 
 
 class IsPositionOwner(permissions.BasePermission):
@@ -82,30 +107,3 @@ class IsProfileOwner(permissions.IsAuthenticated):
         if request.method in permissions.SAFE_METHODS:
             return True
         return request.user.is_admin or obj == request.user
-
-
-class ReadOnly(permissions.BasePermission):
-    """Permission which gives access for SAFE_METHODS."""
-
-    def has_permission(self, request, view):
-        """Checks if method in SAFE_METHODS."""
-        return request.method in permissions.SAFE_METHODS
-
-
-class IsOwner(permissions.BasePermission):
-    """Permission class which checks if current user is an owner."""
-
-    def has_permission(self, request, view):
-        """Checks if user belongs to owner group."""
-        user = request.user
-
-        if user.is_authenticated:
-            try:
-                user.groups.get(name="Owner")
-                logger.error("User have owner permission")
-                return True
-
-            except Group.DoesNotExist:
-                logger.error("Current user is not an owner")
-
-        return False

@@ -38,28 +38,33 @@ class TestPositionRetrieveUpdateDestroyView(TestCase):
 
         self.serializer = PositionSerializer
         self.queryset = Position.objects.all()
+        self.serializer = PositionSerializer
         self.view = PositionRetrieveUpdateDestroyView.as_view()
 
         self.owner = CustomUserFactory(first_name="OwnerUser")
         self.groups.owner.user_set.add(self.owner)
 
-        self.business = BusinessFactory.create(name="Hope", owner=self.owner)
+        self.business = BusinessFactory(name="Hope", owner=self.owner)
         self.client = APIClient()
         self.client.force_authenticate(user=self.owner)
 
-        self.position = PositionFactory.create(name="Wyh",
-                                               business=self.business,
-                                               specialist=[self.specialist1],
-                                               start_time="9:00:00",
-                                               end_time="10:00:00",
-                                               )
+        self.position_testing = PositionFactory.create(
+            business=self.business,
+        )
+        self.pk = self.position_testing.id
+        self.position_testing = {
+            "name": self.position_testing.name,
+            "business": self.business.id,
+            "specialist": [self.specialist1.id],
+            "start_time": str(self.position_testing.start_time.time()),
+            "end_time": str(self.position_testing.end_time.time()),
+        }
+
         self.url = "api:position-detail-list"
-        self.pk = self.position.id
 
     def test_position_get_by_id(self):
         """Get 1 created position."""
-        response = self.client.generic(
-            method="GET",
+        response = self.client.get(
             path=reverse(
                 self.url,
                 kwargs={"pk": self.pk},
@@ -68,82 +73,65 @@ class TestPositionRetrieveUpdateDestroyView(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_position_get_by_id_invalid(self):
-        """Get 1 created position."""
-        response = self.client.generic(
-            method="GET",
+        """Try to get not created position."""
+        response = self.client.get(
             path=reverse(
                 self.url,
-                kwargs={"pk": self.pk + 1},
+                kwargs={"pk": self.pk + 10},
             ),
         )
         self.assertEqual(response.status_code, 404)
 
     def test_position_put_valid(self):
-        """POST requests to ListCreateAPIView with valid data should create a new object."""
-        response = self.client.patch(
+        """PUT valid data."""
+        response = self.client.put(
             path=reverse(
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps({"name": "Angle"}),
+            data=json.dumps(self.position_testing),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
 
     def test_position_put_without_authentication(self):
-        """POST requests to ListCreateAPIView with no authenticate shouldn't create a new object."""
+        """Try to PUT without authentication."""
         self.client.force_authenticate(user=None)
-        response = self.client.patch(
+        response = self.client.put(
             path=reverse(
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps({"name": "Angle"}),
+            data=json.dumps(self.position_testing),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 401)
 
     def test_position_put_end_time(self):
-        """POST requests to ListCreateAPIView with invalid time shouldn't create a new object."""
-        response = self.client.patch(
+        """Try to PUT invalid time."""
+        self.position_testing["end_time"] = self.position_testing["start_time"]
+        response = self.client.put(
             path=reverse(
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps({"end_time": "8:00:00"}),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 400)
-
-    def test_position_put_invalid_time(self):
-        """POST requests to ListCreateAPIView with invalid time shouldn't create a new object."""
-        response = self.client.patch(
-            path=reverse(
-                self.url,
-                kwargs={"pk": self.pk},
-            ),
-            data=json.dumps({
-                "end_time": "8:00:00",
-                "start_time": "9:00:00",
-            }),
+            data=json.dumps(self.position_testing),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 400)
 
     def test_position_put_empty_data(self):
-        """POST requests to ListCreateAPIView with empty data shouldn't create a new object."""
-        response = self.client.patch(
+        """Try to PUT empty data."""
+        response = self.client.put(
             path=reverse(
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps({}),
-            content_type="application/json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
 
     def test_position_delete_by_id(self):
-        """Get 1 created position."""
+        """Delete 1 created position."""
         response = self.client.generic(
             method="DELETE",
             path=reverse(
@@ -154,7 +142,7 @@ class TestPositionRetrieveUpdateDestroyView(TestCase):
         self.assertEqual(response.status_code, 204)
 
     def test_position_delete_by_id_invalid(self):
-        """Get 1 created position."""
+        """Try to delete not created position."""
         response = self.client.generic(
             method="DELETE",
             path=reverse(

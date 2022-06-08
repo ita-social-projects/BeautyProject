@@ -15,19 +15,32 @@ from rest_framework.generics import (ListCreateAPIView,
 from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
-
 from api.models import Order
-
 from api.permissions import IsOrderUser
-
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
 
 logger = logging.getLogger(__name__)
+
+
+class TokenLoginRequiredMixin(LoginRequiredMixin):
+    """A login required mixin that allows token authentication."""
+
+    def dispatch(self, request, *args, **kwargs):
+        """If token was provided, ignore authenticated status."""
+        http_auth = request.META.get("HTTP_AUTHORIZATION")
+
+        if http_auth and "JWT" in http_auth:
+            pass
+
+        elif not request.user.is_authenticated:
+            return self.handle_no_permission()
+
+        return super(LoginRequiredMixin, self).dispatch(
+            request, *args, **kwargs)
 
 
 class OrderListCreateView(ListCreateAPIView):
@@ -55,7 +68,7 @@ class OrderListCreateView(ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class OrderRetrieveCancelView(LoginRequiredMixin, RetrieveUpdateDestroyAPIView):
+class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIView):
     """Generic API for orders custom GET, PUT and DELETE methods.
 
     RUD - Retrieve, Update, Destroy.
