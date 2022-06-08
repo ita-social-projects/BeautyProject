@@ -7,7 +7,7 @@ from api.views.order_views import (OrderApprovingView, OrderListCreateView,
 
 from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
 
-from .views_api import (AllServicesListView, BusinessesListCreateAPIView,
+from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView,
                         ReviewAddView, ServiceUpdateView)
@@ -76,8 +76,8 @@ urlpatterns = [
     ),
     path(
         "services/",
-        AllServicesListView.as_view(),
-        name="service-list",
+        AllServicesListCreateView.as_view(),
+        name="service-list-create",
     ),
     path("service/<int:pk>/",
          ServiceUpdateView.as_view(),
