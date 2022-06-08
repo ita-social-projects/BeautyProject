@@ -10,6 +10,7 @@ from rest_framework import status
 
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView, ListAPIView,
+                                     RetrieveAPIView,
                                      get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
 
@@ -31,7 +32,8 @@ from .serializers.business_serializers import (BusinessCreateSerializer,
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
                                                  ResetPasswordSerializer,
-                                                 SpecialistInformationSerializer)
+                                                 SpecialistInformationSerializer,
+                                                 SpecialistDetailSerializer)
 from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
@@ -112,7 +114,11 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         """
         if CustomUser.objects.filter(id=self.kwargs.get("pk"),
                                      groups__name__icontains="specialist"):
+            logger.info(f"User {self.kwargs.get('pk')} is a specialist.")
+
             return SpecialistInformationSerializer
+
+        logger.info(f"User {self.kwargs.get('pk')} is not specialist.")
 
         return CustomUserDetailSerializer
 
@@ -134,6 +140,13 @@ class CustomUserDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"User {instance} (id={instance.id}) is already "
                     f"deactivated, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class SpecialistDetailView(RetrieveAPIView):
+    """Generic API for specialists custom GET method."""
+
+    queryset = CustomUser.objects.filter(groups__name__icontains="specialist")
+    serializer_class = SpecialistDetailSerializer
 
 
 class PositionListCreateView(ListCreateAPIView):

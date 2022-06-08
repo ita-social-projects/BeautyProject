@@ -31,11 +31,13 @@ from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail
 from rest_framework.reverse import reverse
 from api.serializers.customuser_serializers import (CustomUserSerializer,
-                                                    PasswordsValidation, CustomUserDetailSerializer,
+                                                    PasswordsValidation,
+                                                    CustomUserDetailSerializer,
+                                                    SpecialistInformationSerializer,
                                                     ResetPasswordSerializer)
 from rest_framework.test import (APIRequestFactory, APIClient)
 from rest_framework.serializers import ValidationError
-from api.tests.factories import (CustomUserFactory, GroupFactory, OrderFactory)
+from api.tests.factories import (CustomUserFactory, GroupFactory, OrderFactory, ReviewFactory)
 
 
 class CustomUserSerializerTestCase(TestCase):
@@ -59,6 +61,7 @@ class CustomUserSerializerTestCase(TestCase):
         """This method adds needed info for tests."""
         self.Serializer = CustomUserSerializer
         self.Detail_serializer = CustomUserDetailSerializer
+        self.Specialist_serializer = SpecialistInformationSerializer
 
         self.specialist = CustomUserFactory(first_name="User_1", email="user_1@com.ua",
                                             phone_number="+380960000001")
@@ -68,6 +71,10 @@ class CustomUserSerializerTestCase(TestCase):
                                              phone_number="+380960000003")
         self.customer_order = OrderFactory(customer=self.customer, specialist=self.specialist)
         self.specialist_order = OrderFactory(customer=self.specialist, specialist=self.specialist2)
+        self.review = ReviewFactory(text_body="fine", rating=4,
+                                    from_user=self.customer, to_user=self.specialist)
+        self.review2 = ReviewFactory(text_body="very nice", rating=5,
+                                     from_user=self.specialist, to_user=self.specialist2)
 
         self.groups = GroupFactory.groups_for_test()
         self.groups.specialist.user_set.add(self.specialist)
@@ -146,10 +153,14 @@ class CustomUserSerializerTestCase(TestCase):
         serializer = self.Detail_serializer(self.customer, context={"request": self.request})
         self.assertEqual(serializer.data["customer_exist_orders"],
                          response.data["customer_exist_orders"])
+        self.assertEqual(serializer.data["customer_reviews"],
+                         response.data["customer_reviews"])
         self.assertEqual(serializer.data["groups"], ["Customer"])
         with self.assertRaises(KeyError):
             serializer.data["password"]
             response.data["specialist_exist_orders"]
+            response.data["specialist_reviews"]
+            response.data["make_order"]
 
     def test_serialize_specialist_instance(self):
         """Check serializer with specialist instance data."""
@@ -157,12 +168,20 @@ class CustomUserSerializerTestCase(TestCase):
         response = self.client.get(path=reverse("api:user-detail", args=[self.specialist.id]))
 
         self.request.user = self.specialist
-        serializer = self.Detail_serializer(self.specialist, context={"request": self.request})
+        serializer = self.Specialist_serializer(self.specialist, context={"request": self.request})
+        self.assertEqual(serializer.data["customer_exist_orders"],
+                         response.data["customer_exist_orders"])
+        self.assertEqual(serializer.data["customer_reviews"],
+                         response.data["customer_reviews"])
         self.assertEqual(serializer.data["specialist_exist_orders"],
                          response.data["specialist_exist_orders"])
         self.assertEqual(serializer.data["customer_exist_orders"],
                          response.data["customer_exist_orders"])
+        self.assertEqual(serializer.data["specialist_reviews"],
+                         response.data["specialist_reviews"])
         self.assertEqual(serializer.data["groups"], ["Specialist"])
+        with self.assertRaises(KeyError):
+            response.data["make_order"]
 
     def test_deserialize_update_user_with_password(self):
         """Deserializing a data and updating a user data with password data."""
