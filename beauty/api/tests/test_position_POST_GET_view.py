@@ -62,12 +62,12 @@ class TestPositionListCreateView(TestCase):
             business=self.business,
             specialist=[self.specialist1],
         )
-        resp = self.client.generic(
+        response = self.client.generic(
             method="GET",
             path=self.url,
         )
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(len(resp.data), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data["results"]), 1)
 
     def test_position_post_list_create_view(self):
         """POST requests to ListCreateAPIView with valid data should create a new object."""

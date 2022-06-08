@@ -177,7 +177,7 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
 
     def get_full_name(self):
         """Shows full name of the user."""
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}".strip()
 
     def __str__(self):
         """str: Returns full name of the user."""
