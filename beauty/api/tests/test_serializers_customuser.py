@@ -175,8 +175,6 @@ class CustomUserSerializerTestCase(TestCase):
                          response.data["customer_reviews"])
         self.assertEqual(serializer.data["specialist_exist_orders"],
                          response.data["specialist_exist_orders"])
-        self.assertEqual(serializer.data["customer_exist_orders"],
-                         response.data["customer_exist_orders"])
         self.assertEqual(serializer.data["specialist_reviews"],
                          response.data["specialist_reviews"])
         self.assertEqual(serializer.data["groups"], ["Specialist"])
