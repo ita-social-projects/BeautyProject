@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
-                                     RetrieveUpdateDestroyAPIView, ListAPIView,
+                                     RetrieveUpdateDestroyAPIView,
                                      RetrieveAPIView,
                                      get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
@@ -22,8 +22,8 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 
 from .models import (Business, CustomUser, Position, Service)
 
-from .permissions import (IsAccountOwnerOrReadOnly, IsAdminOrThisBusinessOwner,
-                          IsOwner, IsPositionOwner, IsProfileOwner, ReadOnly)
+from .permissions import (IsAdminOrThisBusinessOwner, IsOwner,
+                          IsPositionOwner, IsProfileOwner, ReadOnly)
 
 from .serializers.business_serializers import (BusinessCreateSerializer,
                                                BusinessesSerializer,
@@ -152,6 +152,20 @@ class SpecialistDetailView(RetrieveAPIView):
 class PositionListCreateView(ListCreateAPIView):
     """Generic API for position POST methods."""
 
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated, IsPositionOwner)
+
+    def get_queryset(self):
+        """Filter position for current owner."""
+        positions = Position.objects.filter(business__owner=self.request.user)
+        logger.info(f"Got positions for owner id = {self.request.user.id}")
+
+        return positions
+
+
+class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    """Generic API for position PUT, GET, DELTE methods."""
+
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
     permission_classes = (IsAuthenticated,
@@ -254,8 +268,10 @@ class ReviewAddView(GenericAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class AllServicesListView(ListAPIView):
-    """ListView for all Services."""
+class AllServicesListCreateView(ListCreateAPIView):
+    """ListView to display all services or service creation."""
+
+    permission_classes = [IsOwner | ReadOnly]
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
@@ -266,10 +282,11 @@ class AllServicesListView(ListAPIView):
 class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
     """View for retrieving, updating or deleting service info."""
 
-    permission_classes = [IsAccountOwnerOrReadOnly]
+    permission_classes = [IsOwner | ReadOnly]
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+
     logger.debug("A view for retrieving, updating or deleting a service instance.")
 
 
