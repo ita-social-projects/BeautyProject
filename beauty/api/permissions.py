@@ -104,6 +104,4 @@ class IsProfileOwner(permissions.IsAuthenticated):
         logger.info(f"{request.user} (id={request.user.id}) tried to access "
                     f"object {obj.id}, permission is checked")
 
-        if request.method in permissions.SAFE_METHODS:
-            return True
         return request.user.is_admin or obj == request.user

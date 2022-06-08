@@ -9,9 +9,8 @@ from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
 
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
-                        CustomUserListCreateView, PositionListCreateView,
-                        PositionRetrieveUpdateDestroyView, ReviewAddView,
-                        ServiceUpdateView)
+                        CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
+                        ReviewAddView, ServiceUpdateView, PositionRetrieveUpdateDestroyView)
 
 app_name = "api"
 
@@ -27,12 +26,18 @@ urlpatterns = [
         name="user-detail",
     ),
     path(
+        "specialist/<int:pk>/",
+        SpecialistDetailView.as_view(),
+        name="specialist-detail",
+    ),
+    path(
         "user/<int:user>/order/<int:pk>/",
         OrderRetrieveCancelView.as_view(),
         name="user-order-detail",
     ),
     path(
-        "orders/", OrderListCreateView.as_view(),
+        "orders/",
+        OrderListCreateView.as_view(),
         name="order-list-create",
     ),
     path(
