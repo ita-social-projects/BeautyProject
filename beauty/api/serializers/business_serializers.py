@@ -65,6 +65,8 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
 class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
     """Serializer for getting all info about business."""
 
+    address = serializers.CharField(max_length=500)
+
     class Meta:
         """Meta for BusinessGetAllInfoSerializers class."""
 
