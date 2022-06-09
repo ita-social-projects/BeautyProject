@@ -213,7 +213,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     RUD - Retrieve, Update, Destroy.
     """
-    permission_classes = (IsAdminOrThisBusinessOwner | ReadOnly,)
+    permission_classes = (IsAdminOrThisBusinessOwner,)
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
@@ -229,7 +229,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
         except AttributeError:
             logger.warning(
                 f"{self.request.user} is not a"
-                "uthorised to access this content",
+                "authorised to access this content",
             )
         return BusinessGetAllInfoSerializers
 
