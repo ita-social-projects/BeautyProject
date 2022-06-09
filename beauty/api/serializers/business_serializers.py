@@ -36,6 +36,7 @@ class BusinessCreateSerializer(BaseBusinessSerializer):
 
 class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for business base fields."""
+
     business_url = serializers.HyperlinkedIdentityField(
         view_name="api:business-detail", lookup_field="pk",
     )

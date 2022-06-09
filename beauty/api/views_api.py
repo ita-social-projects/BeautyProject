@@ -27,7 +27,8 @@ from .permissions import (IsAdminOrThisBusinessOwner, IsOwner,
 
 from .serializers.business_serializers import (BusinessCreateSerializer,
                                                BusinessesSerializer,
-                                               BusinessGetAllInfoSerializers)
+                                               BusinessGetAllInfoSerializers,
+                                               BusinessDetailSerializer)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -213,7 +214,8 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
 
     RUD - Retrieve, Update, Destroy.
     """
-    permission_classes = (IsAdminOrThisBusinessOwner,)
+
+    permission_classes = (IsAdminOrThisBusinessOwner | ReadOnly,)
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
@@ -231,7 +233,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
                 f"{self.request.user} is not a"
                 "authorised to access this content",
             )
-        return BusinessGetAllInfoSerializers
+        return BusinessDetailSerializer
 
 
 class ReviewAddView(GenericAPIView):
