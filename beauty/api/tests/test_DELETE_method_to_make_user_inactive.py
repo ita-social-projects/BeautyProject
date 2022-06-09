@@ -48,7 +48,10 @@ class TestDeleteUser(TestCase):
             data={},
         )
         self.assertEquals(
-            [response.status_code, CustomUser.objects.get(pk=2).is_active],
+            [
+                response.status_code,
+                CustomUser.objects.get(pk=self.user2.id).is_active
+            ],
             [403, True],
         )
 
@@ -60,7 +63,10 @@ class TestDeleteUser(TestCase):
             data={},
         )
         self.assertEquals(
-            [response.status_code, CustomUser.objects.get(pk=1).is_active],
+            [
+                response.status_code, 
+                CustomUser.objects.get(pk=self.user1.id).is_active,
+            ],
             [401, True],
         )
 
@@ -73,6 +79,9 @@ class TestDeleteUser(TestCase):
             data={},
         )
         self.assertEquals(
-            [response.status_code, CustomUser.objects.get(pk=1).is_active],
+            [
+                response.status_code, 
+                CustomUser.objects.get(pk=self.user1.id).is_active,
+            ],
             [400, False],
         )

@@ -19,7 +19,9 @@ class TestReviewDisplayView(TestCase):
         self.first_responder = CustomUserFactory(first_name="UserSpecialist")
         self.second_responder = CustomUserFactory(first_name="UserSpecialist2")
 
-        ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
+        self.review = ReviewFactory.create(
+            from_user=self.user, to_user=self.first_responder,
+        )
         ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
         ReviewFactory.create(from_user=self.user, to_user=self.first_responder)
         ReviewFactory.create(from_user=self.user, to_user=self.second_responder)
@@ -41,9 +43,12 @@ class TestReviewDisplayView(TestCase):
 
     def test_get_method_to_obtain_specified_review(self) -> None:
         """Get review by its id."""
-        response = self.client.generic(method="GET",
-                                       path=reverse("api:review-detail", kwargs={"pk": 2}),
-                                       )
+        response = self.client.generic(
+            method="GET", 
+            path=reverse("api:review-detail",
+            kwargs={"pk": self.review.id}),
+        )
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 6)
 
