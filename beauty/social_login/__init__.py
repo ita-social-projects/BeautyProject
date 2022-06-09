@@ -1,0 +1,1 @@
+"""Main for social authorization."""

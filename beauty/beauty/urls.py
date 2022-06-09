@@ -28,6 +28,8 @@ from beauty.yasg import urlpatterns as doc_urls
 
 from api.views_api import (ResetPasswordView, UserActivationView, UserViewSet)
 
+from social_login.views import GoogleLogin
+
 
 @api_view(["GET"])
 def api_root(request, reverse_format=None):
@@ -64,6 +66,8 @@ urlpatterns = [
     ),
     path("api/v1/", include("api.urls", namespace="api")),
     path(r"auth/", include("djoser.urls.jwt")),
+    path("authorize/", include("dj_rest_auth.urls")),
+    path("social-login/google/", GoogleLogin.as_view(), name="google_login"),
 ]
 
 urlpatterns += router.urls
