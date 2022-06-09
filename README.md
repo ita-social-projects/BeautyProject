@@ -235,7 +235,7 @@ a flake8 check. If the check does not pass the commit will not take place.
 
 ### IT Academy team
 [![@kolyasalubov](https://github.com/kolyasalubov.png?size=200)](https://github.com/kolyasalubov)
-[![@Deer-WarLord](https://github.com/Deer-WarLord.png?size=200)](https://github.com/Deer-WarLord)
+[![@Deer-WarLord](beauty/mediafiles/customuser/Deer_WarLord.png)](https://github.com/Deer-WarLord)
 
 ---
 

@@ -89,6 +89,7 @@ class CustomUserSerializerTestCase(TestCase):
         """Check serializer with valid data."""
         serializer = self.Serializer(data=self.valid_data)
         self.assertTrue(serializer.is_valid(raise_exception=True))
+        self.ecxpect_data["groups"] = serializer.validated_data["groups"]
         self.assertEqual(serializer.validated_data, self.ecxpect_data)
         self.assertEqual(serializer.errors, {})
 
