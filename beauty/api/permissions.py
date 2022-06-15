@@ -108,17 +108,10 @@ class IsProfileOwner(permissions.IsAuthenticated):
 
 
 class IsAdminOrCurrentReviewOwner(permissions.IsAuthenticated):
-    """IsAdminOrCurrentReviewOwner permission class.
-
-    Object-level permission to only allow owners of an object
-    or admin to review and edit it.
-    """
+    """Object-level permission to allow only authors of review or admins to access it."""
 
     def has_object_permission(self, request, view, obj):
-        """Verify that the current user is a review owner or an administrator.
-
-        Checks whether user is admin or review owner
-        """
+        """Verify that the current user is a review owner or an administrator."""
         try:
             has_access = request.user.is_admin or (obj.from_user == request.user)
             if has_access:
