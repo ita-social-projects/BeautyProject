@@ -35,7 +35,6 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  ResetPasswordSerializer,
                                                  SpecialistInformationSerializer,
                                                  SpecialistDetailSerializer)
-from .serializers.review_serializers import ReviewAddSerializer
 from .serializers.position_serializer import PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
 
@@ -234,40 +233,6 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
                 "authorised to access this content",
             )
         return BusinessDetailSerializer
-
-
-class ReviewAddView(GenericAPIView):
-    """Create Review view.
-
-    This class represents a view which is accessed when someone
-    is trying to create a new Review. It makes use of the POST method,
-    other methods are not allowed in this view.
-    """
-
-    serializer_class = ReviewAddSerializer
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, user):
-        """This is a POST method of the view."""
-        serializer = ReviewAddSerializer(data=request.data)
-        author = self.request.user
-        to_user = CustomUser.objects.get(pk=user)
-        if serializer.is_valid():
-            serializer.save(
-                from_user=author,
-                to_user=to_user,
-            )
-            logger.info(
-                f"User {author} (id = {author.id}) posted a review for"
-                f"{to_user} (id = {to_user.id})",
-            )
-            return Response(status=status.HTTP_201_CREATED)
-        else:
-            logger.info(
-                "Error validating review: "
-                f"Field {serializer.errors.popitem()}",
-            )
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class AllServicesListCreateView(ListCreateAPIView):

@@ -18,7 +18,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.serializers.review_serializers import ReviewAddSerializer
-from api.views_api import ReviewAddView
+from api.views.review_views import ReviewAddView
 from .factories import (CustomUserFactory,
                         GroupFactory,
                         ReviewFactory)
