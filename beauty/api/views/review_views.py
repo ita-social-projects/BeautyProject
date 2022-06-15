@@ -12,7 +12,7 @@ from api.models import (CustomUser, Review)
 
 from api.serializers.review_serializers import (ReviewAddSerializer, ReviewDisplaySerializer)
 
-from api.permissions import IsAdminOrCurrentReviewOwner, ReadOnly
+from api.permissions import IsAdminOrCurrentReviewOwner
 
 
 logger = logging.getLogger(__name__)
