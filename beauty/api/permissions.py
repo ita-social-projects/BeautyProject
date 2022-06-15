@@ -116,11 +116,11 @@ class IsAdminOrCurrentReviewOwner(permissions.IsAuthenticated):
             has_access = request.user.is_admin or (obj.from_user == request.user)
             if has_access:
                 logger.info(f"User {request.user.id} permission check. "
-                            f"Access granted",
+                            "Access granted",
                             )
             else:
                 logger.info(f"User {request.user.id} permission check. "
-                            f"Access denied",
+                            "Access denied",
                             )
             return has_access
         except AttributeError:
