@@ -6,10 +6,11 @@ from rest_framework import (status, filters)
 from rest_framework.generics import (GenericAPIView, RetrieveUpdateDestroyAPIView)
 
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
-from api.models import Review
+from api.models import (CustomUser, Review)
 
-from api.serializers.review_serializers import ReviewDisplaySerializer
+from api.serializers.review_serializers import (ReviewAddSerializer, ReviewDisplaySerializer)
 
 from api.permissions import IsAdminOrCurrentReviewOwner
 
@@ -70,3 +71,37 @@ class ReviewRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"User {request.user.id} tried to delete review with id {self.get_object().id}")
 
         return super().delete(request, *args, **kwargs)
+
+
+class ReviewAddView(GenericAPIView):
+    """Create Review view.
+
+    This class represents a view which is accessed when someone
+    is trying to create a new Review. It makes use of the POST method,
+    other methods are not allowed in this view.
+    """
+
+    serializer_class = ReviewAddSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, user):
+        """This is a POST method of the view."""
+        serializer = ReviewAddSerializer(data=request.data)
+        author = self.request.user
+        to_user = CustomUser.objects.get(pk=user)
+        if serializer.is_valid():
+            serializer.save(
+                from_user=author,
+                to_user=to_user,
+            )
+            logger.info(
+                f"User {author} (id = {author.id}) posted a review for"
+                f"{to_user} (id = {to_user.id})",
+            )
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            logger.info(
+                "Error validating review: "
+                f"Field {serializer.errors.popitem()}",
+            )
+            return Response(status=status.HTTP_400_BAD_REQUEST)
