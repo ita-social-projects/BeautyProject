@@ -3,13 +3,15 @@
 import logging
 
 from rest_framework import (status, filters)
-from rest_framework.generics import (GenericAPIView, RetrieveAPIView)
+from rest_framework.generics import (GenericAPIView, RetrieveUpdateDestroyAPIView)
 
 from rest_framework.response import Response
 
 from api.models import Review
 
 from api.serializers.review_serializers import ReviewDisplaySerializer
+
+from api.permissions import IsAdminOrCurrentReviewOwner
 
 
 logger = logging.getLogger(__name__)
@@ -39,7 +41,8 @@ class ReviewDisplayView(GenericAPIView):
         return Response(serialized_data.data, status=status.HTTP_200_OK)
 
 
-class ReviewDisplayDetailView(RetrieveAPIView):
+class ReviewRUDView(RetrieveUpdateDestroyAPIView):
     """View for retrieving specific review."""
     queryset = Review.objects
     serializer_class = ReviewDisplaySerializer
+    permission_classes = (IsAdminOrCurrentReviewOwner, )
