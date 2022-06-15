@@ -68,17 +68,6 @@ class TestReviewDisplayView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 6)
 
-    def test_get_method_to_obtain_specified_review_invalid(self) -> None:
-        """Get review by its id."""
-        response = self.client.generic(
-            method="GET",
-            path=reverse("api:review-detail",
-                         kwargs={"pk": self.review_inaccessible.id},
-                         ),
-        )
-
-        self.assertEqual(response.status_code, 403)
-
     def test_put_method_to_update_specified_review(self) -> None:
         """Get review by its id."""
         response = self.client.put(
