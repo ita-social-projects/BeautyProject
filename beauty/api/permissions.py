@@ -114,18 +114,13 @@ class IsAdminOrCurrentReviewOwner(permissions.IsAuthenticated):
         """Verify that the current user is a review owner or an administrator."""
         if request.method == "GET":
             return True
-        try:
-            has_access = request.user.is_admin or (obj.from_user == request.user)
-            if has_access:
-                logger.info(f"User {request.user.id} permission check. "
-                            "Access granted",
-                            )
-            else:
-                logger.info(f"User {request.user.id} permission check. "
-                            "Access denied",
-                            )
-            return has_access
-        except AttributeError:
-            logger.warning(
-                f"User {request.user.id} hasn't been authenticated",
-            )
+        has_access = request.user.is_admin or (obj.from_user == request.user)
+        if has_access:
+            logger.info(f"User {request.user.id} permission check. "
+                        "Access granted",
+                        )
+        else:
+            logger.info(f"User {request.user.id} permission check. "
+                        "Access denied",
+                        )
+        return has_access
