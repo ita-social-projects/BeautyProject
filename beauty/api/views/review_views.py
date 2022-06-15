@@ -2,8 +2,8 @@
 
 import logging
 
-from rest_framework import (filters, status)
-from rest_framework.generics import (GenericAPIView, RetrieveAPIView)
+from rest_framework import (status, filters)
+from rest_framework.generics import (GenericAPIView, RetrieveUpdateDestroyAPIView)
 
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from api.models import (CustomUser, Review)
 
 from api.serializers.review_serializers import (ReviewAddSerializer, ReviewDisplaySerializer)
+
+from api.permissions import IsAdminOrCurrentReviewOwner
 
 
 logger = logging.getLogger(__name__)
@@ -40,10 +42,35 @@ class ReviewDisplayView(GenericAPIView):
         return Response(serialized_data.data, status=status.HTTP_200_OK)
 
 
-class ReviewDisplayDetailView(RetrieveAPIView):
+class ReviewRUDView(RetrieveUpdateDestroyAPIView):
     """View for retrieving specific review."""
     queryset = Review.objects
     serializer_class = ReviewDisplaySerializer
+    permission_classes = (IsAdminOrCurrentReviewOwner, )
+
+    def get(self, request, *args, **kwargs):
+        """GET method for retrieving specific review."""
+        logger.info(f"User {request.user.id} tried to get review with id {self.get_object().id}")
+
+        return super().get(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        """PUT method for updating the whole content of a specific review."""
+        logger.info(f"User {request.user.id} tried to change review with id {self.get_object().id}")
+
+        return super().update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """PATCH method for updating specific review fields."""
+        logger.info(f"User {request.user.id} tried to change review with id {self.get_object().id}")
+
+        return super().partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        """DELETE method for removing specific review."""
+        logger.info(f"User {request.user.id} tried to delete review with id {self.get_object().id}")
+
+        return super().delete(request, *args, **kwargs)
 
 
 class ReviewAddView(GenericAPIView):
