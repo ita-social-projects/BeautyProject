@@ -112,6 +112,8 @@ class IsAdminOrCurrentReviewOwner(permissions.IsAuthenticated):
 
     def has_object_permission(self, request, view, obj):
         """Verify that the current user is a review owner or an administrator."""
+        if request.method == "GET":
+            return True
         try:
             has_access = request.user.is_admin or (obj.from_user == request.user)
             if has_access:
