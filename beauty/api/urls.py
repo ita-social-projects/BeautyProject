@@ -5,7 +5,7 @@ from django.urls import path
 from api.views.order_views import (OrderApprovingView, OrderListCreateView,
                                    OrderRetrieveCancelView)
 
-from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
+from api.views.review_views import (ReviewDisplayView, ReviewRUDView)
 
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
@@ -82,7 +82,7 @@ urlpatterns = [
     ),
     path(
         r"review/<int:pk>/",
-        ReviewDisplayDetailView.as_view(),
+        ReviewRUDView.as_view(),
         name="review-detail",
     ),
     path(

@@ -105,3 +105,25 @@ class IsProfileOwner(permissions.IsAuthenticated):
                     f"object {obj.id}, permission is checked")
 
         return request.user.is_admin or obj == request.user
+
+
+class IsAdminOrCurrentReviewOwner(permissions.IsAuthenticated):
+    """Object-level permission to allow only authors of review or admins to access it."""
+
+    def has_object_permission(self, request, view, obj):
+        """Verify that the current user is a review owner or an administrator."""
+        try:
+            has_access = request.user.is_admin or (obj.from_user == request.user)
+            if has_access:
+                logger.info(f"User {request.user.id} permission check. "
+                            "Access granted",
+                            )
+            else:
+                logger.info(f"User {request.user.id} permission check. "
+                            "Access denied",
+                            )
+            return has_access
+        except AttributeError:
+            logger.warning(
+                f"User {request.user.id} hasn't been authenticated",
+            )
