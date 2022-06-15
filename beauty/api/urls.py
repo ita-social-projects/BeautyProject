@@ -5,6 +5,8 @@ from django.urls import path
 from api.views.order_views import (OrderApprovingView, OrderListCreateView,
                                    OrderRetrieveCancelView)
 
+from api.views.schedule import SpecialistScheduleView
+
 from api.views.review_views import (ReviewDisplayView, ReviewDisplayDetailView)
 
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
@@ -93,4 +95,9 @@ urlpatterns = [
     path("service/<int:pk>/",
          ServiceUpdateView.as_view(),
          name="service-detail"),
+    path(
+        "schedule/<int:specialist_id>/<int:business_id>/<int:position_id>/",
+        SpecialistScheduleView.as_view(),
+        name="specialist-schedule",
+    ),
 ]
