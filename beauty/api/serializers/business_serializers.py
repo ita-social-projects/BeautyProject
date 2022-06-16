@@ -30,7 +30,8 @@ class BusinessCreateSerializer(BaseBusinessSerializer):
         """Display 3 required fields for Business creation."""
 
         model = Business
-        fields = ("name", "business_type", "owner", "description")
+        fields = ("name", "business_type", "owner", "description",
+                  "working_time")
         read_only_fields = ("owner", )
 
 
@@ -48,7 +49,7 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
         model = Business
         fields = (
             "business_url", "name", "business_type", "address",
-        )
+            "working_time")
 
 
 class BusinessDetailSerializer(BaseBusinessSerializer):
@@ -60,7 +61,7 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        exclude = ("created_at", "id", "owner")
+        exclude = ("created_at", "id", "owner", "working_time")
 
 
 class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
@@ -73,4 +74,4 @@ class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
 
         model = Business
         fields = ("owner", "name", "business_type", "logo", "owner", "address",
-                  "description", "created_at")
+                  "description", "created_at", "working_time")

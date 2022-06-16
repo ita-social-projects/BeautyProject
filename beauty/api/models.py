@@ -234,6 +234,9 @@ class Business(models.Model):
         verbose_name=_("Created at"),
         auto_now_add=True,
     )
+    working_time = models.JSONField(
+        default=dict,
+    )
 
     class Meta:
         """This meta class stores verbose names."""
