@@ -77,7 +77,7 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
     login_url = settings.LOGIN_URL
     redirect_field_name = "redirect_to"
 
-    queryset = Order.objects.exclude(status__in=[2, 4])
+    queryset = Order.objects.all()
     serializer_class = OrderDeleteSerializer
     permission_classes = (IsAuthenticated, IsOrderUser)
 

@@ -70,7 +70,7 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
         model = Order
         fields = "__all__"
         read_only_fields = ("customer", "start_time",
-                            "specialist", "service", "status")
+                            "specialist", "service", "status", "note")
 
     def update(self, instance: object, validated_data: dict) -> object:
         """Set canceled status for order.
@@ -83,8 +83,16 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
             user (object): instance with updated data
 
         """
-        validated_data["status"] = 2
+        doesnt_require_decline_list = (1, 2, 4)
+        if instance.status in doesnt_require_decline_list:
 
-        logger.info(f"{Order} was canceled")
+            logger.info(f"{Order} already has status {instance.get_status_display()}")
+
+            raise serializers.ValidationError(
+                {"order": f"Order already has status {instance.get_status_display()}"})
+
+        validated_data["status"] = Order.StatusChoices.CANCELLED
+
+        logger.info(f"{instance} was canceled")
 
         return super().update(instance, validated_data)
