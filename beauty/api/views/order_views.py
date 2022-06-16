@@ -104,15 +104,15 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
 
         return super().get_object()
 
-    def delete(self, request, *args, **kwargs):
-        """DELETE method to cancel an active appointment by customer or specialist."""
+    def patch(self, request, *args, **kwargs):
+        """Delete method to cancel an active appointment by customer or specialist."""
         order = self.get_object()
         doesnt_require_decline_list = (
             1,
             2,
             4,
         )
-        cancellation_reason = request.GET("reason", None)
+
         if order.status in doesnt_require_decline_list:
             logger.info(f"User {self.request.user.id} failed to "
                         f"cancel {order} with status {order.status}")
@@ -120,7 +120,11 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
                 {"Error": f"Already {order.status}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        elif not cancellation_reason:
+        try:
+            cancellation_reason = str(request.data["reason"])
+            if not cancellation_reason:
+                raise KeyError
+        except KeyError:
             logger.info(f"User {self.request.user.id} hasn't provided "
                         f"cancellation reason for cancelling {order}")
             return Response(
@@ -130,13 +134,6 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
 
         order.status = Order.StatusChoices.CANCELLED
         order.reason = cancellation_reason
-        if not self.serializer_class(order).is_valid():
-            logger.info(f"Cancellation reason for order {order} "
-                        f"is less than required")
-            return Response(
-                {"Error": "Your cancellation reason length is less than required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         order.save()
         logger.info(f"Order {order} has been successfully cancelled by {self.request.user.id}")
