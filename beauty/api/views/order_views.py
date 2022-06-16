@@ -11,14 +11,14 @@ from django.utils.http import urlsafe_base64_decode
 from rest_framework import status
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
-                                     get_object_or_404)
+                                     get_object_or_404, ListAPIView, RetrieveAPIView)
 from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
-from api.models import Order
+from api.models import Order, CustomUser
 from api.permissions import IsOrderUser
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
@@ -105,7 +105,7 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
         return super().get_object()
 
 
-class OrderApprovingView(ListCreateAPIView):
+class OrderApprovingView(RetrieveAPIView):
     """Approving orders custom GET method."""
 
     queryset = Order.objects.all()
@@ -165,3 +165,16 @@ class OrderApprovingView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
+
+
+class CustomerOrdersViews(ListAPIView):
+    """Show all orders concrete customer."""
+
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        """Get orders for a customer."""
+        customer_id = self.kwargs["pk"]
+        customer = get_object_or_404(CustomUser, id=customer_id)
+        return customer.customer_orders.all()
+
