@@ -19,7 +19,7 @@ from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
 from api.models import Order, CustomUser
-from api.permissions import IsOrderUser
+from api.permissions import (IsOrderUser, IsCustomerOrders)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
 
@@ -171,10 +171,10 @@ class CustomerOrdersViews(ListAPIView):
     """Show all orders concrete customer."""
 
     serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated, IsCustomerOrders)
 
     def get_queryset(self):
         """Get orders for a customer."""
         customer_id = self.kwargs["pk"]
         customer = get_object_or_404(CustomUser, id=customer_id)
         return customer.customer_orders.all()
-
