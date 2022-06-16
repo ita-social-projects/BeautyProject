@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from rest_framework import status
+from rest_framework import status, filters
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      get_object_or_404, ListAPIView, RetrieveAPIView)
@@ -172,6 +172,8 @@ class CustomerOrdersViews(ListAPIView):
 
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticated, IsCustomerOrders)
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["status", "specialist", "service", "start_time", "end_time"]
 
     def get_queryset(self):
         """Get orders for a customer."""
