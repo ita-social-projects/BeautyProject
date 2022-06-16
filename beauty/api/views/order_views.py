@@ -178,4 +178,7 @@ class CustomerOrdersViews(ListAPIView):
     def get_queryset(self):
         """Get orders for a customer."""
         customer = get_object_or_404(CustomUser, id=self.kwargs["pk"])
+
+        logger.info(f"Get orders for the customer {customer}")
+
         return customer.customer_orders.all()
