@@ -104,6 +104,44 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
 
         return super().get_object()
 
+    def delete(self, request, *args, **kwargs):
+        """DELETE method to cancel an active appointment by customer or specialist."""
+        order = self.get_object()
+        doesnt_require_decline_list = (
+            1,
+        )
+        cancellation_reason = request.GET("reason", None)
+        if order.status in doesnt_require_decline_list:
+            logger.info(f"User {self.request.user.id} failed to "
+                        f"cancel {order} with status {order.status}")
+            return Response(
+                {"Error": f"Already {order.status}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif not cancellation_reason:
+            logger.info(f"User {self.request.user.id} hasn't provided "
+                        f"cancellation reason for cancelling {order}")
+            return Response(
+                {"Error": "Cancellation reason hasn't been provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        order.status = Order.StatusChoices.CANCELLED
+        order.reason = cancellation_reason
+        if not self.serializer_class(order).is_valid():
+            logger.info(f"Order {order} has been successfully cancelled by {self.request.user.id}")
+            return Response(
+                {"Error": "Your cancellation reason length is less then required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        order.save()
+        logger.info(f"Order {order} has been successfully cancelled by {self.request.user.id}")
+        return Response(
+            {"message": "You have successfully cancelled an appointment"},
+            status=status.HTTP_200_OK,
+        )
+
 
 class OrderApprovingView(ListCreateAPIView):
     """Approving orders custom GET method."""
