@@ -131,7 +131,7 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
         if not self.serializer_class(order).is_valid():
             logger.info(f"Order {order} has been successfully cancelled by {self.request.user.id}")
             return Response(
-                {"Error": "Your cancellation reason length is less then required"},
+                {"Error": "Your cancellation reason length is less than required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
