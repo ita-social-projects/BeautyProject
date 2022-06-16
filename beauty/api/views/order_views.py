@@ -104,6 +104,13 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
 
         return super().get_object()
 
+    def put(self, request, *args, **kwargs):
+        """Put method to cancel an active appointment by customer or specialist."""
+        super().put(request, *args, **kwargs)
+
+        return redirect(
+            reverse("api:user-detail", args=[request.user.id]))
+
 
 class OrderApprovingView(ListCreateAPIView):
     """Approving orders custom GET method."""
