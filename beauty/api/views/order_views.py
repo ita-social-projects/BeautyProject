@@ -22,7 +22,6 @@ from api.models import Order
 from api.permissions import IsOrderUser
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -107,13 +106,14 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
     def put(self, request, *args, **kwargs):
         """Put method to cancel an active appointment by customer or specialist."""
         super().put(request, *args, **kwargs)
-        authenticated_user = request.user
         order = self.get_object()
-        to = [order.customer.email if authenticated_user == order.specialist
-              else order.specialist.email]
+        authenticated_user = request.user
+        user = order.customer if authenticated_user == order.specialist else order.specialist
         context = {"order": order, "user": authenticated_user}
 
-        CancelOrderEmail(request, context).send(to)
+        CancelOrderEmail(request, context).send([user.email])
+
+        logger.info(f"{order}: canceling email was sent to the {user.get_full_name()}")
 
         return redirect(
             reverse("api:user-detail", args=[authenticated_user.id]))
