@@ -83,8 +83,26 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
             user (object): instance with updated data
 
         """
+        user = self.context["request"].user
+        doesnt_require_decline_list = (
+            1,
+            2,
+            4,
+        )
+        if instance.status in doesnt_require_decline_list:
+            logger.info(f"User {user.id} failed to "
+                        f"cancel {instance.id} with status {instance.status}")
+            raise serializers.ValidationError(
+                {"Error": f"Already {instance.status}"},
+            )
+        cancellation_reason = validated_data.get("reason", None)
+        if not cancellation_reason:
+            logger.info(f"User {user.id} hasn't provided "
+                        f"cancellation reason for cancelling {instance.id}")
+            raise serializers.ValidationError(
+                {"Error": "Cancellation reason hasn't been provided"},
+            )
         validated_data["status"] = 2
 
-        logger.info(f"{Order} was canceled")
-
+        logger.info(f"Order {instance.id} has been successfully cancelled by {user.id}")
         return super().update(instance, validated_data)
