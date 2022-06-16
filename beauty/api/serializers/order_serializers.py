@@ -86,7 +86,7 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
         doesnt_require_decline_list = (1, 2, 4)
         if instance.status in doesnt_require_decline_list:
 
-            logger.info(f"{Order} already has status {instance.get_status_display()}")
+            logger.info(f"{instance} already has status {instance.get_status_display()}")
 
             raise serializers.ValidationError(
                 {"order": f"Order already has status {instance.get_status_display()}"})

@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
-from beauty.utils import ApprovingOrderEmail
+from beauty.utils import ApprovingOrderEmail, CancelOrderEmail
 from api.models import Order
 from api.permissions import IsOrderUser
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
@@ -107,9 +107,16 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
     def put(self, request, *args, **kwargs):
         """Put method to cancel an active appointment by customer or specialist."""
         super().put(request, *args, **kwargs)
+        authenticated_user = request.user
+        order = self.get_object()
+        to = [order.customer.email if authenticated_user == order.specialist
+              else order.specialist.email]
+        context = {"order": order, "user": authenticated_user}
+
+        CancelOrderEmail(request, context).send(to)
 
         return redirect(
-            reverse("api:user-detail", args=[request.user.id]))
+            reverse("api:user-detail", args=[authenticated_user.id]))
 
 
 class OrderApprovingView(ListCreateAPIView):
