@@ -175,6 +175,5 @@ class CustomerOrdersViews(ListAPIView):
 
     def get_queryset(self):
         """Get orders for a customer."""
-        customer_id = self.kwargs["pk"]
-        customer = get_object_or_404(CustomUser, id=customer_id)
+        customer = get_object_or_404(CustomUser, id=self.kwargs["pk"])
         return customer.customer_orders.all()
