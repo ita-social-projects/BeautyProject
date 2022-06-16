@@ -1,6 +1,6 @@
 """Module with SpecialistScheduleView."""
 
-from api.models import Position, Business
+from api.models import Business, Order, Position
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -28,11 +28,32 @@ def get_time_intervals(start_time, end_time):
     return intervals
 
 
+def get_free_time_intervals(position):
+    """Returns free time intervals."""
+    free_time = [position.start_time, position.end_time]
+    orders = Order.objects.filter(service__position=position, status=3)
+
+    for order in orders:
+        start_current = order.start_time.time()
+        end_current = order.end_time.time()
+        free_time.extend([start_current, end_current])
+        free_time.sort()
+
+    return free_time
+
+
 class SpecialistScheduleView(APIView):
     """View for displaying specialist's schedule."""
 
-    def get(self, request, specialist_id, business_id, position_id):
+    def get(self, request, position_id, business_id=1, specialist_id=1):
         """GET method for retrieving schedule."""
+        position = Position.objects.get(id=position_id)
+
+        return Response(
+            get_free_time_intervals(position),
+            status=status.HTTP_200_OK,
+        )
+
         business = get_object_or_404(
             Business, id=business_id,
         )
