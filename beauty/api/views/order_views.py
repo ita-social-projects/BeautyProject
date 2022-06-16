@@ -109,6 +109,8 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
         order = self.get_object()
         doesnt_require_decline_list = (
             1,
+            2,
+            4,
         )
         cancellation_reason = request.GET("reason", None)
         if order.status in doesnt_require_decline_list:
