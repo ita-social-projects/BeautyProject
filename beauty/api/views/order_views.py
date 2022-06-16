@@ -129,7 +129,8 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
         order.status = Order.StatusChoices.CANCELLED
         order.reason = cancellation_reason
         if not self.serializer_class(order).is_valid():
-            logger.info(f"Order {order} has been successfully cancelled by {self.request.user.id}")
+            logger.info(f"Cancellation reason for order {order} "
+                        f"is less than required")
             return Response(
                 {"Error": "Your cancellation reason length is less than required"},
                 status=status.HTTP_400_BAD_REQUEST,
