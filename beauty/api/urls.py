@@ -98,7 +98,7 @@ urlpatterns = [
          ServiceUpdateView.as_view(),
          name="service-detail"),
     path(
-        "schedule/<int:position_id>/",
+        "schedule/<int:specialist_id>/<int:position_id>",
         SpecialistScheduleView.as_view(),
         name="specialist-schedule",
     ),
