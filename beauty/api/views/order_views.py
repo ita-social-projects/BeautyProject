@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from rest_framework import status, filters
+from rest_framework import (filters, status)
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      get_object_or_404, ListAPIView, RetrieveAPIView)
