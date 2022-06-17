@@ -2,8 +2,8 @@
 
 from django.urls import path
 
-from api.views.order_views import (OrderApprovingView, OrderListCreateView,
-                                   OrderRetrieveCancelView, CustomerOrdersViews)
+from api.views.order_views import (CustomerOrdersViews, OrderApprovingView,
+                                   OrderListCreateView, OrderRetrieveCancelView)
 
 from api.views.review_views import (ReviewDisplayView,
                                     ReviewRUDView,

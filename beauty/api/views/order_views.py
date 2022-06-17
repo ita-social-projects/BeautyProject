@@ -18,7 +18,7 @@ from rest_framework.reverse import reverse
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import ApprovingOrderEmail
-from api.models import Order, CustomUser
+from api.models import (CustomUser, Order)
 from api.permissions import (IsOrderUser, IsCustomerOrders)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
