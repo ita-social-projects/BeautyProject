@@ -83,7 +83,8 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
             user (object): instance with updated data
 
         """
-        doesnt_require_decline_list = (1, 2, 4)
+        status = Order.StatusChoices
+        doesnt_require_decline_list = (status.COMPLETED, status.CANCELLED, status.DECLINED)
         if instance.status in doesnt_require_decline_list:
 
             logger.info(f"{instance} already has status {instance.get_status_display()}")
@@ -91,7 +92,7 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"order": f"Order already has status {instance.get_status_display()}"})
 
-        validated_data["status"] = Order.StatusChoices.CANCELLED
+        validated_data["status"] = status.CANCELLED
 
         logger.info(f"{instance} was canceled")
 
