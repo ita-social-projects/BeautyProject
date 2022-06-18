@@ -53,14 +53,14 @@ class ServiceModelTest(TestCase):
             "name": "Service_2",
             "price": "33.00",
             "description": "",
-            "duration": 46,
+            "duration": 2700,
         }
         self.invalid_data = {
             "position": 1,
             "name": "Service_2" * 50,
             "price": "33.00",
             "description": "",
-            "duration": 46,
+            "duration": 2700,
         }
 
     def test_list_of_services(self) -> None:

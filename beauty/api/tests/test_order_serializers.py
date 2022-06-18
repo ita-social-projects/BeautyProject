@@ -47,11 +47,11 @@ class TestOrderSerializer(TestCase):
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
-        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                       "specialist": self.specialist.id,
                       "service": self.service.id}
 
-        ecxpect_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        ecxpect_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                         "specialist": self.specialist,
                         "service": self.service}
 
@@ -65,7 +65,7 @@ class TestOrderSerializer(TestCase):
 
     def test_invalid_serializer(self):
         """Check serializer with invalid data."""
-        invalid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        invalid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                         "specialist": self.specialist.id}
 
         serializer = self.Serializer(data=invalid_data)
@@ -78,7 +78,7 @@ class TestOrderSerializer(TestCase):
 
     def test_invalid_datatype(self):
         """Check serializer with invalid data type."""
-        invalid_data = [{"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        invalid_data = [{"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                          "specialist": self.specialist.id,
                          "service": self.service}]
 
@@ -92,10 +92,10 @@ class TestOrderSerializer(TestCase):
 
     def test_partial_validation(self):
         """Check serializer with partial validation."""
-        invalid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        invalid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                         "specialist": self.specialist.id}
 
-        ecxpect_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        ecxpect_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                         "specialist": self.specialist}
 
         serializer = self.Serializer(data=invalid_data, partial=True)
@@ -118,7 +118,7 @@ class TestOrderSerializer(TestCase):
 
     def test_specialist_service(self):
         """Check serializer when a chosen specialist does not have chosen service."""
-        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                       "specialist": self.specialist.id,
                       "service": self.service.id}
 
@@ -139,7 +139,7 @@ class TestOrderSerializer(TestCase):
 
     def test_specialist_is_customer(self):
         """Check serializer when customer and specialist are the same person."""
-        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 00, tzinfo=CET),
                       "specialist": self.specialist.id,
                       "service": self.service.id}
 

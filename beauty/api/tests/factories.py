@@ -7,10 +7,34 @@ Todo:
 from collections import namedtuple
 
 from django.utils import timezone
+from datetime import timedelta
+from random import choice
 import factory
 from factory import fuzzy
 from api.models import (CustomUser, Order, Service, Position, Business, Review)
 from django.contrib.auth.models import Group
+
+
+class RoundedTime:
+    """Class with rounded time.
+
+    Provide time with zero seconds and minutes multiplied by 5
+    """
+
+    minutes = (0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
+
+    @classmethod
+    def calculate_rounded_time_minutes_seconds(cls):
+        """Datetime rigth now with rounded time.
+
+        Returns datetime.now() with edited minutes and seconds
+        """
+        return timezone.now().replace(minute=choice(cls.minutes), second=0)
+
+    @classmethod
+    def get_rounded_duration(cls):
+        """Return timedelta with minutes multiplied by 5."""
+        return timedelta(minutes=choice(cls.minutes))
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -85,7 +109,7 @@ class PositionFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Position_{n}")
     business = factory.SubFactory(BusinessFactory)
-    start_time = factory.LazyFunction(timezone.now)
+    start_time = factory.LazyFunction(RoundedTime.calculate_rounded_time_minutes_seconds)
     end_time = factory.LazyAttribute(lambda o: o.start_time + timezone.timedelta(hours=4))
 
     @factory.post_generation
@@ -112,7 +136,7 @@ class ServiceFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Service_{n}")
     price = fuzzy.FuzzyDecimal(10.0, 100.0)
     description = factory.Faker("sentence", nb_words=4)
-    duration = fuzzy.FuzzyInteger(15, 60)
+    duration = factory.LazyFunction(RoundedTime.get_rounded_duration)
 
 
 class OrderFactory(factory.django.DjangoModelFactory):
@@ -128,7 +152,7 @@ class OrderFactory(factory.django.DjangoModelFactory):
     customer = factory.SubFactory(CustomUserFactory, is_active=True)
     service = factory.SubFactory(ServiceFactory)
     reason = ""
-    start_time = factory.LazyFunction(timezone.now)
+    start_time = factory.LazyFunction(RoundedTime.calculate_rounded_time_minutes_seconds)
 
 
 class ReviewFactory(factory.django.DjangoModelFactory):

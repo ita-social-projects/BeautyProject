@@ -1,8 +1,9 @@
 """This module provides you with all needed utility functions."""
 
 import os
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, time
 from typing import Tuple
+from django.forms import ValidationError
 import pytz
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
@@ -107,3 +108,29 @@ def order_approve_decline_urls(order: object, approve_name="url_for_approve",
     urls[decline_name] = reverse("api:order-approving",
                                  kwargs=url_declined_params, request=request)
     return urls
+
+
+def validate_rounded_minutes_seconds(time_value):
+    """Validate time value.
+
+    Time must have zero seconds and minutes multiples of 5
+    """
+    assert isinstance(time_value, (datetime, time, timedelta)), \
+        "Only datetime, time or timedelta objects"
+
+    if isinstance(time_value, (datetime, time)):
+        if isinstance(time_value, datetime):
+            time_value = time_value.time()
+
+        if time_value.minute % 5 and time_value.second != 0:
+            raise ValidationError(
+                "Time value must have zero seconds and minutes multiples of 5",
+                params={"value": time_value},
+            )
+
+    if isinstance(time_value, timedelta):
+        if (time_value.seconds / 60) % 5:
+            raise ValidationError(
+                "Time value must have minutes multiples of 5",
+                params={"value": time_value},
+            )

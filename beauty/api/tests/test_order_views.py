@@ -59,7 +59,7 @@ class TestOrderListCreateView(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.customer)
 
-        self.data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        self.data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 0, tzinfo=CET),
                      "specialist": self.specialist.id,
                      "service": self.service.id}
 

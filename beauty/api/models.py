@@ -1,7 +1,6 @@
 """This module provides all needed models."""
 
 import logging
-from datetime import timedelta
 from address.models import AddressField
 from django.contrib.auth.base_user import (AbstractBaseUser, BaseUserManager)
 from django.contrib.auth.models import PermissionsMixin
@@ -10,7 +9,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
-from beauty.utils import ModelsUtils
+from beauty.utils import ModelsUtils, validate_rounded_minutes_seconds
 
 
 logger = logging.getLogger(__name__)
@@ -344,10 +343,12 @@ class Position(models.Model):
     start_time = models.TimeField(
         editable=True,
         verbose_name=_("Start time"),
+        validators=[validate_rounded_minutes_seconds],
     )
     end_time = models.TimeField(
         editable=True,
         verbose_name=_("End time"),
+        validators=[validate_rounded_minutes_seconds],
     )
 
     def __str__(self):
@@ -470,10 +471,12 @@ class Order(models.Model):
     start_time = models.DateTimeField(
         editable=True,
         verbose_name=_("Appointment time"),
+        validators=[validate_rounded_minutes_seconds],
     )
     end_time = models.DateTimeField(
         editable=False,
         verbose_name=_("End time"),
+        validators=[validate_rounded_minutes_seconds],
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -521,9 +524,7 @@ class Order(models.Model):
 
     def save(self, *args, **kwargs):
         """Reimplemented save method for end_time calculation."""
-        self.end_time = self.start_time + timedelta(
-            minutes=self.service.duration,
-        )
+        self.end_time = self.start_time + self.service.duration
 
         logger.info(f"Added end time({self.end_time}) for order")
 
@@ -614,9 +615,10 @@ class Service(models.Model):
         blank=True,
         verbose_name=_("Service description"),
     )
-    duration = models.IntegerField(
+    duration = models.DurationField(
         blank=False,
         verbose_name=_("Service duration"),
+        validators=[validate_rounded_minutes_seconds],
     )
 
     def __str__(self):
