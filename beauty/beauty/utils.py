@@ -82,6 +82,12 @@ class StatusOrderEmail(BaseEmailMessage):
     template_name = "email/customer_order_status.html"
 
 
+class CancelOrderEmail(BaseEmailMessage):
+    """Class for sending an email message which renders HTML for it."""
+
+    template_name = "email/order_cancel.html"
+
+
 def order_approve_decline_urls(order: object, approve_name="url_for_approve",
                                decline_name="url_for_decline", request=None) -> dict:
     """Get URLs for approving and declining orders.
