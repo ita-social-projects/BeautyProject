@@ -4,7 +4,6 @@ import logging
 
 from rest_framework import permissions
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -21,11 +20,7 @@ class IsAccountOwnerOrReadOnly(permissions.BasePermission):
 
         if request.method in permissions.SAFE_METHODS:
             return True
-        return (
-            request.user.is_authenticated and (
-                request.user.is_admin or (obj == request.user)
-            )
-        )
+        return (request.user.is_authenticated and (request.user.is_admin or (obj == request.user)))
 
 
 class IsAdminOrThisBusinessOwner(permissions.IsAuthenticated):
@@ -82,6 +77,7 @@ class IsPositionOwner(permissions.BasePermission):
 
     Allows only position owners to work with it.
     """
+
     def has_object_permission(self, request, view, obj):
         """Object permission check."""
         logger.debug(f"Object {obj.id} permission check. Is position owner")
@@ -124,3 +120,13 @@ class IsAdminOrCurrentReviewOwner(permissions.IsAuthenticated):
                         "Access denied",
                         )
         return has_access
+
+
+class IsCustomerOrders(permissions.BasePermission):
+    """Object-level permission to only allow users of an object to edit it."""
+
+    def has_permission(self, request, view):
+        """Object permission check."""
+        logger.debug(f"User {request.user.id} permission check.")
+
+        return request.user.id == view.kwargs["pk"] or request.user.is_admin
