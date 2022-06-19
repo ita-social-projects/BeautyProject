@@ -249,7 +249,7 @@ class TestCustomerOrdersViews(TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_get_method_get_customer_orders_logged_not_customer(self):
-        """Logged users can not rearview a customer's orders."""
+        """Logged users can't view a customer's orders."""
         self.client.force_authenticate(user=self.specialist)
         response = self.client.get(
             path=reverse("api:customer-orders-list", args=[self.customer.id]),
