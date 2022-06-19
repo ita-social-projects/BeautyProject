@@ -180,8 +180,13 @@ class TestOrderRetrieveCancelView(TestCase):
 
         self.client = APIClient()
 
+        self.client.force_authenticate(user=self.specialist)
+        refresh = RefreshToken.for_user(self.specialist)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
     def test_get_method_retrieve_order_not_logged_user(self):
         """Only a logged user from order (customer, specialist) can retrieve an order."""
+        self.client.credentials()
         order_response = self.client.get(path=self.order_url)
         specialist_response = self.client.get(path=self.specialist_order_url)
         customer_response = self.client.get(path=self.customer_order_url)
@@ -194,6 +199,7 @@ class TestOrderRetrieveCancelView(TestCase):
 
     def test_get_method_retrieve_order_logged_customer(self):
         """Logged order customer can retrieve an order."""
+        self.client.credentials()
         self.client.force_authenticate(user=self.customer)
         refresh = RefreshToken.for_user(self.customer)
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
@@ -208,24 +214,15 @@ class TestOrderRetrieveCancelView(TestCase):
 
     def test_get_method_retrieve_order_logged_specialist(self):
         """Logged order specialist can retrieve an order."""
-        self.client.force_authenticate(user=self.specialist)
-        refresh = RefreshToken.for_user(self.specialist)
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
-
         specialist_response = self.client.get(path=self.specialist_order_url)
         customer_response = self.client.get(path=self.customer_order_url)
         order_response = self.client.get(path=self.order_url)
-
         self.assertEqual(specialist_response.status_code, 200)
         self.assertEqual(customer_response.status_code, 200)
         self.assertEqual(order_response.status_code, 200)
 
     def test_put_method_valid_reason_specialist(self):
         """Cancel order with valid reason by specialist."""
-        self.client.force_authenticate(user=self.specialist)
-        refresh = RefreshToken.for_user(self.specialist)
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
-
         response = self.client.put(path=self.order_url, data={"reason": "test reason"})
         self.assertEqual(response.status_code, 302)
 
@@ -240,10 +237,6 @@ class TestOrderRetrieveCancelView(TestCase):
 
     def test_put_method_invalid_reason(self):
         """Cancel order with invalid reason."""
-        self.client.force_authenticate(user=self.specialist)
-        refresh = RefreshToken.for_user(self.specialist)
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
-
         response = self.client.put(path=self.order_url, data={"reason": ""})
         self.assertEqual(response.status_code, 400)
 
@@ -258,6 +251,7 @@ class TestOrderRetrieveCancelView(TestCase):
         self.client.force_authenticate(user)
         refresh = RefreshToken.for_user(user)
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
         response = self.client.put(path=self.order_url, data={"reason": "test reason"})
         self.assertEqual(response.status_code, 403)
 
@@ -265,9 +259,6 @@ class TestOrderRetrieveCancelView(TestCase):
         """Test an order with statuses which can not change."""
         status = Order.StatusChoices
         doesnt_require_decline_list = (status.COMPLETED, status.CANCELLED, status.DECLINED)
-        self.client.force_authenticate(user=self.specialist)
-        refresh = RefreshToken.for_user(self.specialist)
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
 
         for status in doesnt_require_decline_list:
             with self.subTest(status=status):
