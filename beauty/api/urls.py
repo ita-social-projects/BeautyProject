@@ -1,6 +1,8 @@
 """This module provides all needed api urls."""
 
-from django.urls import path
+from datetime import datetime
+
+from django.urls import path, register_converter
 
 from api.views.order_views import (OrderApprovingView, OrderListCreateView,
                                    OrderRetrieveCancelView)
@@ -18,6 +20,26 @@ from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         ServiceUpdateView, PositionRetrieveUpdateDestroyView)
 
 app_name = "api"
+
+
+class DateConverter:
+    """Converter class for passing date in urls.
+
+    Provide to_python and to_url methods.
+    """
+
+    regex = r"\d{4}-\d{2}-\d{2}"
+
+    def to_python(self, value):
+        """Converts date from url to python datetime object."""
+        return datetime.strptime(value, "%Y-%m-%d")
+
+    def to_url(self, value):
+        """Return date value from url."""
+        return value
+
+
+register_converter(DateConverter, "date")
 
 urlpatterns = [
     path(
@@ -99,7 +121,7 @@ urlpatterns = [
          ServiceUpdateView.as_view(),
          name="service-detail"),
     path(
-        "schedule/<int:specialist_id>/<int:position_id>",
+        "schedule/<int:position_id>/<int:specialist_id>/<date:order_date>/",
         SpecialistScheduleView.as_view(),
         name="specialist-schedule",
     ),

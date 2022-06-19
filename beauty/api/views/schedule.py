@@ -21,14 +21,14 @@ def get_time_intervals(start_time, end_time):
         time_range = (end_time + timedelta(hours=24)) - start_time
 
     time_block = start_time
-    for _ in range(time_range // timedelta(minutes=15)):
+    for _ in range(time_range // timedelta(minutes=15) - 3):
         intervals.append(time_block.time())
         time_block += timedelta(minutes=15)
 
     return intervals
 
 
-def get_free_time_intervals(position, specialist):
+def get_free_time_intervals(position, specialist, order_date):
     """Returns free time intervals."""
     free_time = [position.start_time, position.end_time]
 
@@ -36,10 +36,14 @@ def get_free_time_intervals(position, specialist):
         Order.StatusChoices.ACTIVE,
         Order.StatusChoices.APPROVED,
     ]
+
+    next_day_order_date = order_date + timedelta(days=1)
+
     # Get all not canceled orders for position.
     orders = Order.objects.filter(
         specialist=specialist,
         status__in=valid_order_statuses,
+        start_time__range=(order_date, next_day_order_date),
     )
 
     # Adds all time moments from orders (start and end) to free_time list.
@@ -65,14 +69,14 @@ def get_free_time_intervals(position, specialist):
 class SpecialistScheduleView(APIView):
     """View for displaying specialist's schedule."""
 
-    def get(self, request, position_id, specialist_id=1):
+    def get(self, request, position_id, specialist_id, order_date):
         """GET method for retrieving schedule."""
         position = get_object_or_404(Position, id=position_id)
         specialist = get_object_or_404(CustomUser, id=specialist_id)
 
         if specialist in position.specialist.all():
             return Response(
-                get_free_time_intervals(position, specialist),
+                get_free_time_intervals(position, specialist, order_date),
                 status=status.HTTP_200_OK,
             )
 

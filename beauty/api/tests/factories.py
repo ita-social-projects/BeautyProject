@@ -29,7 +29,9 @@ class RoundedTime:
 
         Returns datetime.now() with edited minutes and seconds
         """
-        return timezone.now().replace(minute=choice(cls.minutes), second=0)
+        return timezone.now().replace(
+            minute=choice(cls.minutes), second=0, microsecond=0,
+        )
 
     @classmethod
     def get_rounded_duration(cls):
@@ -122,6 +124,9 @@ class PositionFactory(factory.django.DjangoModelFactory):
         if extracted:
             for spec in extracted:
                 self.specialist.add(spec)
+
+        # auto add one specialist to the position
+        self.specialist.add(CustomUserFactory.create())
 
 
 class ServiceFactory(factory.django.DjangoModelFactory):
