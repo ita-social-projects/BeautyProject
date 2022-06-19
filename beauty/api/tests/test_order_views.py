@@ -45,7 +45,8 @@ from .factories import (GroupFactory,
                         PositionFactory,
                         ServiceFactory,
                         OrderFactory)
-from ..models import Order
+from api.models import Order
+
 
 CET = pytz.timezone("Europe/Kiev")
 
