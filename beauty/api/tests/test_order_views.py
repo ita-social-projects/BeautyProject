@@ -33,7 +33,7 @@ from .factories import (GroupFactory,
                         PositionFactory,
                         ServiceFactory,
                         OrderFactory)
-
+from ..models import Order
 
 CET = pytz.timezone("Europe/Kiev")
 
@@ -219,3 +219,59 @@ class TestOrderRetrieveCancelView(TestCase):
         self.assertEqual(specialist_response.status_code, 200)
         self.assertEqual(customer_response.status_code, 200)
         self.assertEqual(order_response.status_code, 200)
+
+    def test_put_method_valid_reason_specialist(self):
+        """Cancel order with valid reason by specialist."""
+        self.client.force_authenticate(user=self.specialist)
+        refresh = RefreshToken.for_user(self.specialist)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_put_method_valid_reason_customer(self):
+        """Cancel order with valid reason by customer."""
+        self.client.force_authenticate(user=self.customer)
+        refresh = RefreshToken.for_user(self.customer)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_put_method_invalid_reason(self):
+        """Cancel order with invalid reason."""
+        self.client.force_authenticate(user=self.specialist)
+        refresh = RefreshToken.for_user(self.specialist)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        response = self.client.put(path=self.order_url, data={"reason": ""})
+        self.assertEqual(response.status_code, 400)
+
+    def test_put_method_not_logged_user(self):
+        """Not logged user can not cancel an order."""
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_put_method_not_order_user(self):
+        """Users not from order can not cancel it."""
+        user = CustomUserFactory()
+        self.client.force_authenticate(user)
+        refresh = RefreshToken.for_user(user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 403)
+
+    def test_put_method_no_cancel_status(self):
+        """Test an order with statuses which can not change."""
+        status = Order.StatusChoices
+        doesnt_require_decline_list = (status.COMPLETED, status.CANCELLED, status.DECLINED)
+        self.client.force_authenticate(user=self.specialist)
+        refresh = RefreshToken.for_user(self.specialist)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        for status in doesnt_require_decline_list:
+            with self.subTest(status=status):
+                self.order.status = status
+                self.order.save()
+                response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+                self.assertEqual(response.status_code, 400)
