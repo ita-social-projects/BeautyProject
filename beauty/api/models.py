@@ -344,13 +344,8 @@ class Position(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Business"),
     )
-    start_time = models.TimeField(
-        editable=True,
-        verbose_name=_("Start time"),
-    )
-    end_time = models.TimeField(
-        editable=True,
-        verbose_name=_("End time"),
+    working_time = models.JSONField(
+        default=dict,
     )
 
     def __str__(self):
