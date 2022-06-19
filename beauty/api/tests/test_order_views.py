@@ -15,6 +15,18 @@ Tests for OrderApprovingView:
 - The specialist is redirected to the own page if he declined the order;
 - The specialist is redirected to the own page if the order token expired;
 - The user is redirected to the order specialist detail page if he is not logged.
+
+Tests for OrderRetrieveCancelView:
+- SetUp method adds needed info for tests;
+- Only a logged user from order (customer, specialist) can retrieve an order;
+- Logged order customer can retrieve an order;
+- Logged order specialist can retrieve an order;
+- Cancel order with valid reason by specialist;
+- Cancel order with valid reason by customer;
+- Cancel order with invalid reason;
+- Not logged user can not cancel an order;
+- Users not from order can not cancel it;
+- Test an order with statuses which can not change.
 """
 
 import pytz
