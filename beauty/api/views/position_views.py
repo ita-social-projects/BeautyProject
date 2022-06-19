@@ -67,14 +67,13 @@ class InviteSpecialistToPosition(GenericAPIView):
                 request=request,
                 context=context,
             ).send(to=[email_to_send])
-            return Response(status=status.HTTP_200_OK)
         else:
             logger.info("User doesn't exist, sending an invitation for registration.")
             RegisterInviteEmail(
                 request=request,
                 context=context,
             ).send(to=[email_to_send])
-            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
     def check_user(self, user_email, position):
         """This method checks that all requirements are satisfied."""
