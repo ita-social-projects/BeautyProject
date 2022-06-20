@@ -118,19 +118,29 @@ def get_free_time_specialist_for_owner(position, specialist, order_date):
         status__in=valid_order_statuses,
         start_time__range=(order_date, next_day_order_date),
     )
+    # Needed of use insert method and access to list in same loop
+    new_specialist_schedule = specialist_schedule.copy()
 
-    for index in range(len(specialist_schedule)):
+    for time in specialist_schedule:
         current_order = [order.id
                          for order in orders
-                         if order.start_time.time() == specialist_schedule[index][1]
+                         if order.start_time.time() == time[1]
                          ]
-        specialist_schedule.insert(index + 1, current_order[0])
 
-    start_order = [order for order in orders if order.end_time.time() == specialist_schedule[0][0]]
+        if current_order:
+            new_specialist_schedule.insert(
+                new_specialist_schedule.index(time) + 1,
+                current_order[0],
+            )
+
+    start_order = [order
+                   for order in orders
+                   if order.end_time.time() == specialist_schedule[0][0]
+                   ]
     if start_order:
-        specialist_schedule.insert(0, start_order[0].id)
+        new_specialist_schedule.insert(0, start_order[0].id)
 
-    return specialist_schedule
+    return new_specialist_schedule
 
 
 class SpecialistScheduleView(APIView):
