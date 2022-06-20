@@ -94,8 +94,8 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
                 try:
                     opening_time = datetime.strptime(working_time[day][0], "%H:%M")
                     closing_time = datetime.strptime(working_time[day][1], "%H:%M")
-                    print(type(opening_time), closing_time)
-
+                    working_time[day][0] = opening_time.strftime("%H:%M")
+                    working_time[day][1] = closing_time.strftime("%H:%M")
                 except ValueError:
                     raise serializers.ValidationError(
                         {f"{day}": f"{day} -day`s schedule does not match the template "
