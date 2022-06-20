@@ -40,6 +40,9 @@ class OrderApprovingTokenGenerator(PasswordResetTokenGenerator):
 class SpecialistInviteTokenGenerator(PasswordResetTokenGenerator):
     """This is a token for approving Position."""
 
-    def _make_hash_value(self, user: object, timestamp: int):
+    def _make_hash_value(self, invitation: object, timestamp: int) -> str:
         """This method sets values for hashing."""
-        return f"{user.id}{timestamp}"
+        created_at_timestamp = invitation.created_at.replace(
+            microsecond=0, tzinfo=None).timestamp()
+
+        return f"{invitation.email}{created_at_timestamp}{timestamp}"

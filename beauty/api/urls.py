@@ -81,12 +81,12 @@ urlpatterns = [
         name="position-detail-list",
     ),
     path(
-        "position/<int:pk>/add",
+        "position/<int:pk>/add/",
         InviteSpecialistToPosition.as_view(),
         name="position-add-specialist",
     ),
     path(
-        "position-accept/<str:user>/<str:position>/<str:token>",
+        "position-accept/<str:email>/<str:position>/<str:token>/<str:answer>/",
         InviteSpecialistApprove.as_view(),
         name="position-approve",
     ),

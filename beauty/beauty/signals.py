@@ -1,12 +1,13 @@
 """Module with all project signals."""
 
 import logging
+
 from django.db.models.signals import post_save
 from django.dispatch import Signal, receiver
 from rest_framework.reverse import reverse
 
-from api.models import Order
-from beauty.tokens import OrderApprovingTokenGenerator
+from api.models import Order, Invitation
+from beauty.tokens import OrderApprovingTokenGenerator, SpecialistInviteTokenGenerator
 from beauty.utils import StatusOrderEmail
 
 
@@ -20,6 +21,14 @@ def create_token_for_order(sender, instance, created, **kwargs):
     """Create order token."""
     if created:
         instance.token = OrderApprovingTokenGenerator().make_token(instance)
+        instance.save()
+
+
+@receiver(post_save, sender=Invitation, dispatch_uid="")
+def create_token_for_invite(sender, instance, created, **kwargs):
+    """Signal that creates token for an Invitation."""
+    if created:
+        instance.token = SpecialistInviteTokenGenerator().make_token(instance)
         instance.save()
 
 

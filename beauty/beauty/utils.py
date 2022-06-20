@@ -8,7 +8,6 @@ import pytz
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
 from faker import Faker
-from .tokens import SpecialistInviteTokenGenerator
 
 faker = Faker()
 
@@ -135,29 +134,25 @@ class PositionAcceptEmail(BaseEmailMessage):
     def get_context_data(self):
         """Get context data for rendering HTML messages."""
         context = super().get_context_data()
-
-        pos = context.get("position")
-        user = context.get("inviter")
-        email = context.get("email")
-
-        context.update(self.create_approve_link(user.id, pos, email))
-
+        context.update(self.create_approve_link(context.get("invite")))
         return context
 
-    def create_approve_link(self, inviter: int, position: int, email: str):
+    def create_approve_link(self, invite: object):
         """This method creates approve link."""
-        from api.models import CustomUser
         from djoser.utils import encode_uid
 
-        user = CustomUser.objects.get(email=email)
         params = {
-            "user": encode_uid(inviter),
-            "position": encode_uid(position.id),
-            "token": SpecialistInviteTokenGenerator().make_token(user=user),
+            "email": encode_uid(invite.email),
+            "position": encode_uid(invite.position.id),
+            "token": invite.token,
         }
 
         return {"approve_link": reverse("api:position-approve",
-                                        kwargs=params, request=None),
+                                        kwargs=params | {"answer": encode_uid("confirm")},
+                                        request=None),
+                "decline_link": reverse("api:position-approve",
+                                        kwargs=params | {"answer": encode_uid("decline")},
+                                        request=None),
                 }
 
 
