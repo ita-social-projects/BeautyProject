@@ -4,8 +4,8 @@ from datetime import datetime
 
 from django.urls import path, register_converter
 
-from api.views.order_views import (OrderApprovingView, OrderListCreateView,
-                                   OrderRetrieveCancelView)
+from api.views.order_views import (CustomerOrdersViews, OrderApprovingView,
+                                   OrderListCreateView, OrderRetrieveCancelView)
 
 from api.views.schedule import SpecialistScheduleView
 
@@ -61,6 +61,11 @@ urlpatterns = [
         "user/<int:user>/order/<int:pk>/",
         OrderRetrieveCancelView.as_view(),
         name="user-order-detail",
+    ),
+    path(
+        "customer/<int:pk>/orders/",
+        CustomerOrdersViews.as_view(),
+        name="customer-orders-list",
     ),
     path(
         "orders/",

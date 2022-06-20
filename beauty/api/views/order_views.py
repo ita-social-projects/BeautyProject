@@ -8,18 +8,18 @@ from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from rest_framework import status
+from rest_framework import (filters, status)
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
-                                     get_object_or_404)
+                                     get_object_or_404, ListAPIView, RetrieveAPIView)
 from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
-from beauty.utils import ApprovingOrderEmail, CancelOrderEmail
-from api.models import Order
-from api.permissions import IsOrderUser
+from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail)
+from api.models import (CustomUser, Order)
+from api.permissions import (IsOrderUser, IsCustomerOrders)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
 logger = logging.getLogger(__name__)
@@ -119,7 +119,7 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
             reverse("api:user-detail", args=[authenticated_user.id]))
 
 
-class OrderApprovingView(ListCreateAPIView):
+class OrderApprovingView(RetrieveAPIView):
     """Approving orders custom GET method."""
 
     queryset = Order.objects.all()
@@ -179,3 +179,20 @@ class OrderApprovingView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
+
+
+class CustomerOrdersViews(ListAPIView):
+    """Show all orders concrete customer."""
+
+    serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated, IsCustomerOrders)
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["status", "specialist", "service", "start_time", "end_time"]
+
+    def get_queryset(self):
+        """Get orders for a customer."""
+        customer = get_object_or_404(CustomUser, id=self.kwargs["pk"])
+
+        logger.info(f"Get orders for the customer {customer}")
+
+        return customer.customer_orders.all()
