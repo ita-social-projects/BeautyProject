@@ -6,6 +6,9 @@ from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+
 from rest_framework import status
 
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
@@ -242,6 +245,11 @@ class AllServicesListCreateView(ListCreateAPIView):
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_fields = ["name", "price", "duration"]
+    search_fields = ["name", "price", "description", "duration"]
+    ordering_fields = ["price", "name", "duration"]
 
     logger.debug("View to display all services that can be provided.")
 
