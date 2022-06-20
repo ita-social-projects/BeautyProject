@@ -121,7 +121,6 @@ class BusinessListCreateViewTest(TestCase):
         Checks if view does not allow user to create business without
         authentication
         """
-
         response = self.client.post(
             path=reverse(
                 "api:businesses-list-create",
@@ -140,7 +139,7 @@ class BusinessListCreateViewTest(TestCase):
         self.client.force_authenticate(user=self.customer)
 
         self.invalid_create_data = {
-            "name": faker.word(), 
+            "name": faker.word(),
             "business_type": faker.word(),
             "description": faker.text(),
         }

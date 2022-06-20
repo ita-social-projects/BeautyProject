@@ -125,9 +125,6 @@ class PositionFactory(factory.django.DjangoModelFactory):
             for spec in extracted:
                 self.specialist.add(spec)
 
-        # auto add one specialist to the position
-        self.specialist.add(CustomUserFactory.create())
-
 
 class ServiceFactory(factory.django.DjangoModelFactory):
     """Factory class for testing Service model."""

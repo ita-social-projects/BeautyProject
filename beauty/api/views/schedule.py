@@ -1,6 +1,6 @@
 """Module with SpecialistScheduleView."""
 
-from api.models import Order, Position, CustomUser
+from api.models import Order, Position, CustomUser, Service
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from datetime import timedelta, datetime, date
 
 
-def get_time_intervals(start_time, end_time):
+def get_time_intervals(service, start_time, end_time):
     """Divides given time range in blocks by 15 min."""
     intervals = []
 
@@ -21,14 +21,19 @@ def get_time_intervals(start_time, end_time):
         time_range = (end_time + timedelta(hours=24)) - start_time
 
     time_block = start_time
-    for _ in range(time_range // timedelta(minutes=15) - 3):
+    for _ in range(time_range // timedelta(minutes=15)):
         intervals.append(time_block.time())
         time_block += timedelta(minutes=15)
+
+    while service.duration > end_time - datetime.combine(
+        date.today(), intervals[-1],
+    ):
+        intervals.pop()
 
     return intervals
 
 
-def get_free_time_intervals(position, specialist, order_date):
+def get_free_time_intervals(position, specialist, service, order_date):
     """Returns free time intervals."""
     free_time = [position.start_time, position.end_time]
 
@@ -60,7 +65,7 @@ def get_free_time_intervals(position, specialist, order_date):
     free_time = [time for time in free_time if free_time.count(time) == 1]
 
     # First value is start of free time block, and second is end of block.
-    free_time_blocks = [get_time_intervals(free_time[i], free_time[i + 1])
+    free_time_blocks = [get_time_intervals(service, free_time[i], free_time[i + 1])
                         for i in range(0, len(free_time) - 1, 2)]
 
     return free_time_blocks
@@ -69,18 +74,33 @@ def get_free_time_intervals(position, specialist, order_date):
 class SpecialistScheduleView(APIView):
     """View for displaying specialist's schedule."""
 
-    def get(self, request, position_id, specialist_id, order_date):
+    def get(self, request, position_id, specialist_id, service_id, order_date):
         """GET method for retrieving schedule."""
         position = get_object_or_404(Position, id=position_id)
         specialist = get_object_or_404(CustomUser, id=specialist_id)
+        service = get_object_or_404(Service, id=service_id)
 
-        if specialist in position.specialist.all():
+        if specialist not in position.specialist.all():
             return Response(
-                get_free_time_intervals(position, specialist, order_date),
-                status=status.HTTP_200_OK,
+                {"detail": "Such specialist doesn't hold position"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if service not in position.service_set.all():
+            return Response(
+                {"detail": "Such specialist doesn't have such service"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if order_date < datetime.now().replace(
+            hour=0, minute=0, second=0, microsecond=0,
+        ):
+            return Response(
+                {"detail": "You can't see schedule of the past days"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         return Response(
-            {"detail": "Not found"},
-            status=status.HTTP_404_NOT_FOUND,
+            get_free_time_intervals(position, specialist, service, order_date),
+            status=status.HTTP_200_OK,
         )
