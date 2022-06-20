@@ -7,7 +7,7 @@ from django.urls import path, register_converter
 from api.views.order_views import (CustomerOrdersViews, OrderApprovingView,
                                    OrderListCreateView, OrderRetrieveCancelView)
 
-from api.views.schedule import SpecialistScheduleView
+from api.views.schedule import OwnerSpecialistScheduleView, SpecialistScheduleView
 
 from api.views.review_views import (ReviewDisplayView,
                                     ReviewRUDView,
@@ -129,5 +129,10 @@ urlpatterns = [
         "schedule/<int:position_id>/<int:specialist_id>/<int:service_id>/<date:order_date>/",
         SpecialistScheduleView.as_view(),
         name="specialist-schedule",
+    ),
+    path(
+        "owner_schedule/<int:position_id>/<int:specialist_id>/<date:order_date>/",
+        OwnerSpecialistScheduleView.as_view(),
+        name="owner-specialist-schedule",
     ),
 ]

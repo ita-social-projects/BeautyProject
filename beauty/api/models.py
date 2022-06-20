@@ -344,11 +344,13 @@ class Position(models.Model):
         editable=True,
         verbose_name=_("Start time"),
         validators=[validate_rounded_minutes_seconds],
+        default=None,
     )
     end_time = models.TimeField(
         editable=True,
         verbose_name=_("End time"),
         validators=[validate_rounded_minutes_seconds],
+        default=None,
     )
 
     def __str__(self):
