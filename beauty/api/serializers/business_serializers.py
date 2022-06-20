@@ -1,9 +1,11 @@
 """The module includes serializers for Business model."""
 
+import calendar
 import logging
-import re
 from datetime import datetime
+
 from rest_framework import serializers
+
 from api.models import (Business, CustomUser)
 
 
@@ -30,6 +32,7 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
 
     Provides proper business creation and validation based on set working hours.
     """
+    week_days = [day.capitalize() for day in calendar.HTMLCalendar.cssclasses]
 
     Sun = serializers.ListField(
         write_only=True,
@@ -71,34 +74,44 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
         """Validate working hours.
 
         Args:
-            data (dict): dictionary with data for user creation
+            data (dict): dictionary with data for business creation
 
         Returns:
-            data (dict): dictionary with validated data for user creation
+            data (dict): dictionary with validated data for business creation
 
         """
-        hours_fields = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        working_time = data["working_time"]
+        for day in self.week_days:
 
-        for time in hours_fields:
-            if len(data[time]) not in [0, 2]:
+            amount_of_data = len(working_time[day])
+            if amount_of_data not in [0, 2]:
                 raise serializers.ValidationError(
-                    {f"{time}": "Must contain 2 elements or 0."},
+                    {f"{day}": "Must contain 2 elements or 0."},
                 )
 
-            if len(data[time]) == 2:
-                if not (
-                    re.search(
-                        r"^\d{2}:\d{2}$",
-                        data[time][0],
-                    ) and re.search(
-                        r"^\d{2}:\d{2}$",
-                        data[time][1],
-                    )
-                ):
+            if len(working_time[day]) == 2:
+
+                try:
+                    opening_time = datetime.strptime(working_time[day][0], "%H:%M")
+                    closing_time = datetime.strptime(working_time[day][1], "%H:%M")
+                    print(type(opening_time), closing_time)
+
+                except ValueError:
                     raise serializers.ValidationError(
-                        {f"{time}":
-                         "Doesn't match template like 00:00-00:00."},
+                        {f"{day}": f"{day} -day`s schedule does not match the template "
+                                   f"['HH:MM', 'HH:MM']."},
                     )
+
+                if opening_time > closing_time:
+
+                    raise serializers.ValidationError(
+                        {f"{day}": f"{day} -day working hours must begin before they end."},
+                    )
+
+                if opening_time == closing_time:
+                    working_time[day] = []
+
+        data["working_time"] = working_time
 
         return super().validate(data)
 
@@ -112,16 +125,14 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
             business (object): new business
 
         """
-        hours_fields = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-
         json_field = {key: value if len(value) != 2 else [
                       datetime.strptime(value[0], "%H:%M").time().__str__(),
                       datetime.strptime(value[1], "%H:%M").time().__str__(),
                       ]
                       for key, value in validated_data.items()
-                      if key in hours_fields}
+                      if key in self.week_days}
 
-        for key in hours_fields:
+        for key in self.week_days:
             validated_data.pop(key)
 
         validated_data["working_time"] = json_field
@@ -129,15 +140,13 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
 
 
 class BusinessCreateSerializer(BaseBusinessSerializer, WorkingTimeSerializer):
-    """Business serilalizer for list and create views."""
+    """Business serializer for list and create views."""
 
     class Meta:
-        """Display 3 required fields for Business creation."""
+        """Display required fields for Business creation."""
 
-        hours_fields = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
         model = Business
-        fields = ("name", "business_type", "owner", "description",
-                  *hours_fields)
+        fields = ("name", "business_type", "owner", "description", "working_time")
         read_only_fields = ("owner", )
 
 
@@ -171,7 +180,7 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
         exclude = ("created_at", "id", "owner", "working_time")
 
 
-class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
+class BusinessGetAllInfoSerializers(BaseBusinessSerializer, WorkingTimeSerializer):
     """Serializer for getting all info about business."""
 
     address = serializers.CharField(max_length=500)
