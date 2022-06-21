@@ -46,8 +46,8 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
                         f"does not have such service")
 
             raise serializers.ValidationError(
-                {"service": "Specialist does not have such service.",
-                 "help_text": f"Specialist has such services "
+                {"service": f"Specialist {specialist.get_full_name()} does not have such service.",
+                 "help_text": f"Specialist {specialist.get_full_name()} has such services "
                               f"{list(specialist_services)}."},
             )
 

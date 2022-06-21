@@ -39,11 +39,6 @@ def api_root(request, reverse_format=None):
             "api:user-list-create",
             request=request,
             format=reverse_format,
-        ),
-        "orders": reverse(
-            "api:order-list-create",
-            request=request,
-            format=reverse_format,
         )},
     )
 
