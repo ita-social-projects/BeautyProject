@@ -43,10 +43,11 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             specialist=specialist).values_list("service__name", flat=True)
         if not service.position.specialist.filter(id=specialist.id):
             logger.info(f"Specialist {specialist.get_full_name()}"
-                        f"does not have such service")
+                        f"does not have {service.name} service")
 
             raise serializers.ValidationError(
-                {"service": f"Specialist {specialist.get_full_name()} does not have such service.",
+                {"service": f"Specialist {specialist.get_full_name()} does not have "
+                            f"{service.name} service.",
                  "help_text": f"Specialist {specialist.get_full_name()} has such services "
                               f"{list(specialist_services)}."},
             )
