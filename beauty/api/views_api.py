@@ -23,6 +23,8 @@ from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
+from .filters import ServiceFilter
+
 from .models import (Business, CustomUser, Position, Service)
 
 from .permissions import (IsAdminOrThisBusinessOwner, IsOwner,
@@ -246,8 +248,8 @@ class AllServicesListCreateView(ListCreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filter_fields = ["name", "price", "duration"]
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_class = ServiceFilter
     search_fields = ["name", "price", "description", "duration"]
     ordering_fields = ["price", "name", "duration"]
 
