@@ -5,7 +5,7 @@ Todo:
 """
 
 from collections import namedtuple
-
+import calendar
 from django.utils import timezone
 import factory
 from factory import fuzzy
@@ -74,6 +74,16 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     address = factory.Faker("address")
     description = factory.Faker("sentence", nb_words=4)
 
+    @factory.lazy_attribute
+    def working_time(self):
+        """Generates business working time."""
+        week_days = [day.capitalize()
+                     for day in calendar.HTMLCalendar.cssclasses]
+        working_time = {day: ["9:00",
+                              "10:00"]
+                        for day in week_days}
+        return working_time
+
 
 class PositionFactory(factory.django.DjangoModelFactory):
     """Factory class for testing Position model."""
@@ -85,8 +95,11 @@ class PositionFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Position_{n}")
     business = factory.SubFactory(BusinessFactory)
-    start_time = factory.LazyFunction(timezone.now)
-    end_time = factory.LazyAttribute(lambda o: o.start_time + timezone.timedelta(hours=4))
+
+    @factory.lazy_attribute
+    def working_time(self):
+        """Generates working time based on business."""
+        return self.business.working_time
 
     @factory.post_generation
     def specialist(self, create, extracted, **kwargs):

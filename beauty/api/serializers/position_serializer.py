@@ -29,8 +29,8 @@ def is_valid_position_time(business_time, data):
             datetime.strptime(data[time][1], "%H:%M"),
         )
         main_interval = (
-            datetime.strptime(business_time[time][0], "%H:%M:%S"),
-            datetime.strptime(business_time[time][1], "%H:%M:%S"),
+            datetime.strptime(business_time[time][0], "%H:%M"),
+            datetime.strptime(business_time[time][1], "%H:%M"),
         )
 
         if not is_inside_interval(main_interval, inner_interval):
