@@ -8,20 +8,19 @@ from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
-from rest_framework import status
+from rest_framework import (filters, status)
 from rest_framework.generics import (ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
-                                     get_object_or_404)
+                                     get_object_or_404, ListAPIView, RetrieveAPIView)
 from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
-from beauty.utils import ApprovingOrderEmail
-from api.models import Order
-from api.permissions import IsOrderUser
+from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail)
+from api.models import (CustomUser, Order)
+from api.permissions import (IsOrderUser, IsCustomerOrders)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
-
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +76,7 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
     login_url = settings.LOGIN_URL
     redirect_field_name = "redirect_to"
 
-    queryset = Order.objects.exclude(status__in=[2, 4])
+    queryset = Order.objects.all()
     serializer_class = OrderDeleteSerializer
     permission_classes = (IsAuthenticated, IsOrderUser)
 
@@ -104,8 +103,23 @@ class OrderRetrieveCancelView(TokenLoginRequiredMixin, RetrieveUpdateDestroyAPIV
 
         return super().get_object()
 
+    def put(self, request, *args, **kwargs):
+        """Put method to cancel an active appointment by customer or specialist."""
+        super().put(request, *args, **kwargs)
+        order = self.get_object()
+        authenticated_user = request.user
+        user = order.customer if authenticated_user == order.specialist else order.specialist
+        context = {"order": order, "user": authenticated_user}
 
-class OrderApprovingView(ListCreateAPIView):
+        CancelOrderEmail(request, context).send([user.email])
+
+        logger.info(f"{order}: canceling email was sent to the {user.get_full_name()}")
+
+        return redirect(
+            reverse("api:user-detail", args=[authenticated_user.id]))
+
+
+class OrderApprovingView(RetrieveAPIView):
     """Approving orders custom GET method."""
 
     queryset = Order.objects.all()
@@ -165,3 +179,20 @@ class OrderApprovingView(ListCreateAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
+
+
+class CustomerOrdersViews(ListAPIView):
+    """Show all orders concrete customer."""
+
+    serializer_class = OrderSerializer
+    permission_classes = (IsAuthenticated, IsCustomerOrders)
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ["status", "specialist", "service", "start_time", "end_time"]
+
+    def get_queryset(self):
+        """Get orders for a customer."""
+        customer = get_object_or_404(CustomUser, id=self.kwargs["pk"])
+
+        logger.info(f"Get orders for the customer {customer}")
+
+        return customer.customer_orders.all()

@@ -502,6 +502,7 @@ class Order(models.Model):
         blank=True,
         null=True,
         verbose_name=_("Reason for cancellation"),
+        max_length=300,
     )
 
     token = models.CharField(
