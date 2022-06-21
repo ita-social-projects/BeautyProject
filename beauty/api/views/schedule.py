@@ -8,39 +8,42 @@ from django.shortcuts import get_object_or_404
 from datetime import timedelta, datetime, date
 
 
-def get_free_time(position, specialist, order_date):
-    """Return list of time moments."""
-    free_time = [
-        position.start_time,
-        position.end_time,
-    ]
+def get_orders_for_specific_date(specialist, order_date):
+    """Return active or approved orders.
 
+    Filter them by certain specialist and specific date.
+    """
     valid_order_statuses = [
         Order.StatusChoices.ACTIVE,
         Order.StatusChoices.APPROVED,
     ]
 
-    next_day_order_date = order_date + timedelta(days=1)
-
-    # Get all not canceled orders for position.
-    orders = Order.objects.filter(
+    return Order.objects.filter(
         specialist=specialist,
         status__in=valid_order_statuses,
-        start_time__range=(order_date, next_day_order_date),
+        start_time__range=(order_date, order_date + timedelta(days=1)),
     )
 
-    # Adds all time moments from orders (start and end) to free_time list.
-    free_time.extend([order_time for order in orders
-                      for order_time in (
-                          order.start_time.time(),
-                          order.end_time.time(),
-                      )])
 
-    free_time.sort()
+def get_free_time(position, specialist, order_date):
+    """Return list of time moments."""
+    free_time = [position.start_time, position.end_time]
+
+    orders = get_orders_for_specific_date(specialist, order_date)
+
+    # Adds all time moments from orders (start and end) to free_time list.
+    orders_time = [
+        order_time
+        for order in orders
+        for order_time in (order.start_time.time(), order.end_time.time())
+    ]
+
+    free_time.extend(orders_time)
 
     # Remove values that are dublicated, including origin of dublicated value.
     # [1, 1, 2, 3, 4] then remove elements at 0 and 1 index.
-    free_time = [time for time in free_time if free_time.count(time) == 1]
+    free_time = list(set(free_time))
+    free_time.sort()
 
     return free_time
 
@@ -73,24 +76,17 @@ def get_free_time_for_customer(position, specialist, service, order_date):
     new_free_time = []
 
     for start, end in zip(free_time[::2], free_time[1::2]):
-        if datetime.combine(
-            datetime.today(),
-            end,
-        ) - datetime.combine(
-            datetime.today(),
-            start,
-        ) >= service.duration:
-            new_free_time.extend([
-                start,
-                (datetime.combine(
-                    datetime.today(),
-                    end,
-                ) - service.duration).time(),
-            ])
+        end = datetime.combine(datetime.today(), end)
+
+        if end - datetime.combine(datetime.today(), start) >= service.duration:
+            new_free_time.extend((start, (end - service.duration).time()))
 
     # First value is start of free time block, and second is end of block.
-    free_time_blocks = [get_time_intervals(start, end)
-                        for start, end in zip(new_free_time[::2], new_free_time[1::2])]
+    free_time_blocks = [
+        get_time_intervals(start, end)
+        for start, end in
+        zip(new_free_time[::2], new_free_time[1::2])
+    ]
 
     return free_time_blocks
 
@@ -99,33 +95,23 @@ def get_free_time_specialist_for_owner(position, specialist, order_date):
     """Return list of free time blocks and orders."""
     specialist_schedule = get_free_time(position, specialist, order_date)
 
-    specialist_schedule = [[start, end]
-                           for start, end in zip(
-                               specialist_schedule[::2],
-                               specialist_schedule[1::2],
-    )]
-
-    valid_order_statuses = [
-        Order.StatusChoices.ACTIVE,
-        Order.StatusChoices.APPROVED,
+    specialist_schedule = [
+        [start, end]
+        for start, end in
+        zip(specialist_schedule[::2], specialist_schedule[1::2])
     ]
 
-    next_day_order_date = order_date + timedelta(days=1)
+    orders = get_orders_for_specific_date(position, specialist, order_date)
 
-    # Get all not canceled orders for position.
-    orders = Order.objects.filter(
-        specialist=specialist,
-        status__in=valid_order_statuses,
-        start_time__range=(order_date, next_day_order_date),
-    )
     # Needed of use insert method and access to list in same loop
     new_specialist_schedule = specialist_schedule.copy()
 
     for time in specialist_schedule:
-        current_order = [order.id
-                         for order in orders
-                         if order.start_time.time() == time[1]
-                         ]
+        current_order = [
+            order.id
+            for order in orders
+            if order.start_time.time() == time[1]
+        ]
 
         if current_order:
             new_specialist_schedule.insert(
@@ -133,10 +119,12 @@ def get_free_time_specialist_for_owner(position, specialist, order_date):
                 current_order[0],
             )
 
-    start_order = [order
-                   for order in orders
-                   if order.end_time.time() == specialist_schedule[0][0]
-                   ]
+    start_order = [
+        order
+        for order in orders
+        if order.end_time.time() == specialist_schedule[0][0]
+    ]
+
     if start_order:
         new_specialist_schedule.insert(0, start_order[0].id)
 
@@ -164,16 +152,16 @@ class SpecialistScheduleView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if order_date < datetime.now().replace(
-            hour=0, minute=0, second=0, microsecond=0,
-        ):
+        if order_date.date() < date.today():
             return Response(
                 {"detail": "You can't see schedule of the past days"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         return Response(
-            get_free_time_for_customer(position, specialist, service, order_date),
+            get_free_time_for_customer(
+                position, specialist, service, order_date,
+            ),
             status=status.HTTP_200_OK,
         )
 
@@ -193,6 +181,8 @@ class OwnerSpecialistScheduleView(APIView):
             )
 
         return Response(
-            get_free_time_specialist_for_owner(position, specialist, order_date),
+            get_free_time_specialist_for_owner(
+                position, specialist, order_date,
+            ),
             status=status.HTTP_200_OK,
         )
