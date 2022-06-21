@@ -10,7 +10,7 @@ from rest_framework import status
 
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
-                                     RetrieveAPIView,
+                                     RetrieveAPIView, ListAPIView,
                                      get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
 
@@ -22,7 +22,7 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 
 from .models import (Business, CustomUser, Position, Service)
 
-from .permissions import (IsAdminOrThisBusinessOwner, IsOwner,
+from .permissions import (IsAdminOrThisBusinessOwner, IsOwner, IsServiceOwner,
                           IsPositionOwner, IsProfileOwner, ReadOnly)
 
 from .serializers.business_serializers import (BusinessCreateSerializer,
@@ -249,12 +249,44 @@ class AllServicesListCreateView(ListCreateAPIView):
 class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
     """View for retrieving, updating or deleting service info."""
 
-    permission_classes = [IsOwner | ReadOnly]
+    permission_classes = [IsServiceOwner]
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
     logger.debug("A view for retrieving, updating or deleting a service instance.")
+
+
+class BusinessServicesView(ListAPIView):
+    """View for retrieving all services providing by specific business."""
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    def get_queryset(self):
+        """Filter service for current business."""
+        business = Business.objects.get(id=self.kwargs["pk"])
+        position = Position.objects.get(business=business)
+
+        logger.info(f"Got services from business {business}")
+
+        return Service.objects.filter(position=position)
+
+
+class SpecialistsServicesView(ListAPIView):
+    """View for retrieving all services providing by specific specialist."""
+
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    def get_queryset(self):
+        """Filter service for current specialist."""
+        specialist = CustomUser.objects.get(id=self.kwargs["pk"])
+        position = Position.objects.get(specialist=specialist)
+
+        logger.info(f"Got services from specialist {specialist}")
+
+        return Service.objects.filter(position=position)
 
 
 class UserViewSet(DjoserUserViewSet):
