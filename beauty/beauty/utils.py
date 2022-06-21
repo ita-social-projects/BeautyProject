@@ -160,3 +160,9 @@ class RegisterInviteEmail(BaseEmailMessage):
     """This email is sent to invite to register on site."""
 
     template_name = "email/register_invite_email.html"
+
+
+class SpecialistAnswerEmail(BaseEmailMessage):
+    """This email is sent to notify owner on the Specialist's decision."""
+
+    template_name = "email/specialist_decision.html"

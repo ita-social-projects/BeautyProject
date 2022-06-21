@@ -14,7 +14,7 @@ from api.models import Position, CustomUser, Invitation
 from api.permissions import IsPositionOwner
 from beauty.tokens import SpecialistInviteTokenGenerator
 from rest_framework.permissions import IsAuthenticated
-from beauty.utils import PositionAcceptEmail, RegisterInviteEmail
+from beauty.utils import PositionAcceptEmail, RegisterInviteEmail, SpecialistAnswerEmail
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
@@ -125,10 +125,25 @@ class InviteSpecialistApprove(GenericAPIView):
                 position=position_id,
             )
             if SpecialistInviteTokenGenerator().check_token(invitation, token):
+                logger.info("Token is valid.")
+                owner = Position.objects.get(pk=position_id).business.owner
                 if answer == "decline":
+                    SpecialistAnswerEmail(
+                        request=request,
+                        context={
+                            "invite": invitation,
+                            "answer": "declined",
+                        },
+                    ).send(to=[owner.email])
                     invitation.delete()
                 else:
-                    logger.info("Token is valid.")
+                    SpecialistAnswerEmail(
+                        request=request,
+                        context={
+                            "invite": invitation,
+                            "answer": "accepted",
+                        },
+                    ).send(to=[owner.email])
                     user = CustomUser.objects.get(email=user_email)
                     specialist_group = Group.objects.get(name="Specialist")
                     specialist_group.user_set.add(user)
