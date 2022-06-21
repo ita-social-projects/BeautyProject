@@ -2,7 +2,7 @@
 
 from django.urls import path
 
-from api.views.order_views import (CustomerOrdersViews, OrderApprovingView,
+from api.views.order_views import (CustomerOrdersViews, SpecialistOrdersViews, OrderApprovingView,
                                    OrderListCreateView, OrderRetrieveCancelView)
 
 from api.views.review_views import (ReviewDisplayView,
@@ -41,6 +41,11 @@ urlpatterns = [
         "customer/<int:pk>/orders/",
         CustomerOrdersViews.as_view(),
         name="customer-orders-list",
+    ),
+    path(
+        "specialist/<int:pk>/orders/",
+        SpecialistOrdersViews.as_view(),
+        name="specialist-orders-list",
     ),
     path(
         "orders/",
