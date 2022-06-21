@@ -53,16 +53,16 @@ class OrderListCreateView(CreateAPIView):
         """Create an order and add an authenticated customer to it."""
         serializer = self.get_serializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
-        order = serializer.save(customer=request.user)
+        orders = serializer.save(customer=request.user)
+        for order in orders:
+            logger.info(f"{order} with {order.service.name} was created")
 
-        logger.info(f"{order} with {order.service.name} was created")
+            context = {"order": order}
+            to = [order.specialist.email]
+            ApprovingOrderEmail(request, context).send(to)
 
-        context = {"order": order}
-        to = [order.specialist.email]
-        ApprovingOrderEmail(request, context).send(to)
-
-        logger.info(f"{order}: approving email was sent to the specialist "
-                    f"{order.specialist.get_full_name()}")
+            logger.info(f"{order}: approving email was sent to the specialist "
+                        f"{order.specialist.get_full_name()}")
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
