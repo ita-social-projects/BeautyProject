@@ -656,7 +656,6 @@ class Invitation(models.Model):
     email = models.EmailField(
         max_length=100,
         unique=False,
-        validators=(validate_email,),
     )
 
     position = models.ForeignKey(
