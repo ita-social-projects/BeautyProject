@@ -2,6 +2,7 @@
 
 import logging
 
+from django.http import Http404
 from django.db import IntegrityError
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
@@ -23,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 class InviteSpecialistToPosition(GenericAPIView):
     """This view is used for inviting specialists for a position."""
+
     queryset = Position.objects.all()
     serializer_class = PositionInviteSerializer
     permission_classes = (IsAuthenticated, IsPositionOwner)
@@ -91,7 +93,7 @@ class InviteSpecialistToPosition(GenericAPIView):
                 return True
             else:
                 raise ValidationError({"user": "User is already on the Position."}, code=400)
-        except CustomUser.DoesNotExist:
+        except Http404:
             return False
 
 

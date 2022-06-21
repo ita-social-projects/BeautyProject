@@ -161,6 +161,26 @@ class RegisterInviteEmail(BaseEmailMessage):
 
     template_name = "email/register_invite_email.html"
 
+    def get_context_data(self):
+        """Get context data for rendering HTML messages."""
+        context = super().get_context_data()
+        context.update(self.create_invite_link(context.get("invite")))
+        return context
+
+    def create_invite_link(self, invite: object):
+        """This method creates invite link."""
+        from djoser.utils import encode_uid
+
+        return {
+            "register_link": reverse(
+                "api:register-invite",
+                kwargs={
+                    "invite": encode_uid(invite.id),
+                    "token": invite.token,
+                },
+                request=None),
+        }
+
 
 class SpecialistAnswerEmail(BaseEmailMessage):
     """This email is sent to notify owner on the Specialist's decision."""
