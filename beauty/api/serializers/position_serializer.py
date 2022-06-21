@@ -1,6 +1,7 @@
 """The module includes serializers for Position model."""
 
 import logging
+import calendar
 from datetime import datetime
 from rest_framework import serializers
 from api.models import Position
@@ -13,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 def is_valid_position_time(business_time, data):
     """Return True if position time within business time."""
-    hours_fields = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    week_days = [day.capitalize() for day in calendar.HTMLCalendar.cssclasses]
 
-    for time in hours_fields:
+    for time in week_days:
         if len(business_time[time]) < len(data[time]):
             return False
         if len(business_time[time]) > len(data[time]):
@@ -41,7 +42,7 @@ def is_inside_interval(main_interval: tuple, inner_interval: tuple):
     """Return True if inner interval is inside main_interval."""
     if inner_interval[0] < main_interval[0]:
         return False
-    if inner_interval[1] > main_interval[1]:
+    elif inner_interval[1] > main_interval[1]:
         return False
     else:
         return True
@@ -49,6 +50,7 @@ def is_inside_interval(main_interval: tuple, inner_interval: tuple):
 
 class PositionGetSerializer(serializers.ModelSerializer):
     """Position serializer for get all position method."""
+
     class Meta:
         """Class with a model and model fields for serialization."""
 
@@ -62,9 +64,10 @@ class PositionSerializer(WorkingTimeSerializer):
     class Meta:
         """Class with a model and model fields for serialization."""
 
-        hours_fields = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        week_days = [day.capitalize()
+                     for day in calendar.HTMLCalendar.cssclasses]
         model = Position
-        fields = ["name", "specialist", "business", *hours_fields]
+        fields = ["name", "specialist", "business", *week_days]
 
     def validate(self, data: dict) -> dict:
         """Validate start and end time.

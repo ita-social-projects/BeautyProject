@@ -80,32 +80,38 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
             data (dict): dictionary with validated data for business creation
 
         """
-        working_time = data["working_time"]
+        working_time = {day: [] for day in self.week_days}
         for day in self.week_days:
 
-            amount_of_data = len(working_time[day])
-            if amount_of_data not in [0, 2]:
+            if day not in data.keys():
                 raise serializers.ValidationError(
-                    {f"{day}": "Must contain 2 elements or 0."},
+                    {day: "Day name not match main structure."},
                 )
 
-            if len(working_time[day]) == 2:
+            amount_of_data = len(data[day])
+            if amount_of_data not in [0, 2]:
+                raise serializers.ValidationError(
+                    {day: "Must contain 2 elements or 0."},
+                )
+
+            if len(data[day]) == 2:
 
                 try:
-                    opening_time = datetime.strptime(working_time[day][0], "%H:%M")
-                    closing_time = datetime.strptime(working_time[day][1], "%H:%M")
-                    working_time[day][0] = opening_time.strftime("%H:%M")
-                    working_time[day][1] = closing_time.strftime("%H:%M")
+                    opening_time = datetime.strptime(data[day][0], "%H:%M")
+                    closing_time = datetime.strptime(data[day][1], "%H:%M")
+                    working_time[day].append(opening_time.strftime("%H:%M"))
+                    working_time[day].append(closing_time.strftime("%H:%M"))
                 except ValueError:
                     raise serializers.ValidationError(
-                        {f"{day}": f"{day} -day`s schedule does not match the template "
-                                   f"['HH:MM', 'HH:MM']."},
+                        {day: "Day schedule does not match the template\
+                              ['HH:MM', 'HH:MM']."},
                     )
 
                 if opening_time > closing_time:
 
                     raise serializers.ValidationError(
-                        {f"{day}": f"{day} -day working hours must begin before they end."},
+                        {day:
+                            "working hours must begin before they end."},
                     )
 
                 if opening_time == closing_time:
@@ -145,8 +151,10 @@ class BusinessCreateSerializer(BaseBusinessSerializer, WorkingTimeSerializer):
     class Meta:
         """Display required fields for Business creation."""
 
+        week_days = [day.capitalize()
+                     for day in calendar.HTMLCalendar.cssclasses]
         model = Business
-        fields = ("name", "business_type", "owner", "description", "working_time")
+        fields = ("name", "business_type", "owner", "description", *week_days)
         read_only_fields = ("owner", )
 
 
@@ -180,7 +188,8 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
         exclude = ("created_at", "id", "owner", "working_time")
 
 
-class BusinessGetAllInfoSerializers(BaseBusinessSerializer, WorkingTimeSerializer):
+class BusinessGetAllInfoSerializers(BaseBusinessSerializer,
+                                    WorkingTimeSerializer):
     """Serializer for getting all info about business."""
 
     address = serializers.CharField(max_length=500)
