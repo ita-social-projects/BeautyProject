@@ -233,6 +233,9 @@ class Business(models.Model):
         verbose_name=_("Created at"),
         auto_now_add=True,
     )
+    working_time = models.JSONField(
+        default=dict,
+    )
 
     class Meta:
         """This meta class stores verbose names."""
@@ -340,17 +343,9 @@ class Position(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Business"),
     )
-    start_time = models.TimeField(
-        editable=True,
-        verbose_name=_("Start time"),
-        validators=[validate_rounded_minutes_seconds],
-        default=None,
-    )
-    end_time = models.TimeField(
-        editable=True,
-        verbose_name=_("End time"),
-        validators=[validate_rounded_minutes_seconds],
-        default=None,
+
+    working_time = models.JSONField(
+        default=dict,
     )
 
     def __str__(self):
