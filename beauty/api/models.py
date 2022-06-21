@@ -236,6 +236,8 @@ class Business(models.Model):
     )
     working_time = models.JSONField(
         default=dict,
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -249,11 +251,10 @@ class Business(models.Model):
         """str: Returns a verbose title of the business."""
         return str(self.name)
 
-    def create_position(self, name, specialist, start_time, end_time):
+    def create_position(self, name, specialist, working_time):
         """Creates Position for specific Business."""
         position = Position.objects.create(name=name, business=self,
-                                           start_time=start_time,
-                                           end_time=end_time)
+                                           working_time=working_time)
         position.specialist.add(specialist)
 
         logger.info(f"New position with id={position.id} was created")
@@ -346,6 +347,8 @@ class Position(models.Model):
     )
     working_time = models.JSONField(
         default=dict,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):

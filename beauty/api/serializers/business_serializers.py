@@ -85,7 +85,7 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
 
             if day not in data.keys():
                 raise serializers.ValidationError(
-                    {day: "Day name not match main structure."},
+                    {day: "Day name not match main structure or missing."},
                 )
 
             amount_of_data = len(data[day])
@@ -94,7 +94,7 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
                     {day: "Must contain 2 elements or 0."},
                 )
 
-            if len(data[day]) == 2:
+            if amount_of_data == 2:
 
                 try:
                     opening_time = datetime.strptime(data[day][0], "%H:%M")
@@ -188,8 +188,7 @@ class BusinessDetailSerializer(BaseBusinessSerializer):
         exclude = ("created_at", "id", "owner", "working_time")
 
 
-class BusinessGetAllInfoSerializers(BaseBusinessSerializer,
-                                    WorkingTimeSerializer):
+class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
     """Serializer for getting all info about business."""
 
     address = serializers.CharField(max_length=500)
