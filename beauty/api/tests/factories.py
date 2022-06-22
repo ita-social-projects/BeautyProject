@@ -6,6 +6,7 @@ Todo:
 
 from collections import namedtuple
 import calendar
+import random
 from django.utils import timezone
 import factory
 from factory import fuzzy
@@ -77,11 +78,16 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def working_time(self):
         """Generates business working time."""
+        start_hour = f"{random.randint(6, 10)}:{random.randint(0, 59)}"
+        end_hour = f"{random.randint(13, 20)}:{random.randint(0, 59)}"
         week_days = [day.capitalize()
                      for day in calendar.HTMLCalendar.cssclasses]
-        working_time = {day: ["9:00",
-                              "10:00"]
+
+        working_time = {day: [start_hour, end_hour]
+                        if random.random() > 0.25
+                        else []
                         for day in week_days}
+
         return working_time
 
 
@@ -99,7 +105,30 @@ class PositionFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def working_time(self):
         """Generates working time based on business."""
-        return self.business.working_time
+        working_time = self.business.working_time
+
+        work_day = [key for key, value in working_time.items() if value][0]
+
+        # If all days are weekends
+        if not work_day:
+            return working_time
+
+        start_hour = [int(time)
+                      for time in working_time[work_day][0].split(":")]
+        end_hour = [int(time)
+                    for time in working_time[work_day][1].split(":")]
+
+        start_hour = f"{random.randint(start_hour[0], 11)}:"\
+                     + f"{random.randint(start_hour[1], 59)}"
+        end_hour = f"{random.randint(13, end_hour[0])}:"\
+                   + f"{random.randint(0, end_hour[1])}"
+
+        working_time = {day: [start_hour, end_hour]
+                        if working_time[day]
+                        else []
+                        for day in working_time.keys()}
+
+        return working_time
 
     @factory.post_generation
     def specialist(self, create, extracted, **kwargs):

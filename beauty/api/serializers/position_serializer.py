@@ -28,6 +28,7 @@ def is_valid_position_time(business_time, data):
             datetime.strptime(data[time][0], "%H:%M"),
             datetime.strptime(data[time][1], "%H:%M"),
         )
+
         main_interval = (
             datetime.strptime(business_time[time][0], "%H:%M"),
             datetime.strptime(business_time[time][1], "%H:%M"),
@@ -40,12 +41,11 @@ def is_valid_position_time(business_time, data):
 
 def is_inside_interval(main_interval: tuple, inner_interval: tuple):
     """Return True if inner interval is inside main_interval."""
-    if inner_interval[0] < main_interval[0]:
-        return False
-    elif inner_interval[1] > main_interval[1]:
-        return False
-    else:
-        return True
+    return (
+        inner_interval[0] >= main_interval[0]
+    ) and (
+        inner_interval[1] <= main_interval[1]
+    )
 
 
 class PositionGetSerializer(serializers.ModelSerializer):

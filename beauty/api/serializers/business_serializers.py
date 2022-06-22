@@ -132,8 +132,8 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
 
         """
         json_field = {key: value if len(value) != 2 else [
-                      datetime.strptime(value[0], "%H:%M").time().__str__(),
-                      datetime.strptime(value[1], "%H:%M").time().__str__(),
+                      value[0],
+                      value[1],
                       ]
                       for key, value in validated_data.items()
                       if key in self.week_days}

@@ -44,10 +44,13 @@ class TestPositionListCreateView(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.owner)
 
-        self.position_testing = PositionFactory.build(name="Wyh")
+        self.position_testing = PositionFactory.build(
+            name="Wyh",
+            business=self.business,
+        )
         self.valid_data = {
             "name": self.position_testing.name,
-            "business": self.business.id,
+            "business": self.position_testing.business.id,
             "specialist": [self.specialist1.id],
         }
         self.valid_data.update(self.position_testing.working_time)
