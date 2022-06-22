@@ -49,3 +49,28 @@ class TestDeleteBusiness(TestCase):
         )
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Business.objects.get(pk=self.business2.id).is_active)
+
+    def test_delete_business_unauthorized(self):
+        """Unauthorized person can't make business inactive."""
+        self.client.force_authenticate(user=None)
+        response = self.client.delete(
+            path=reverse(
+                "api:business-detail",
+                kwargs={"pk": self.business1.id},
+            ),
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(Business.objects.get(pk=self.business1.id).is_active)
+
+    def test_delete_business_that_is_already_inactive(self):
+        """Owner can't make his business inactive if it is already deactivated."""
+        self.business1.is_active = False
+        self.business1.save()
+        response = self.client.delete(
+            path=reverse(
+                "api:business-detail",
+                kwargs={"pk": self.business1.id},
+            ),
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Business.objects.get(pk=self.business1.id).is_active)
