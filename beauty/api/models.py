@@ -235,6 +235,10 @@ class Business(models.Model):
         auto_now_add=True,
     )
 
+    is_active = models.BooleanField(
+        default=True,
+    )
+
     class Meta:
         """This meta class stores verbose names."""
 

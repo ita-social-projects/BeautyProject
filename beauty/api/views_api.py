@@ -214,7 +214,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy.
     """
 
-    permission_classes = (IsAdminOrThisBusinessOwner | ReadOnly,)
+    permission_classes = (IsAdminOrThisBusinessOwner,)
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
@@ -233,6 +233,25 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
                 "authorised to access this content",
             )
         return BusinessDetailSerializer
+
+    def delete(self, request, *args, **kwargs):
+        """Reimplementation of the DESTROY (DELETE) method.
+
+        Instead of deleting a Business, it makes Business inactive by modifing
+        its 'is_active' field. Only an authentificated Business can change
+        themselves.
+        """
+        instance = self.get_object()
+
+        if instance.is_active:
+            instance.is_active = False
+            instance.save()
+            logger.info(f"Business {instance} was deactivated.")
+            return Response(status=status.HTTP_200_OK)
+
+        logger.info(f"Business {instance} (id={instance.id}) is already "
+                    f"deactivated, but tried doing it again.")
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class AllServicesListCreateView(ListCreateAPIView):

@@ -73,4 +73,4 @@ class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
 
         model = Business
         fields = ("owner", "name", "business_type", "logo", "owner", "address",
-                  "description", "created_at")
+                  "description", "created_at", "is_active")
