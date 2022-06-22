@@ -197,5 +197,4 @@ class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
         """Meta for BusinessGetAllInfoSerializers class."""
 
         model = Business
-        fields = ("owner", "name", "business_type", "logo", "owner", "address",
-                  "description", "created_at", "working_time")
+        fields = "__all__"
