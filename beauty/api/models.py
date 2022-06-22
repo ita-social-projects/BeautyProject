@@ -234,6 +234,11 @@ class Business(models.Model):
         verbose_name=_("Created at"),
         auto_now_add=True,
     )
+    working_time = models.JSONField(
+        default=dict,
+        blank=True,
+        null=True,
+    )
 
     is_active = models.BooleanField(
         default=True,
@@ -250,11 +255,10 @@ class Business(models.Model):
         """str: Returns a verbose title of the business."""
         return str(self.name)
 
-    def create_position(self, name, specialist, start_time, end_time):
+    def create_position(self, name, specialist, working_time):
         """Creates Position for specific Business."""
         position = Position.objects.create(name=name, business=self,
-                                           start_time=start_time,
-                                           end_time=end_time)
+                                           working_time=working_time)
         position.specialist.add(specialist)
 
         logger.info(f"New position with id={position.id} was created")
@@ -345,13 +349,10 @@ class Position(models.Model):
         on_delete=models.CASCADE,
         verbose_name=_("Business"),
     )
-    start_time = models.TimeField(
-        editable=True,
-        verbose_name=_("Start time"),
-    )
-    end_time = models.TimeField(
-        editable=True,
-        verbose_name=_("End time"),
+    working_time = models.JSONField(
+        default=dict,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):

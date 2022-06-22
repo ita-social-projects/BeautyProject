@@ -14,7 +14,7 @@ from .factories import (
     PositionFactory,
     GroupFactory,
 )
-from beauty.utils import get_random_start_end_datetime
+
 
 User = get_user_model()
 faker = Faker()
@@ -50,10 +50,10 @@ class BusinessModelTest(TestCase):
         Creates new position and that this position belongs
         to a correct business
         """
-        start_time, end_time = get_random_start_end_datetime()
         position = self.business.create_position(
-            faker.word(), self.specialist1, start_time, end_time,
+            faker.word(), self.specialist1, self.business.working_time,
         )
+
         all_positions = self.business.position_set.all()
 
         self.assertIn(position, all_positions)
@@ -65,10 +65,10 @@ class BusinessModelTest(TestCase):
         Checks if this method gives all specilaists who belong
         to current business
         """
-        start_time, end_time = get_random_start_end_datetime()
         self.business.create_position(
-            faker.word(), self.specialist1, start_time, end_time,
+            faker.word(), self.specialist1, self.business.working_time,
         )
+
         all_specialists = self.business.get_all_specialists()
 
         self.assertIn(self.specialist1, all_specialists)
@@ -102,6 +102,7 @@ class BusinessListCreateViewTest(TestCase):
             "business_type": faker.word(),
             "description": faker.text(),
         }
+        self.valid_create_data.update(self.business1.working_time)
 
     def test_list_of_businesses(self) -> None:
         """Tests if view gives all businesses."""
@@ -121,7 +122,6 @@ class BusinessListCreateViewTest(TestCase):
         Checks if view does not allow user to create business without
         authentication
         """
-
         response = self.client.post(
             path=reverse(
                 "api:businesses-list-create",
@@ -140,7 +140,7 @@ class BusinessListCreateViewTest(TestCase):
         self.client.force_authenticate(user=self.customer)
 
         self.invalid_create_data = {
-            "name": faker.word(), 
+            "name": faker.word(),
             "business_type": faker.word(),
             "description": faker.text(),
         }
@@ -171,3 +171,31 @@ class BusinessListCreateViewTest(TestCase):
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["owner"], self.owner.get_full_name())
+
+    def test_create_business_invalid_time(self) -> None:
+        """Owner cannot create business if working time is invalid."""
+        self.client.force_authenticate(user=self.owner)
+
+        self.valid_create_data["Mon"] = ["10:00", "9:00"]
+        response = self.client.post(
+            path=reverse(
+                "api:businesses-list-create",
+            ),
+            data=self.valid_create_data,
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_business_missing_working_day(self) -> None:
+        """Owner can not create business without any working day."""
+        self.client.force_authenticate(user=self.owner)
+
+        self.valid_create_data.pop("Mon")
+        response = self.client.post(
+            path=reverse(
+                "api:businesses-list-create",
+            ),
+            data=self.valid_create_data,
+        )
+
+        self.assertEqual(response.status_code, 400)

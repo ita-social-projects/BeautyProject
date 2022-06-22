@@ -5,12 +5,14 @@ Todo:
 """
 
 from collections import namedtuple
-
+import calendar
+import random
 from django.utils import timezone
 import factory
 from factory import fuzzy
 from api.models import (CustomUser, Order, Service, Position, Business, Review)
 from django.contrib.auth.models import Group
+from beauty.utils import string_to_time, time_to_string
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -74,6 +76,26 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     address = factory.Faker("address")
     description = factory.Faker("sentence", nb_words=4)
 
+    @factory.lazy_attribute
+    def working_time(self):
+        """Generates business working time."""
+        start_hour = f"{random.randint(6, 10)}:{random.randint(0, 59)}"
+        end_hour = f"{random.randint(13, 20)}:{random.randint(0, 59)}"
+        start_hour = string_to_time(start_hour)
+        end_hour = string_to_time(end_hour)
+        start_hour = time_to_string(start_hour)
+        end_hour = time_to_string(end_hour)
+
+        week_days = [day.capitalize()
+                     for day in calendar.HTMLCalendar.cssclasses]
+
+        working_time = {day: [start_hour, end_hour]
+                        if random.random() > 0.25
+                        else []
+                        for day in week_days}
+
+        return working_time
+
 
 class PositionFactory(factory.django.DjangoModelFactory):
     """Factory class for testing Position model."""
@@ -85,8 +107,38 @@ class PositionFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Position_{n}")
     business = factory.SubFactory(BusinessFactory)
-    start_time = factory.LazyFunction(timezone.now)
-    end_time = factory.LazyAttribute(lambda o: o.start_time + timezone.timedelta(hours=4))
+
+    @factory.lazy_attribute
+    def working_time(self):
+        """Generates working time based on business."""
+        working_time = self.business.working_time
+
+        work_day = [key for key, value in working_time.items() if value][0]
+
+        # If all days are weekends
+        if not work_day:
+            return working_time
+
+        start_hour = [int(time)
+                      for time in working_time[work_day][0].split(":")]
+        end_hour = [int(time)
+                    for time in working_time[work_day][1].split(":")]
+
+        start_hour = f"{random.randint(start_hour[0], 11)}:"\
+                     + f"{random.randint(start_hour[1], 59)}"
+        end_hour = f"{random.randint(13, end_hour[0])}:"\
+                   + f"{random.randint(0, end_hour[1])}"
+        start_hour = string_to_time(start_hour)
+        end_hour = string_to_time(end_hour)
+        start_hour = time_to_string(start_hour)
+        end_hour = time_to_string(end_hour)
+
+        working_time = {day: [start_hour, end_hour]
+                        if working_time[day]
+                        else []
+                        for day in working_time.keys()}
+
+        return working_time
 
     @factory.post_generation
     def specialist(self, create, extracted, **kwargs):

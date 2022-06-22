@@ -3,10 +3,9 @@
 Tests for PositionListCreateView:
 - SetUp method adds needed data for tests;
 - Get 1 selected position by id;
+- Try to get 1 by id, by id is invalid
 - Put into valid id;
 - Customer must be authenticated and be owner of position;
-- End time euqal to start time;
-- Invalid start and end time;
 - Owner is allowed to put empty data;
 - Delete by selected id;
 - Delete by id, which doesn't exist;
@@ -52,13 +51,13 @@ class TestPositionRetrieveUpdateDestroyView(TestCase):
             business=self.business,
         )
         self.pk = self.position_testing.id
-        self.position_testing = {
+
+        self.valid_data = {
             "name": self.position_testing.name,
             "business": self.business.id,
             "specialist": [self.specialist1.id],
-            "start_time": str(self.position_testing.start_time.time()),
-            "end_time": str(self.position_testing.end_time.time()),
         }
+        self.valid_data.update(self.position_testing.working_time)
 
         self.url = "api:position-detail-list"
 
@@ -89,7 +88,7 @@ class TestPositionRetrieveUpdateDestroyView(TestCase):
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps(self.position_testing),
+            data=json.dumps(self.valid_data),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
@@ -102,23 +101,10 @@ class TestPositionRetrieveUpdateDestroyView(TestCase):
                 self.url,
                 kwargs={"pk": self.pk},
             ),
-            data=json.dumps(self.position_testing),
+            data=json.dumps(self.valid_data),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 401)
-
-    def test_position_put_end_time(self):
-        """Try to PUT invalid time."""
-        self.position_testing["end_time"] = self.position_testing["start_time"]
-        response = self.client.put(
-            path=reverse(
-                self.url,
-                kwargs={"pk": self.pk},
-            ),
-            data=json.dumps(self.position_testing),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 400)
 
     def test_position_put_empty_data(self):
         """Try to PUT empty data."""
