@@ -122,6 +122,25 @@ class IsAdminOrCurrentReviewOwner(permissions.IsAuthenticated):
         return has_access
 
 
+class IsAdminOrCurrentBusinessOwner(permissions.IsAuthenticated):
+    """Object-level permission to allow only owner of business or admins to access it."""
+
+    def has_object_permission(self, request, view, obj):
+        """Verify that the current user is a business owner or an administrator."""
+        if request.method == "GET":
+            return True
+        has_access = request.user.is_admin or (obj.owner == request.user)
+        if has_access:
+            logger.info(f"User {request.user.id} permission check. "
+                        "Access granted",
+                        )
+        else:
+            logger.info(f"User {request.user.id} permission check. "
+                        "Access denied",
+                        )
+        return has_access
+
+
 class IsCustomerOrders(permissions.BasePermission):
     """Object-level permission to only allow users of an object to edit it."""
 

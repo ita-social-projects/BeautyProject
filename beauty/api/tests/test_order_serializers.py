@@ -12,18 +12,16 @@ Tests for OrderSerializer:
 - Check serializer when customer and specialist are the same person.
 """
 
-
 import pytz
 from django.utils import timezone
 from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail, ValidationError
 
 from api.serializers.order_serializers import OrderSerializer
-from .factories import (GroupFactory,
-                        CustomUserFactory,
-                        PositionFactory,
-                        ServiceFactory)
-
+from api.tests.factories import (GroupFactory,
+                                 CustomUserFactory,
+                                 PositionFactory,
+                                 ServiceFactory)
 
 CET = pytz.timezone("Europe/Kiev")
 

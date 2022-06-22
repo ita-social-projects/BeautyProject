@@ -1,6 +1,7 @@
 """This module provides you with all needed utility functions."""
 
 import os
+
 from datetime import timedelta, datetime
 from typing import Tuple
 import pytz
@@ -113,3 +114,75 @@ def order_approve_decline_urls(order: object, approve_name="url_for_approve",
     urls[decline_name] = reverse("api:order-approving",
                                  kwargs=url_declined_params, request=request)
     return urls
+
+
+def time_to_string(time):
+    """Cast time to string HH:MM."""
+    return time.strftime("%H:%M")
+
+
+def string_to_time(string):
+    """Cast string HH:MM to time."""
+    return datetime.strptime(string, "%H:%M")
+
+
+class PositionAcceptEmail(BaseEmailMessage):
+    """This is an email for confirming Position."""
+
+    template_name = "email/position_accept_email.html"
+
+    def get_context_data(self):
+        """Get context data for rendering HTML messages."""
+        context = super().get_context_data()
+        context.update(self.create_approve_link(context.get("invite")))
+        return context
+
+    def create_approve_link(self, invite: object):
+        """This method creates approve link."""
+        from djoser.utils import encode_uid
+
+        params = {
+            "email": encode_uid(invite.email),
+            "position": encode_uid(invite.position.id),
+            "token": invite.token,
+        }
+
+        return {"approve_link": reverse("api:position-approve",
+                                        kwargs=params | {"answer": encode_uid("confirm")},
+                                        request=None),
+                "decline_link": reverse("api:position-approve",
+                                        kwargs=params | {"answer": encode_uid("decline")},
+                                        request=None),
+                }
+
+
+class RegisterInviteEmail(BaseEmailMessage):
+    """This email is sent to invite to register on site."""
+
+    template_name = "email/register_invite_email.html"
+
+    def get_context_data(self):
+        """Get context data for rendering HTML messages."""
+        context = super().get_context_data()
+        context.update(self.create_invite_link(context.get("invite")))
+        return context
+
+    def create_invite_link(self, invite: object):
+        """This method creates invite link."""
+        from djoser.utils import encode_uid
+
+        return {
+            "register_link": reverse(
+                "api:register-invite",
+                kwargs={
+                    "invite": encode_uid(invite.id),
+                    "token": invite.token,
+                },
+                request=None),
+        }
+
+
+class SpecialistAnswerEmail(BaseEmailMessage):
+    """This email is sent to notify owner on the Specialist's decision."""
+
+    template_name = "email/specialist_decision.html"
