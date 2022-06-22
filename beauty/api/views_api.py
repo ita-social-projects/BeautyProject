@@ -195,11 +195,11 @@ class RemoveSpecialistFromPosition(DestroyAPIView):
         if instance.specialist:
             instance.specialist.set(())
             instance.save()
-            logger.info(f"Specialist {instance} was delete from position.")
+            logger.info(f"Specialist was delete from position {instance}.")
             return Response(status=status.HTTP_200_OK)
 
-        logger.info(f"Specialist {instance} (id={instance.id}) is already "
-                    f"delete from position, but tried doing it again.")
+        logger.info(f"Specialist (id={instance.id}) is already "
+                    f"delete from position {instance}, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
