@@ -4,10 +4,9 @@ import logging
 import calendar
 
 from rest_framework import serializers
-from api.models import Position
 from beauty.utils import string_to_time
 from api.serializers.business_serializers import WorkingTimeSerializer
-
+from api.models import Position
 
 logger = logging.getLogger(__name__)
 
@@ -95,3 +94,8 @@ class PositionSerializer(WorkingTimeSerializer):
         logger.info("Position_serializer: successfully set time")
 
         return super().validate(data)
+
+
+class PositionInviteSerializer(serializers.Serializer):
+    """This is a serializer for inviting new specialists to a Position."""
+    email = serializers.EmailField()
