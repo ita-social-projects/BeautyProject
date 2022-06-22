@@ -81,7 +81,7 @@ urlpatterns = [
     path(
         "position/<int:pk>/specialist/<int:specialist_id>",
         RemoveSpecialistFromPosition.as_view(),
-        name="position-detail-list",
+        name="position-delete-specialist",
     ),
     path(
         r"<int:user>/reviews/add/",
