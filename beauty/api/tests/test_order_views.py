@@ -15,6 +15,18 @@ Tests for OrderApprovingView:
 - The specialist is redirected to the own page if he declined the order;
 - The specialist is redirected to the own page if the order token expired;
 - The user is redirected to the order specialist detail page if he is not logged.
+
+Tests for OrderRetrieveCancelView:
+- SetUp method adds needed info for tests;
+- Only a logged user from order (customer, specialist) can retrieve an order;
+- Logged order customer can retrieve an order;
+- Logged order specialist can retrieve an order;
+- Cancel order with valid reason by specialist;
+- Cancel order with valid reason by customer;
+- Cancel order with invalid reason;
+- Not logged user can not cancel an order;
+- Users not from order can not cancel it;
+- Test an order with statuses which can not change.
 """
 
 import pytz
@@ -33,6 +45,7 @@ from .factories import (GroupFactory,
                         PositionFactory,
                         ServiceFactory,
                         OrderFactory)
+from api.models import Order
 
 
 CET = pytz.timezone("Europe/Kiev")
@@ -180,8 +193,13 @@ class TestOrderRetrieveCancelView(TestCase):
 
         self.client = APIClient()
 
+        self.client.force_authenticate(user=self.specialist)
+        refresh = RefreshToken.for_user(self.specialist)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
     def test_get_method_retrieve_order_not_logged_user(self):
         """Only a logged user from order (customer, specialist) can retrieve an order."""
+        self.client.credentials()
         order_response = self.client.get(path=self.order_url)
         specialist_response = self.client.get(path=self.specialist_order_url)
         customer_response = self.client.get(path=self.customer_order_url)
@@ -194,6 +212,7 @@ class TestOrderRetrieveCancelView(TestCase):
 
     def test_get_method_retrieve_order_logged_customer(self):
         """Logged order customer can retrieve an order."""
+        self.client.credentials()
         self.client.force_authenticate(user=self.customer)
         refresh = RefreshToken.for_user(self.customer)
         self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
@@ -208,14 +227,55 @@ class TestOrderRetrieveCancelView(TestCase):
 
     def test_get_method_retrieve_order_logged_specialist(self):
         """Logged order specialist can retrieve an order."""
-        self.client.force_authenticate(user=self.specialist)
-        refresh = RefreshToken.for_user(self.specialist)
-        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
-
         specialist_response = self.client.get(path=self.specialist_order_url)
         customer_response = self.client.get(path=self.customer_order_url)
         order_response = self.client.get(path=self.order_url)
-
         self.assertEqual(specialist_response.status_code, 200)
         self.assertEqual(customer_response.status_code, 200)
         self.assertEqual(order_response.status_code, 200)
+
+    def test_put_method_valid_reason_specialist(self):
+        """Cancel order with valid reason by specialist."""
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_put_method_valid_reason_customer(self):
+        """Cancel order with valid reason by customer."""
+        self.client.force_authenticate(user=self.customer)
+        refresh = RefreshToken.for_user(self.customer)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_put_method_invalid_reason(self):
+        """Cancel order with invalid reason."""
+        response = self.client.put(path=self.order_url, data={"reason": ""})
+        self.assertEqual(response.status_code, 400)
+
+    def test_put_method_not_logged_user(self):
+        """Not logged user can not cancel an order."""
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_put_method_not_order_user(self):
+        """Users not from order can not cancel it."""
+        user = CustomUserFactory()
+        self.client.force_authenticate(user)
+        refresh = RefreshToken.for_user(user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"JWT {refresh.access_token}")
+
+        response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+        self.assertEqual(response.status_code, 403)
+
+    def test_put_method_no_cancel_status(self):
+        """Test an order with statuses which can not change."""
+        status = Order.StatusChoices
+        doesnt_require_decline_list = (status.COMPLETED, status.CANCELLED, status.DECLINED)
+
+        for status in doesnt_require_decline_list:
+            with self.subTest(status=status):
+                self.order.status = status
+                self.order.save()
+                response = self.client.put(path=self.order_url, data={"reason": "test reason"})
+                self.assertEqual(response.status_code, 400)
