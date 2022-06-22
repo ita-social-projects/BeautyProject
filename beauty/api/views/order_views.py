@@ -19,7 +19,7 @@ from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail)
 from api.models import (CustomUser, Order)
-from api.permissions import (IsOrderUser, IsCustomerOrders, IsOwner)
+from api.permissions import (IsOrderUser, IsCustomerOrders, IsOwnerOfSpecialist)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 
 logger = logging.getLogger(__name__)
@@ -202,7 +202,7 @@ class SpecialistOrdersViews(ListAPIView):
     """Show all orders of concrete specialist."""
 
     serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticated, IsCustomerOrders | IsOwner)
+    permission_classes = (IsAuthenticated, IsCustomerOrders | IsOwnerOfSpecialist)
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["status", "specialist", "service", "start_time", "end_time"]
 
@@ -215,6 +215,6 @@ class SpecialistOrdersViews(ListAPIView):
 
         if self.request.user == specialist:
             return specialist.specialist_orders.all()
-        elif self.request.user.is_owner:
-            return specialist.specialist_orders.filter(
-                service__position__business__owner=self.request.user)
+
+        return specialist.specialist_orders.filter(
+            service__position__business__owner=self.request.user)
