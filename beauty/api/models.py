@@ -199,6 +199,7 @@ class Business(models.Model):
         address (AddressField): Location of business
         description (str): Description of business
         created_at (datetime): Time when business was created
+        is_active (bool): Determines whether business is active
 
     """
 
@@ -238,6 +239,10 @@ class Business(models.Model):
         default=dict,
         blank=True,
         null=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
     )
 
     class Meta:
