@@ -35,7 +35,7 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  ResetPasswordSerializer,
                                                  SpecialistInformationSerializer,
                                                  SpecialistDetailSerializer)
-from .serializers.position_serializer import PositionSerializer
+from .serializers.position_serializer import PositionGetSerializer, PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
 
 
@@ -152,8 +152,17 @@ class SpecialistDetailView(RetrieveAPIView):
 class PositionListCreateView(ListCreateAPIView):
     """Generic API for position POST methods."""
 
-    serializer_class = PositionSerializer
     permission_classes = (IsAuthenticated, IsPositionOwner)
+
+    def get_serializer_class(self):
+        """Return specific Serializer.
+
+        PositionSerializer for creation,
+        PositionGetSerizalier for GET all.
+        """
+        if self.request.method == "POST":
+            return PositionSerializer
+        return PositionGetSerializer
 
     def get_queryset(self):
         """Filter position for current owner."""
