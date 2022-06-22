@@ -129,9 +129,11 @@ def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
     if response is not None:
         if isinstance(response.data, list):
-            response.data = list(filter(lambda o: o, response.data))
-            for data in response.data:
+            data_list = [o for o in response.data if o]
+            for data in data_list:
                 data["status_code"] = response.status_code
+                data["count_num"] = response.data.index(data)
+            response.data = data_list
         else:
             response.data["status_code"] = response.status_code
     return response

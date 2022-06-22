@@ -38,7 +38,6 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             attrs: data from fields
 
         Returns: validated data
-
         """
         customer = self.context.get("request").user
         specialist = attrs.get("specialist")
@@ -46,14 +45,12 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
         service = attrs.get("service")
 
         errors = {}
-
         if timezone.now() > start_time:
             logger.info("The start time should be more as now.")
-            errors.update({"start_time": "The start time should be more as now."})
 
+            errors.update({"start_time": "The start time should be more as now."})
         specialist_services = Position.objects.filter(
             specialist=specialist).values_list("service__name", flat=True)
-
         if not service.position.specialist.filter(id=specialist.id):
             logger.info(f"Specialist {specialist.get_full_name()}"
                         f"does not have {service.name} service")
@@ -70,7 +67,6 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             errors.update({"users": "Customer and specialist are the same person!"})
         if errors:
             raise ValidationError(errors)
-
         return super().validate(attrs)
 
 
