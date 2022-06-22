@@ -1,11 +1,8 @@
-{% load i18n %}
-
 {% block subject %}
-{% blocktrans %}{{inviter}} is inviting you to apply for {{position}}.{% endblocktrans %}
+{{inviter}} is inviting you to apply for {{position}}.
 {% endblock subject %}
 
 {% block html_body %}
-{% blocktrans %}
 <p>You're receiving this email because you have been invited to apply for the following position:</p>
 <br>
 <p>Position: {{position}}</p>
@@ -18,5 +15,4 @@
 </a>
 <br>
 
-{% endblocktrans %}
 {% endblock html_body %}

@@ -152,7 +152,7 @@ class PositionAcceptEmail(BaseEmailMessage):
         user = CustomUser.objects.get(email=email)
         params = {
             "user": encode_uid(inviter),
-            "position": encode_uid(position),
+            "position": encode_uid(position.id),
             "token": SpecialistInviteTokenGenerator().make_token(user=user),
         }
 

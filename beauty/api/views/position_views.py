@@ -2,6 +2,8 @@
 
 import logging
 
+from django.contrib.auth.models import Group
+from django.shortcuts import get_object_or_404
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -20,11 +22,12 @@ logger = logging.getLogger(__name__)
 
 class InviteSpecialistToPosition(GenericAPIView):
     """This view is used for inviting specialists for a position."""
+    queryset = Position.objects.all()
     serializer_class = PositionInviteSerializer
-    permission_classes = (IsAuthenticated & IsPositionOwner)
+    permission_classes = (IsAuthenticated, IsPositionOwner)
 
-    def put(self, request, pk, *args, **kwargs):
-        """PUT method for sending invites for a position.
+    def post(self, request, *args, **kwargs):
+        """POST method for sending invites for a position.
 
         When business owner wants to add a specialist to a Position, the owner
         simply adds an email and sends a request. This request is headed to
@@ -40,42 +43,52 @@ class InviteSpecialistToPosition(GenericAPIView):
 
         Returns:
             HTTP 200: Email was sent.
-            HTTP 406: User is already on the Position.
+            HTTP 400: User is already on the Position.
             HTTP 400: Serializaer error, wron email.
 
         """
-        email_to_send = request.data["email"]
-        position_to_invite = Position.objects.get(pk=pk)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email_to_send = request.data.get("email")
+        position_to_invite = self.get_object()
         context = {
             "inviter": request.user,
             "email": email_to_send,
-            "position": pk,
+            "position": position_to_invite,
         }
-        serializer = PositionInviteSerializer(data=context)
 
+        logger.info(
+            f"{request.user} (id={request.user.id}) is inviting user with email "
+            f"'{email_to_send}' to {position_to_invite} (id={position_to_invite.id}).")
+
+        if self.check_user(email_to_send, position_to_invite):
+            logger.info("User exists, sending an invitation for a Position.")
+            PositionAcceptEmail(
+                request=request,
+                context=context,
+            ).send(to=[email_to_send])
+            return Response(status=status.HTTP_200_OK)
+        else:
+            logger.info("User doesn't exist, sending an invitation for registration.")
+            RegisterInviteEmail(
+                request=request,
+                context=context,
+            ).send(to=[email_to_send])
+            return Response(status=status.HTTP_200_OK)
+
+    def check_user(self, user_email, position):
+        """This method checks that all requirements are satisfied."""
         try:
-            logger.info(
-                f"{request.user} (id={request.user.id}) is inviting user with email ",
-                f"'{email_to_send}' to {position_to_invite} (id={position_to_invite.id}).")
-            if serializer.is_valid():
-                logger.info("User exists, sending an invitation for a Position.")
-                PositionAcceptEmail(
-                    request=request,
-                    context=context,
-                ).send(to=[request.data["email"]])
-                return Response(status=status.HTTP_200_OK)
+            user = get_object_or_404(CustomUser,
+                                     email=user_email,
+                                     groups__name="Specialist",
+                                     )
+            if not user.position_set.filter(id=position.id):
+                return True
             else:
-                logger.info("User doesn't exist, sending an invitation for registration.")
-                RegisterInviteEmail(
-                    request=request,
-                    context=context,
-                ).send(to=[request.data["email"]])
-                return Response(status=status.HTTP_200_OK)
-        except ValidationError as err:
-            logger.info(f"Bad request: {err.detail}")
-            if 400 in err.get_codes():
-                return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+                raise ValidationError({"user": "User is already on the Position."}, code=400)
+        except CustomUser.DoesNotExist:
+            return False
 
 
 class InviteSpecialistApprove(GenericAPIView):
@@ -97,11 +110,18 @@ class InviteSpecialistApprove(GenericAPIView):
         """
         user_id = force_str(urlsafe_base64_decode(user))
         position_id = force_str(urlsafe_base64_decode(position))
+        logging.info("Accept Invitation link is accessed. "
+                     f"Info: User ID {user_id} and Position ID {position_id}")
+
         if SpecialistInviteTokenGenerator().check_token(request.user, token):
+            logger.info("Token is valid.")
             user = CustomUser.objects.get(pk=user_id)
+            specialist_group = Group.objects.get(name="Specialist")
+            specialist_group.user_set.add(user)
             position = Position.objects.get(pk=position_id)
             position.specialist.set((user,))
             position.save()
             return Response(status=status.HTTP_200_OK)
         else:
+            logger.info("Token is invalid.")
             return Response(status=status.HTTP_400_BAD_REQUEST)
