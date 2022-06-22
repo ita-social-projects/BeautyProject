@@ -35,3 +35,11 @@ class OrderApprovingTokenGenerator(PasswordResetTokenGenerator):
         logger.info(f"Token for {order} was created")
 
         return f"{order.pk}{order.status}{update_at_timestamp}{timestamp}"
+
+
+class SpecialistInviteTokenGenerator(PasswordResetTokenGenerator):
+    """This is a token for approving Position."""
+
+    def _make_hash_value(self, user: object, timestamp: int):
+        """This method sets values for hashing."""
+        return f"{user.id}{timestamp}"

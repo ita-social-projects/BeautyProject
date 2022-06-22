@@ -1,12 +1,14 @@
 """This module provides you with all needed utility functions."""
 
 import os
+
 from datetime import timedelta, datetime
 from typing import Tuple
 import pytz
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
 from faker import Faker
+from .tokens import SpecialistInviteTokenGenerator
 
 faker = Faker()
 
@@ -123,3 +125,43 @@ def time_to_string(time):
 def string_to_time(string):
     """Cast string HH:MM to time."""
     return datetime.strptime(string, "%H:%M")
+
+
+class PositionAcceptEmail(BaseEmailMessage):
+    """This is an email for confirming Position."""
+
+    template_name = "email/position_accept_email.html"
+
+    def get_context_data(self):
+        """Get context data for rendering HTML messages."""
+        context = super().get_context_data()
+
+        pos = context.get("position")
+        user = context.get("inviter")
+        email = context.get("email")
+
+        context.update(self.create_approve_link(user.id, pos, email))
+
+        return context
+
+    def create_approve_link(self, inviter: int, position: int, email: str):
+        """This method creates approve link."""
+        from api.models import CustomUser
+        from djoser.utils import encode_uid
+
+        user = CustomUser.objects.get(email=email)
+        params = {
+            "user": encode_uid(inviter),
+            "position": encode_uid(position),
+            "token": SpecialistInviteTokenGenerator().make_token(user=user),
+        }
+
+        return {"approve_link": reverse("api:position-approve",
+                                        kwargs=params, request=None),
+                }
+
+
+class RegisterInviteEmail(BaseEmailMessage):
+    """This email is sent to invite to register on site."""
+
+    template_name = "email/register_invite_email.html"

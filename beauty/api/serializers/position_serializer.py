@@ -4,10 +4,9 @@ import logging
 import calendar
 
 from rest_framework import serializers
-from api.models import Position
 from beauty.utils import string_to_time
 from api.serializers.business_serializers import WorkingTimeSerializer
-
+from api.models import Position, CustomUser
 
 logger = logging.getLogger(__name__)
 
@@ -95,3 +94,31 @@ class PositionSerializer(WorkingTimeSerializer):
         logger.info("Position_serializer: successfully set time")
 
         return super().validate(data)
+
+
+class PositionInviteSerializer(serializers.Serializer):
+    """This is a serializer for inviting new specialists to a Position."""
+    email = serializers.EmailField()
+
+    def is_valid(self):
+        """Method for validation.
+
+        This method checks whether user exists and validates an email. It also
+        checks that user is not assigned to this position already.
+
+        """
+        email_to_check = self.initial_data["email"]
+        super().is_valid(email_to_check)
+        pos_to_check = self.initial_data["position"]
+        user = CustomUser.objects.filter(email=email_to_check)
+        position = Position.objects.get(pk=pos_to_check)
+
+        if user.exists():
+            if user.get() not in position.specialist.all():
+                return True
+            else:
+                raise serializers.ValidationError(
+                    detail="User is already on the Position.",
+                    code=400,
+                )
+        return False

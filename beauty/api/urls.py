@@ -9,6 +9,9 @@ from api.views.review_views import (ReviewDisplayView,
                                     ReviewRUDView,
                                     ReviewAddView)
 
+from api.views.position_views import (InviteSpecialistToPosition,
+                                      InviteSpecialistApprove)
+
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
@@ -76,6 +79,16 @@ urlpatterns = [
         "position/<int:pk>",
         PositionRetrieveUpdateDestroyView.as_view(),
         name="position-detail-list",
+    ),
+    path(
+        "position/<int:pk>/add",
+        InviteSpecialistToPosition.as_view(),
+        name="position-add-specialist",
+    ),
+    path(
+        "position-accept/<str:user>/<str:position>/<str:token>",
+        InviteSpecialistApprove.as_view(),
+        name="position-approve",
     ),
     path(
         r"<int:user>/reviews/add/",
