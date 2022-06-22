@@ -1,4 +1,12 @@
-"""This module is for testing DELETE method that is used to inactivate Business."""
+"""This module is for testing DELETE method that is used to inactivate Business.
+
+Tests for RemoveSpecialistFromPosition:
+- SetUp method adds needed info for tests;
+- Not logged users cannot remove specialist from position;
+- Logged users, which are not owner of business, can't remove specialist from position;
+- A logged owner can remove specialist from position;
+- Only a logged owner of business can remove specialist from position.
+"""
 
 from django.test import TestCase
 from rest_framework.test import APIClient
