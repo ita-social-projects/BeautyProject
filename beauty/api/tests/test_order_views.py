@@ -27,6 +27,14 @@ Tests for OrderRetrieveCancelView:
 - Not logged user can not cancel an order;
 - Users not from order can not cancel it;
 - Test an order with statuses which can not change.
+
+Tests for CustomerOrdersViews:
+- SetUp method adds needed info for tests;
+- Not logged users can not rearview a customer's orders;
+- Logged users can't view a customer's orders;
+- Only a logged customer can rearview his own orders;
+- Check count customer orders;
+- Check response data for customer orders.
 """
 
 import pytz
@@ -35,7 +43,7 @@ from django.test import TestCase
 from djoser.utils import encode_uid
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import (APIClient, APIRequestFactory)
 from django.conf import settings
 from api.serializers.order_serializers import OrderSerializer
 from api.views.order_views import (OrderListCreateView,
@@ -279,3 +287,63 @@ class TestOrderRetrieveCancelView(TestCase):
                 self.order.save()
                 response = self.client.put(path=self.order_url, data={"reason": "test reason"})
                 self.assertEqual(response.status_code, 400)
+
+
+class TestCustomerOrdersViews(TestCase):
+    """This class represents a Test case and has all the tests for CustomerOrdersViews."""
+
+    def setUp(self) -> None:
+        """This method adds needed info for tests."""
+        self.Serializer = OrderSerializer
+        self.client = APIClient()
+        self.order_status = Order.StatusChoices
+        self.specialist = CustomUserFactory(first_name="UserSpecialist")
+        self.customer = CustomUserFactory(first_name="UserCustomer")
+        self.service = ServiceFactory(name="Service_1")
+
+        self.client.force_authenticate(user=self.customer)
+
+        self.orders = [OrderFactory(specialist=self.specialist,
+                                    customer=self.customer,
+                                    service=self.service,
+                                    status=status) for status in self.order_status]
+
+    def test_get_method_get_customer_orders_not_logged_user(self):
+        """Not logged users can not rearview a customer's orders."""
+        self.client.force_authenticate(user=None)
+        response = self.client.get(
+            path=reverse("api:customer-orders-list", args=[self.customer.id]),
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_method_get_customer_orders_logged_not_customer(self):
+        """Logged users can't view a customer's orders."""
+        self.client.force_authenticate(user=self.specialist)
+        response = self.client.get(
+            path=reverse("api:customer-orders-list", args=[self.customer.id]),
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_method_get_customer_orders_logged_customer(self):
+        """Only a logged customer can rearview his own orders."""
+        response = self.client.get(
+            path=reverse("api:customer-orders-list", args=[self.customer.id]),
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_method_check_customer_orders_data_count(self):
+        """Check count customer orders."""
+        response = self.client.get(
+            path=reverse("api:customer-orders-list", args=[self.customer.id]),
+        )
+        self.assertEqual(response.data.get("count"), len(self.orders))
+
+    def test_get_method_check_customer_orders_data(self):
+        """Check response data for customer orders."""
+        factory = APIRequestFactory()
+        request = factory.get("/")
+        response = self.client.get(
+            path=reverse("api:customer-orders-list", args=[self.customer.id]),
+        )
+        serializer = self.Serializer(self.orders, many=True, context={"request": request})
+        self.assertEqual(response.data.get("results"), serializer.data)
