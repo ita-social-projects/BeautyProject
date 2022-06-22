@@ -140,3 +140,13 @@ def validate_rounded_minutes_seconds(time_value):
                 "Time value must have minutes multiples of 5",
                 params={"value": time_value},
             )
+
+
+def time_to_string(time):
+    """Cast time to string HH:MM."""
+    return time.strftime("%H:%M")
+
+
+def string_to_time(string):
+    """Cast string HH:MM to time."""
+    return datetime.strptime(string, "%H:%M")

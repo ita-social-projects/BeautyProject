@@ -2,10 +2,10 @@
 
 import logging
 import calendar
-from datetime import datetime
+
 from rest_framework import serializers
 from api.models import Position
-
+from beauty.utils import string_to_time
 from api.serializers.business_serializers import WorkingTimeSerializer
 
 
@@ -25,13 +25,13 @@ def is_valid_position_time(business_time, data):
             continue
 
         inner_interval = (
-            datetime.strptime(data[time][0], "%H:%M"),
-            datetime.strptime(data[time][1], "%H:%M"),
+            string_to_time(data[time][0]),
+            string_to_time(data[time][1]),
         )
 
         main_interval = (
-            datetime.strptime(business_time[time][0], "%H:%M"),
-            datetime.strptime(business_time[time][1], "%H:%M"),
+            string_to_time(business_time[time][0]),
+            string_to_time(business_time[time][1]),
         )
 
         if not is_inside_interval(main_interval, inner_interval):
