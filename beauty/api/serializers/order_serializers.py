@@ -47,9 +47,9 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
 
         errors = {}
         if timezone.now() > start_time:
-            logger.info("The start time should be more as now.")
+            logger.info("The start time should be later than now.")
 
-            errors.update({"start_time": "The start time should be more as now."})
+            errors.update({"start_time": "The start time should be later than now."})
         specialist_services = Position.objects.filter(
             specialist=specialist).values_list("service__name", flat=True)
         if not service.position.specialist.filter(id=specialist.id):
