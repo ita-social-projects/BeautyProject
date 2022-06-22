@@ -113,23 +113,27 @@ class BusinessDetailRUDView(TestCase):
     def test_get_method_for_edit_view_by_unauthenticated_user(self):
         """Unauthenticated user can view only basic business details."""
         self.client.force_authenticate(user=None)
-        response = self.client.get(reverse(
-            viewname="api:business-detail",
-            kwargs={
-                "pk": self.business.id,
-            }),
+        response = self.client.get(
+            path=reverse(
+                viewname="api:business-detail",
+                kwargs={
+                    "pk": self.business.id,
+                },
+            ),
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 401)
         self.assertIs(response.data.get("id"), None)
 
     def test_get_method_for_edit_view_by_someone_else(self):
         """Someone authenticated can view only basic business details."""
         self.client.force_authenticate(user=self.another_user)
-        response = self.client.get(reverse(
-            viewname="api:business-detail",
-            kwargs={
-                "pk": self.business.id,
-            }),
+        response = self.client.get(
+            path=reverse(
+                viewname="api:business-detail",
+                kwargs={
+                    "pk": self.business.id,
+                },
+            ),
         )
         self.assertEqual(response.status_code, 200)
         self.assertIs(response.data.get("id"), None)
