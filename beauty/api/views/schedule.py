@@ -49,7 +49,7 @@ def get_free_time(position, specialist, order_date):
 
         # Remove values that are dublicated, including origin of dublicated value.
         # [1, 1, 2, 3, 4] then remove elements at 0 and 1 index.
-        free_time = list(set(free_time))
+        free_time = [time for time in free_time if free_time.count(time) == 1]
         free_time.sort()
 
         return free_time
