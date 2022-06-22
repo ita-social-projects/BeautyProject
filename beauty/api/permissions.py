@@ -4,6 +4,8 @@ import logging
 
 from rest_framework import permissions
 from api.models import Position
+
+
 logger = logging.getLogger(__name__)
 
 
