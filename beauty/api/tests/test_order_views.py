@@ -16,13 +16,13 @@ Tests for OrderApprovingView:
 - The specialist is redirected to the own page if the order token expired;
 - The user is redirected to the order specialist detail page if he is not logged.
 
-Tests for TestOrderRetrieveCancelView:
+Tests for OrderRetrieveCancelView:
 - SetUp method adds needed info for tests;
 - Only a logged user from order (customer, specialist) can retrieve an order;
 - Logged order customer can retrieve an order;
 - Logged order specialist can retrieve an order.
 
-Tests for TestCustomerOrdersViews:
+Tests for CustomerOrdersViews:
 - SetUp method adds needed info for tests;
 - Not logged users can not rearview a customer's orders;
 - Logged users can't view a customer's orders;
