@@ -1,4 +1,5 @@
 """The module includes serializers for Order model."""
+
 from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 from rest_framework import serializers
@@ -39,7 +40,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
 
         Returns: validated data
         """
-        customer = self.context.get("request").user
+        request = self.context.get("request")
         specialist = attrs.get("specialist")
         start_time = attrs.get("start_time")
         service = attrs.get("service")
@@ -61,7 +62,7 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
                              "help_text": f"Specialist {specialist.get_full_name()} "
                                           f"has such services {list(specialist_services)}."}},
             )
-        if specialist == customer:
+        if specialist == request.user:
             logger.info("Customer and specialist are the same person!")
 
             errors.update({"users": "Customer and specialist are the same person!"})

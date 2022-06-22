@@ -3,7 +3,7 @@
 from django.urls import path
 
 from api.views.order_views import (CustomerOrdersViews, OrderApprovingView,
-                                   OrderListCreateView, OrderRetrieveCancelView)
+                                   OrderCreateView, OrderRetrieveCancelView)
 
 from api.views.review_views import (ReviewDisplayView,
                                     ReviewRUDView,
@@ -44,8 +44,8 @@ urlpatterns = [
     ),
     path(
         "orders/",
-        OrderListCreateView.as_view(),
-        name="order-list-create",
+        OrderCreateView.as_view(),
+        name="order-create",
     ),
     path(
         "order/<int:pk>/",

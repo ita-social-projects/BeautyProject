@@ -4,6 +4,7 @@ Tests for OrderSerializer:
 - This method adds needed info for tests;
 - Check serializer with valid data;
 - Check serializer with invalid data;
+- Check serializer with invalid start_time field;
 - Check serializer with invalid data type;
 - Check serializer with partial validation;
 - Check serializer without data;
@@ -11,7 +12,6 @@ Tests for OrderSerializer:
 - Check serializer when a chosen specialist does not have chosen service;
 - Check serializer when customer and specialist are the same person.
 """
-
 
 import pytz
 from django.utils import timezone
@@ -23,7 +23,7 @@ from .factories import (GroupFactory,
                         CustomUserFactory,
                         PositionFactory,
                         ServiceFactory)
-
+from rest_framework.test import APIRequestFactory
 
 CET = pytz.timezone("Europe/Kiev")
 
@@ -44,18 +44,22 @@ class TestOrderSerializer(TestCase):
         self.groups.specialist.user_set.add(self.specialist)
         self.groups.customer.user_set.add(self.customer)
         self.position.specialist.add(self.specialist)
+        self.factory = APIRequestFactory()
+        self.request = self.factory.get("/")
+        self.request.user = self.customer
+        self.start_time = timezone.datetime.now(tz=CET) + timezone.timedelta(days=2)
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
-        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        valid_data = {"start_time": self.start_time,
                       "specialist": self.specialist.id,
                       "service": self.service.id}
 
-        ecxpect_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        ecxpect_data = {"start_time": self.start_time,
                         "specialist": self.specialist,
                         "service": self.service}
 
-        serializer = self.Serializer(data=valid_data)
+        serializer = self.Serializer(data=valid_data, context={"request": self.request})
         self.assertTrue(serializer.is_valid(raise_exception=True))
         self.assertEqual(serializer.validated_data, ecxpect_data)
         self.assertEqual(serializer.errors, {})
@@ -65,7 +69,7 @@ class TestOrderSerializer(TestCase):
 
     def test_invalid_serializer(self):
         """Check serializer with invalid data."""
-        invalid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        invalid_data = {"start_time": self.start_time,
                         "specialist": self.specialist.id}
 
         serializer = self.Serializer(data=invalid_data)
@@ -76,9 +80,26 @@ class TestOrderSerializer(TestCase):
         self.assertEqual(serializer.errors, {
             "service": [ErrorDetail(string="This field is required.", code="required")]})
 
+    def test_invalid_start_time(self):
+        """Check serializer with invalid start_time field."""
+        invalid_data = {"start_time": self.start_time - timezone.timedelta(days=30),
+                        "specialist": self.specialist.id,
+                        "service": self.service.id}
+
+        serializer = self.Serializer(data=invalid_data, context={"request": self.request})
+        serializer.is_valid()
+
+        self.assertFalse(serializer.is_valid())
+        self.assertEqual(serializer.validated_data, {})
+        self.assertEqual(serializer.data, invalid_data)
+        self.assertEqual(serializer.errors, {
+            "start_time": [ErrorDetail(string="The start time should be more as now.",
+                                       code="invalid")],
+        })
+
     def test_invalid_datatype(self):
         """Check serializer with invalid data type."""
-        invalid_data = [{"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        invalid_data = [{"start_time": self.start_time,
                          "specialist": self.specialist.id,
                          "service": self.service}]
 
@@ -92,14 +113,18 @@ class TestOrderSerializer(TestCase):
 
     def test_partial_validation(self):
         """Check serializer with partial validation."""
-        invalid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
-                        "specialist": self.specialist.id}
+        invalid_data = {"start_time": self.start_time,
+                        "specialist": self.specialist.id,
+                        "service": self.service.id}
 
-        ecxpect_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
-                        "specialist": self.specialist}
+        ecxpect_data = {"start_time": self.start_time,
+                        "specialist": self.specialist,
+                        "service": self.service}
 
-        serializer = self.Serializer(data=invalid_data, partial=True)
-        self.assertTrue(serializer.is_valid())
+        serializer = self.Serializer(data=invalid_data, partial=True,
+                                     context={"request": self.request})
+
+        self.assertTrue(serializer.is_valid(raise_exception=True))
         self.assertEqual(serializer.validated_data, ecxpect_data)
         self.assertEqual(serializer.errors, {})
 
@@ -118,39 +143,41 @@ class TestOrderSerializer(TestCase):
 
     def test_specialist_service(self):
         """Check serializer when a chosen specialist does not have chosen service."""
-        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        valid_data = {"start_time": self.start_time,
                       "specialist": self.specialist.id,
                       "service": self.service.id}
 
         self.position.specialist.remove(self.specialist)
 
-        serializer = self.Serializer(data=valid_data)
-
-        self.assertTrue(serializer.is_valid())
-        self.assertEqual(serializer.errors, {})
+        serializer = self.Serializer(data=valid_data, context={"request": self.request})
 
         with self.assertRaises(ValidationError) as ex:
-            self.assertTrue(serializer.is_valid())
+            self.assertTrue(serializer.is_valid(raise_exception=True))
             serializer.save(customer=self.customer)
+
         self.assertEqual(
-            {"help_text": "Specialist has such services [].",
-             "service": "Specialist does not have such service."}, ex.exception.args[0],
+            {"service": {"message": ErrorDetail(
+                string=f"Specialist {self.specialist.get_full_name()} does not have "
+                       f"{self.service.name} service.",
+                code="invalid"), "help_text": ErrorDetail(
+                string=f"Specialist {self.specialist.get_full_name()} has such services [].",
+                code="invalid")}},
+            ex.exception.args[0],
         )
 
     def test_specialist_is_customer(self):
         """Check serializer when customer and specialist are the same person."""
-        valid_data = {"start_time": timezone.datetime(2022, 5, 30, 9, 40, 16, tzinfo=CET),
+        valid_data = {"start_time": self.start_time,
                       "specialist": self.specialist.id,
                       "service": self.service.id}
-
-        serializer = self.Serializer(data=valid_data)
-
-        self.assertTrue(serializer.is_valid())
-        self.assertEqual(serializer.errors, {})
+        self.request.user = self.specialist
+        serializer = self.Serializer(data=valid_data, context={"request": self.request})
 
         with self.assertRaises(ValidationError) as ex:
-            self.assertTrue(serializer.is_valid())
-            serializer.save(customer=self.specialist)
+            self.assertTrue(serializer.is_valid(raise_exception=True))
+            serializer.save()
         self.assertEqual(
-            {"users": "Customer and specialist are the same person!"}, ex.exception.args[0],
+            {"users": [
+                ErrorDetail(string="Customer and specialist are the same person!", code="invalid"),
+            ]}, ex.exception.args[0],
         )

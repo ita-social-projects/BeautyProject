@@ -42,7 +42,7 @@ class TokenLoginRequiredMixin(LoginRequiredMixin):
             request, *args, **kwargs)
 
 
-class OrderListCreateView(CreateAPIView):
+class OrderCreateView(CreateAPIView):
     """Generic API for orders custom POST method."""
 
     queryset = Order.objects.all()
