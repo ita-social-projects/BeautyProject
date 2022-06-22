@@ -1,6 +1,7 @@
 """Module with SpecialistScheduleView."""
 
 from api.models import Order, Position, CustomUser, Service
+from api.serializers.order_serializers import OrderSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -125,8 +126,10 @@ def get_free_time_specialist_for_owner(position, specialist, order_date):
         if order.end_time.time() == specialist_schedule[0][0]
     ]
 
-    if start_order:
-        new_specialist_schedule.insert(0, start_order[0].id)
+    order = OrderSerializer(start_order[0])
+
+    if start_order and order.is_valid(raise_exception=True):
+        new_specialist_schedule.insert(0, order.date)
 
     return new_specialist_schedule
 

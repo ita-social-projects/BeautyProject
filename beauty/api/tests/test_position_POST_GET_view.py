@@ -5,7 +5,6 @@ Tests for PositionListCreateView:
 - Get 1 created positions;
 - Post valid position;
 - Customer must be authenticated;
-- Start time must go before end time;
 - Owner isn't allowed to post empty data.
 """
 
@@ -45,14 +44,16 @@ class TestPositionListCreateView(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.owner)
 
-        self.position_testing = PositionFactory.build(name="Wyh")
-        self.position_testing = {
+        self.position_testing = PositionFactory.build(
+            name="Wyh",
+            business=self.business,
+        )
+        self.valid_data = {
             "name": self.position_testing.name,
-            "business": self.business.id,
+            "business": self.position_testing.business.id,
             "specialist": [self.specialist1.id],
-            "start_time": str(self.position_testing.start_time.time()),
-            "end_time": str(self.position_testing.end_time.time()),
         }
+        self.valid_data.update(self.position_testing.working_time)
 
         self.url = reverse("api:position-list")
 
@@ -74,7 +75,7 @@ class TestPositionListCreateView(TestCase):
         response = self.client.generic(
             method="POST",
             path=self.url,
-            data=json.dumps(self.position_testing),
+            data=json.dumps(self.valid_data),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 201)
@@ -85,20 +86,9 @@ class TestPositionListCreateView(TestCase):
         response = self.client.generic(
             method="POST",
             path=self.url,
-            data=self.position_testing,
+            data=self.valid_data,
         )
         self.assertEqual(response.status_code, 401)
-
-    def test_position_post_list_create_view_invalid_time(self):
-        """POST requests to ListCreateAPIView with invalid time shouldn't create a new object."""
-        self.position_testing["end_time"] = self.position_testing["start_time"]
-        response = self.client.generic(
-            method="POST",
-            path=self.url,
-            data=json.dumps(self.position_testing),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 400)
 
     def test_position_post_list_create_view_empty_data(self):
         """POST requests to ListCreateAPIView with empty data shouldn't create a new object."""

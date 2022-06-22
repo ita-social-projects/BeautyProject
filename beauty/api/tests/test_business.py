@@ -14,7 +14,7 @@ from .factories import (
     PositionFactory,
     GroupFactory,
 )
-from beauty.utils import get_random_start_end_datetime
+
 
 User = get_user_model()
 faker = Faker()
@@ -50,10 +50,10 @@ class BusinessModelTest(TestCase):
         Creates new position and that this position belongs
         to a correct business
         """
-        start_time, end_time = get_random_start_end_datetime()
         position = self.business.create_position(
-            faker.word(), self.specialist1, start_time, end_time,
+            faker.word(), self.specialist1, self.business.working_time,
         )
+
         all_positions = self.business.position_set.all()
 
         self.assertIn(position, all_positions)
@@ -65,10 +65,10 @@ class BusinessModelTest(TestCase):
         Checks if this method gives all specilaists who belong
         to current business
         """
-        start_time, end_time = get_random_start_end_datetime()
         self.business.create_position(
-            faker.word(), self.specialist1, start_time, end_time,
+            faker.word(), self.specialist1, self.business.working_time,
         )
+
         all_specialists = self.business.get_all_specialists()
 
         self.assertIn(self.specialist1, all_specialists)
@@ -102,6 +102,7 @@ class BusinessListCreateViewTest(TestCase):
             "business_type": faker.word(),
             "description": faker.text(),
         }
+        self.valid_create_data.update(self.business1.working_time)
 
     def test_list_of_businesses(self) -> None:
         """Tests if view gives all businesses."""
