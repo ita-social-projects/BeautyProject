@@ -23,7 +23,7 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 from .models import (Business, CustomUser, Position, Service)
 
 from .permissions import (IsAdminOrThisBusinessOwner, IsOwner,
-                          IsPositionOwner, IsProfileOwner, ReadOnly)
+                          IsPositionOwner, IsProfileOwner, ReadOnly, IsAdminOrCurrentBusinessOwner)
 
 from .serializers.business_serializers import (BusinessCreateSerializer,
                                                BusinessesSerializer,
@@ -214,7 +214,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy.
     """
 
-    permission_classes = (IsAdminOrThisBusinessOwner,)
+    permission_classes = (IsAdminOrCurrentBusinessOwner,)
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
