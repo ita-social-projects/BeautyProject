@@ -44,6 +44,7 @@ class InviteRegisterView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         invitation = Invitation.objects.get(pk=force_str(urlsafe_base64_decode(invite)))
         owner = Position.objects.get(pk=invitation.position.id).business.owner
+        logger.info("Invite link for registering through invite is accessed.")
 
         if SpecialistInviteTokenGenerator().check_token(invitation, token):
             if serializer.is_valid():
@@ -65,6 +66,8 @@ class InviteRegisterView(GenericAPIView):
                         "answer": "accepted",
                     },
                 ).send(to=[owner.email])
+                logger.info(f"{user} (id={user.id}) was created and assigned "
+                            f"for position id {position.id}.")
                 return Response(status=status.HTTP_200_OK)
             else:
                 return Response(
@@ -72,6 +75,7 @@ class InviteRegisterView(GenericAPIView):
                     data={"serializer": "Wrong input data"},
                 )
         else:
+            logger.info("Token is invalid.")
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"token": "Token is invalid"},

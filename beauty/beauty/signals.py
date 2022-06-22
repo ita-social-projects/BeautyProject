@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import Signal, receiver
 from rest_framework.reverse import reverse
 
-from api.models import Order, Invitation
+from api.models import (Order, Invitation)
 from beauty.tokens import OrderApprovingTokenGenerator, SpecialistInviteTokenGenerator
 from beauty.utils import StatusOrderEmail
 
