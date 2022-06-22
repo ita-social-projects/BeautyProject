@@ -1,0 +1,12 @@
+{% block subject %}
+Your invitation for {{invite.position}} was {{answer}}.
+{% endblock subject %}
+
+{% block html_body %}
+<p>You're receiving this email because your invitation was {{answer}} for the following position:</p>
+<br>
+<p>Position: {{invite.position}}</p>
+<p>Business: {{invite.position.business}}</p>
+<br>
+
+{% endblock html_body %}

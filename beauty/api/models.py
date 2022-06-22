@@ -199,6 +199,7 @@ class Business(models.Model):
         address (AddressField): Location of business
         description (str): Description of business
         created_at (datetime): Time when business was created
+        is_active (bool): Determines whether business is active
 
     """
 
@@ -234,6 +235,15 @@ class Business(models.Model):
         verbose_name=_("Created at"),
         auto_now_add=True,
     )
+    working_time = models.JSONField(
+        default=dict,
+        blank=True,
+        null=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
 
     class Meta:
         """This meta class stores verbose names."""
@@ -246,11 +256,10 @@ class Business(models.Model):
         """str: Returns a verbose title of the business."""
         return str(self.name)
 
-    def create_position(self, name, specialist, start_time, end_time):
+    def create_position(self, name, specialist, working_time):
         """Creates Position for specific Business."""
         position = Position.objects.create(name=name, business=self,
-                                           start_time=start_time,
-                                           end_time=end_time)
+                                           working_time=working_time)
         position.specialist.add(specialist)
 
         logger.info(f"New position with id={position.id} was created")
@@ -335,19 +344,17 @@ class Position(models.Model):
     specialist = models.ManyToManyField(
         "CustomUser",
         verbose_name=_("Specialist"),
+        blank=True,
     )
     business = models.ForeignKey(
         "Business",
         on_delete=models.CASCADE,
         verbose_name=_("Business"),
     )
-    start_time = models.TimeField(
-        editable=True,
-        verbose_name=_("Start time"),
-    )
-    end_time = models.TimeField(
-        editable=True,
-        verbose_name=_("End time"),
+    working_time = models.JSONField(
+        default=dict,
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -630,3 +637,44 @@ class Service(models.Model):
         ordering = ["id"]
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
+
+
+class Invitation(models.Model):
+    """This class represents an invite for a position.
+
+    Attributes:
+        created_at (datetime): represents time of creation, used in token
+        email (str): Email which was used to send an invite
+        position (Position): position in question
+        token (str): token used in confirmations
+    """
+
+    class Meta:
+        """This class ensures that all invites are unique."""
+        unique_together = ["email", "position"]
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Created at"),
+    )
+
+    email = models.EmailField(
+        max_length=100,
+        unique=False,
+    )
+
+    position = models.ForeignKey(
+        "Position",
+        on_delete=models.CASCADE,
+        verbose_name=_("Position"),
+    )
+
+    token = models.CharField(
+        max_length=64,
+        editable=False,
+        null=True,
+    )
+
+    def __str__(self) -> str:
+        """This method changes representation of the Invite in the admin panel."""
+        return f"Invite for {self.email} on {self.position}"
