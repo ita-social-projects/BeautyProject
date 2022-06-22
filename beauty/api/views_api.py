@@ -2,6 +2,7 @@
 
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
@@ -187,20 +188,20 @@ class RemoveSpecialistFromPosition(DestroyAPIView):
     serializer_class = PositionSerializer
     permission_classes = (IsAuthenticated, IsPositionOwner)
 
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request, pk, specialist_id, *args, **kwargs):
         """Reimplementation of the DESTROY (DELETE) method."""
         instance = self.get_object()
+        try:
+            if instance.specialist.all().get(id=specialist_id):
+                instance.specialist.set(())
+                instance.save()
+                logger.info(f"Specialist was removed from position {instance}.")
+                return Response(status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            logger.info(f"Specialist (id={instance.id}) is already removed from "
+                        f"position {instance}, but tried doing it again.")
 
-        if instance.specialist:
-            instance.specialist.set(())
-            instance.save()
-            logger.info(f"Specialist was removed from position {instance}.")
-            return Response(status=status.HTTP_200_OK)
-
-        logger.info(f"Specialist (id={instance.id}) is already removed from "
-                    f"position {instance}, but tried doing it again.")
-
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class BusinessesListCreateAPIView(ListCreateAPIView):
