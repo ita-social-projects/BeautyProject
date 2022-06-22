@@ -177,8 +177,7 @@ class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated,
-                          IsPositionOwner)
+    permission_classes = (IsAuthenticated, IsPositionOwner)
 
 
 class RemoveSpecialistFromPosition(DestroyAPIView):
@@ -195,11 +194,12 @@ class RemoveSpecialistFromPosition(DestroyAPIView):
         if instance.specialist:
             instance.specialist.set(())
             instance.save()
-            logger.info(f"Specialist was delete from position {instance}.")
+            logger.info(f"Specialist was removed from position {instance}.")
             return Response(status=status.HTTP_200_OK)
 
-        logger.info(f"Specialist (id={instance.id}) is already "
-                    f"delete from position {instance}, but tried doing it again.")
+        logger.info(f"Specialist (id={instance.id}) is already removed from "
+                    f"position {instance}, but tried doing it again.")
+
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
