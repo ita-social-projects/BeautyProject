@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.models import Business
 from .factories import BusinessFactory, CustomUserFactory
-from ..serializers.business_serializers import BusinessGetAllInfoSerializers
+from api.serializers.business_serializers import BusinessGetAllInfoSerializers
 
 
 class TestDeleteBusiness(TestCase):
@@ -17,7 +17,7 @@ class TestDeleteBusiness(TestCase):
     def setUp(self) -> None:
         """This method adds needed info for tests."""
         self.owner = CustomUserFactory(first_name="OwnerUser")
-        self.user1 = CustomUserFactory.create(is_active=True)
+        self.user = CustomUserFactory.create()
 
         self.business1 = BusinessFactory.create(name="Business1", owner=self.owner)
         self.business2 = BusinessFactory.create(name="Business2", owner=self.owner)
@@ -36,11 +36,11 @@ class TestDeleteBusiness(TestCase):
             ),
         )
         self.assertEqual(response.status_code, 200)
-        self.assertFalse(Business.objects.get(pk=1).is_active)
+        self.assertFalse(Business.objects.get(pk=self.business1.id).is_active)
 
     def test_delete_business_by_other_user(self):
         """Business can't become inactive by another user."""
-        self.client.force_authenticate(user=self.user1)
+        self.client.force_authenticate(user=self.user)
         response = self.client.delete(
             path=reverse(
                 "api:business-detail",
