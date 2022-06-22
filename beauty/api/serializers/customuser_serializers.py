@@ -354,3 +354,46 @@ class ResetPasswordSerializer(PasswordsValidation):
             raise serializers.ValidationError(
                 {"password": "Fields should be valid"},
             )
+
+
+class InviteUserCreate(PasswordsValidation, serializers.ModelSerializer):
+    """This serializer is used when user is registered by an invite link."""
+
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={"input_type": "password", "placeholder": "Password"},
+        validators=[validate_password],
+    )
+    confirm_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        style={"input_type": "password",
+               "placeholder": "Confirmation Password",
+               },
+    )
+
+    class Meta:
+        """Class with a model and model fields for serialization."""
+        model = CustomUser
+        fields = ("id", "first_name", "patronymic", "last_name",
+                  "phone_number", "bio", "avatar",
+                  "password", "confirm_password")
+
+    def create(self, validated_data: dict) -> object:
+        """Create a new user using dict with data.
+
+        Args:
+            validated_data (dict): validated data for new user creation
+
+        Returns:
+            user (object): new user
+
+        """
+        confirm_password = validated_data.pop("confirm_password")
+        validated_data["password"] = make_password(confirm_password)
+
+        logger.info(f"User {validated_data['first_name']} with"
+                    f" {validated_data['email']} was created.")
+
+        return super().create(validated_data)
