@@ -1,5 +1,6 @@
 """The module includes serializers for Order model."""
-
+from rest_framework.exceptions import ValidationError
+from django.utils import timezone
 from rest_framework import serializers
 from api.models import (Order, CustomUser, Service, Position)
 import logging
@@ -30,34 +31,47 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
 
         read_only_fields = ("customer", "status", "reason")
 
-    def create(self, validated_data):
-        """Create.
+    def validate(self, attrs):
+        """Validate data.
 
-        Check that specialist has the chosen service
-        before creating an order.
+        Args:
+            attrs: data from fields
+
+        Returns: validated data
+
         """
-        service = validated_data.get("service")
-        specialist = validated_data.get("specialist")
-        customer = validated_data.get("customer")
+        customer = self.context.get("request").user
+        specialist = attrs.get("specialist")
+        start_time = attrs.get("start_time")
+        service = attrs.get("service")
+
+        errors = {}
+
+        if timezone.now() > start_time:
+            logger.info("The start time should be more as now.")
+            errors.update({"start_time": "The start time should be more as now."})
+
         specialist_services = Position.objects.filter(
             specialist=specialist).values_list("service__name", flat=True)
+
         if not service.position.specialist.filter(id=specialist.id):
             logger.info(f"Specialist {specialist.get_full_name()}"
                         f"does not have {service.name} service")
 
-            raise serializers.ValidationError(
-                {"service": f"Specialist {specialist.get_full_name()} does not have "
-                            f"{service.name} service.",
-                 "help_text": f"Specialist {specialist.get_full_name()} has such services "
-                              f"{list(specialist_services)}."},
+            errors.update(
+                {"service": {"message": f"Specialist {specialist.get_full_name()} does not have "
+                                        f"{service.name} service.",
+                             "help_text": f"Specialist {specialist.get_full_name()} "
+                                          f"has such services {list(specialist_services)}."}},
             )
-
         if specialist == customer:
             logger.info("Customer and specialist are the same person!")
 
-            raise serializers.ValidationError(
-                {"users": "Customer and specialist are the same person!"})
-        return super().create(validated_data)
+            errors.update({"users": "Customer and specialist are the same person!"})
+        if errors:
+            raise ValidationError(errors)
+
+        return super().validate(attrs)
 
 
 class OrderDeleteSerializer(serializers.ModelSerializer):
@@ -87,7 +101,6 @@ class OrderDeleteSerializer(serializers.ModelSerializer):
         status = Order.StatusChoices
         doesnt_require_decline_list = (status.COMPLETED, status.CANCELLED, status.DECLINED)
         if instance.status in doesnt_require_decline_list:
-
             logger.info(f"{instance} already has status {instance.get_status_display()}")
 
             raise serializers.ValidationError(

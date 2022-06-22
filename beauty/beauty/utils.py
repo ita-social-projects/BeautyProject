@@ -116,10 +116,22 @@ def order_approve_decline_urls(order: object, approve_name="url_for_approve",
 
 
 def custom_exception_handler(exc, context):
-    """Custom exception handler."""
+    """Custom exceptions handler.
+
+    Args:
+        exc: exceptions list or dict
+        context: context data includes information about view and request
+
+    Returns: response data
+    """
     from rest_framework.views import exception_handler
+
     response = exception_handler(exc, context)
     if response is not None:
-        response.data["status_code"] = response.status_code
-
+        if isinstance(response.data, list):
+            response.data = list(filter(lambda o: o, response.data))
+            for data in response.data:
+                data["status_code"] = response.status_code
+        else:
+            response.data["status_code"] = response.status_code
     return response
