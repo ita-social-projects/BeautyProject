@@ -281,7 +281,7 @@ class SpecialistsServicesView(ListAPIView):
 
     def get_queryset(self):
         """Filter service for current specialist."""
-        specialist = CustomUser.objects.get(id=self.kwargs["pk"])
+        specialist = get_object_or_404(CustomUser, id=self.kwargs["pk"])
         position = Position.objects.get(specialist=specialist)
 
         logger.info(f"Got services from specialist {specialist}")
