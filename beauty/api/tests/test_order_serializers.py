@@ -19,11 +19,10 @@ from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail, ValidationError
 
 from api.serializers.order_serializers import OrderSerializer
-from .factories import (GroupFactory,
-                        CustomUserFactory,
-                        PositionFactory,
-                        ServiceFactory)
-from rest_framework.test import APIRequestFactory
+from api.tests.factories import (GroupFactory,
+                                 CustomUserFactory,
+                                 PositionFactory,
+
 
 CET = pytz.timezone("Europe/Kiev")
 
