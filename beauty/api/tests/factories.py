@@ -75,7 +75,6 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     owner = factory.SubFactory(CustomUserFactory, is_active=True)
     address = factory.Faker("address")
     description = factory.Faker("sentence", nb_words=4)
-    is_active = True
 
     @factory.lazy_attribute
     def working_time(self):
