@@ -2,10 +2,10 @@
 
 import calendar
 import logging
-from datetime import datetime
 
 from rest_framework import serializers
 
+from beauty.utils import string_to_time, time_to_string
 from api.models import (Business, CustomUser)
 
 
@@ -97,10 +97,10 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
             if amount_of_data == 2:
 
                 try:
-                    opening_time = datetime.strptime(data[day][0], "%H:%M")
-                    closing_time = datetime.strptime(data[day][1], "%H:%M")
-                    working_time[day].append(opening_time.strftime("%H:%M"))
-                    working_time[day].append(closing_time.strftime("%H:%M"))
+                    opening_time = string_to_time(data[day][0])
+                    closing_time = string_to_time(data[day][1])
+                    working_time[day].append(time_to_string(opening_time))
+                    working_time[day].append(time_to_string(closing_time))
                 except ValueError:
                     raise serializers.ValidationError(
                         {day: "Day schedule does not match the template\

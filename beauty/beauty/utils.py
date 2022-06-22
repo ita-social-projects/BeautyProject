@@ -113,3 +113,13 @@ def order_approve_decline_urls(order: object, approve_name="url_for_approve",
     urls[decline_name] = reverse("api:order-approving",
                                  kwargs=url_declined_params, request=request)
     return urls
+
+
+def time_to_string(time):
+    """Cast time to string HH:MM."""
+    return time.strftime("%H:%M")
+
+
+def string_to_time(string):
+    """Cast string HH:MM to time."""
+    return datetime.strptime(string, "%H:%M")

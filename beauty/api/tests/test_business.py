@@ -171,3 +171,31 @@ class BusinessListCreateViewTest(TestCase):
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["owner"], self.owner.get_full_name())
+
+    def test_create_business_invalid_time(self) -> None:
+        """Owner cannot create business if working time is invalid."""
+        self.client.force_authenticate(user=self.owner)
+
+        self.valid_create_data["Mon"] = ["10:00", "9:00"]
+        response = self.client.post(
+            path=reverse(
+                "api:businesses-list-create",
+            ),
+            data=self.valid_create_data,
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_business_missing_working_day(self) -> None:
+        """Owner can not create business without any working day."""
+        self.client.force_authenticate(user=self.owner)
+
+        self.valid_create_data.pop("Mon")
+        response = self.client.post(
+            path=reverse(
+                "api:businesses-list-create",
+            ),
+            data=self.valid_create_data,
+        )
+
+        self.assertEqual(response.status_code, 400)

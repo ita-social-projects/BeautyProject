@@ -99,3 +99,40 @@ class TestPositionListCreateView(TestCase):
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 400)
+
+    def test_create_position_invalid_time(self) -> None:
+        """Owner cannot create position if working time is invalid."""
+        self.client.force_authenticate(user=self.owner)
+
+        self.valid_data["Mon"] = ["10:00", "9:00"]
+        response = self.client.post(
+            path=self.url,
+            data=self.valid_data,
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_position_missing_working_day(self) -> None:
+        """Owner can not create position without any working day."""
+        self.client.force_authenticate(user=self.owner)
+
+        self.valid_data.pop("Mon")
+        response = self.client.post(
+            path=self.url,
+            data=self.valid_data,
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_position_doesnt_fit_business(self) -> None:
+        """Owner can not create position if it doesn't fit business working time."""
+        self.client.force_authenticate(user=self.owner)
+
+        # Business max time defined in factory is 20:59
+        self.valid_data["Mon"] = [self.valid_data["Mon"][0], "21:00"]
+        response = self.client.post(
+            path=self.url,
+            data=self.valid_data,
+        )
+
+        self.assertEqual(response.status_code, 400)

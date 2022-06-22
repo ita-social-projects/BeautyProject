@@ -12,6 +12,7 @@ import factory
 from factory import fuzzy
 from api.models import (CustomUser, Order, Service, Position, Business, Review)
 from django.contrib.auth.models import Group
+from beauty.utils import string_to_time, time_to_string
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -80,6 +81,11 @@ class BusinessFactory(factory.django.DjangoModelFactory):
         """Generates business working time."""
         start_hour = f"{random.randint(6, 10)}:{random.randint(0, 59)}"
         end_hour = f"{random.randint(13, 20)}:{random.randint(0, 59)}"
+        start_hour = string_to_time(start_hour)
+        end_hour = string_to_time(end_hour)
+        start_hour = time_to_string(start_hour)
+        end_hour = time_to_string(end_hour)
+
         week_days = [day.capitalize()
                      for day in calendar.HTMLCalendar.cssclasses]
 
@@ -122,6 +128,10 @@ class PositionFactory(factory.django.DjangoModelFactory):
                      + f"{random.randint(start_hour[1], 59)}"
         end_hour = f"{random.randint(13, end_hour[0])}:"\
                    + f"{random.randint(0, end_hour[1])}"
+        start_hour = string_to_time(start_hour)
+        end_hour = string_to_time(end_hour)
+        start_hour = time_to_string(start_hour)
+        end_hour = time_to_string(end_hour)
 
         working_time = {day: [start_hour, end_hour]
                         if working_time[day]
