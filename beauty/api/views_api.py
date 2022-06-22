@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      RetrieveAPIView,
-                                     get_object_or_404)
+                                     get_object_or_404, DestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
@@ -177,8 +177,30 @@ class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated,
-                          IsPositionOwner)
+    permission_classes = (IsAuthenticated, IsPositionOwner)
+
+
+class RemoveSpecialistFromPosition(DestroyAPIView):
+    """Generic API for position DELETE specialist methods."""
+
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated, IsPositionOwner)
+
+    def delete(self, request, *args, **kwargs):
+        """Reimplementation of the DESTROY (DELETE) method."""
+        instance = self.get_object()
+
+        if instance.specialist:
+            instance.specialist.set(())
+            instance.save()
+            logger.info(f"Specialist was removed from position {instance}.")
+            return Response(status=status.HTTP_200_OK)
+
+        logger.info(f"Specialist (id={instance.id}) is already removed from "
+                    f"position {instance}, but tried doing it again.")
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class BusinessesListCreateAPIView(ListCreateAPIView):
