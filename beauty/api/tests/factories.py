@@ -23,7 +23,7 @@ class RoundedTime:
     Provide time with zero seconds and minutes multiplied by 5
     """
 
-    minutes = (0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
+    minutes = (5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
 
     @classmethod
     def calculate_rounded_time_minutes_seconds(cls):
@@ -32,7 +32,8 @@ class RoundedTime:
         Returns datetime.now() with edited minutes and seconds
         """
         return timezone.now().replace(
-            minute=choice(cls.minutes), second=0, microsecond=0,
+            hour=random.randint(1, 23), minute=choice(cls.minutes),
+            second=0, microsecond=0,
         )
 
     @classmethod
@@ -105,8 +106,8 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def working_time(self):
         """Generates business working time."""
-        start_hour = f"{random.randint(6, 10)}:{random.randint(0, 59)}"
-        end_hour = f"{random.randint(13, 20)}:{random.randint(0, 59)}"
+        start_hour = f"{random.randint(6, 10)}:{choice(RoundedTime.minutes)}"
+        end_hour = f"{random.randint(13, 20)}:{choice(RoundedTime.minutes)}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
         start_hour = time_to_string(start_hour)
@@ -150,10 +151,10 @@ class PositionFactory(factory.django.DjangoModelFactory):
         end_hour = [int(time)
                     for time in working_time[work_day][1].split(":")]
 
-        start_hour = f"{random.randint(start_hour[0], 11)}:"\
-                     + f"{random.randint(start_hour[1], 59)}"
-        end_hour = f"{random.randint(13, end_hour[0])}:"\
-                   + f"{random.randint(0, end_hour[1])}"
+        start_hour = f"{random.randint(start_hour[0] + 1, 12)}:"\
+                     + f"{choice(RoundedTime.minutes)}"
+        end_hour = f"{random.randint(12, end_hour[0] - 1)}:"\
+                   + f"{choice(RoundedTime.minutes)}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
         start_hour = time_to_string(start_hour)

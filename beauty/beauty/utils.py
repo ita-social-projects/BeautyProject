@@ -142,6 +142,12 @@ def validate_rounded_minutes_seconds(time_value):
             )
 
 
+def validate_working_time_json(json):
+    """Validate json for working time for every day."""
+    for value in json.values():
+        map(validate_rounded_minutes_seconds, value)
+
+
 def time_to_string(time):
     """Cast time to string HH:MM."""
     return time.strftime("%H:%M")
@@ -149,7 +155,7 @@ def time_to_string(time):
 
 def string_to_time(string):
     """Cast string HH:MM to time."""
-    return datetime.strptime(string, "%H:%M")
+    return datetime.strptime(string, "%H:%M").time()
 
 
 class PositionAcceptEmail(BaseEmailMessage):
