@@ -168,3 +168,21 @@ class IsOwnerOfSpecialist(permissions.BasePermission):
         for position in positions:
             if request.user == position.business.owner:
                 return True
+
+
+class IsServiceOwner(permissions.BasePermission):
+    """IsServiceOwner permission class.
+
+    Allows only service owners to work with it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        """Object permission check."""
+        logger.debug(f"Object {obj.id} permission check. Is service owner")
+
+        if request.method == "GET" or request.user.is_admin:
+            return True
+        elif request.user.is_owner:
+            return obj.position.business.owner == request.user
+        else:
+            return False
