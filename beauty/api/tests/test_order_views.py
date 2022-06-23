@@ -35,6 +35,16 @@ Tests for CustomerOrdersViews:
 - Only a logged customer can rearview his own orders;
 - Check count customer orders;
 - Check response data for customer orders.
+
+Tests for SpecialistOrdersViews:
+- SetUp method adds needed info for tests;
+- Not logged users cannot get a specialist's orders;
+- Logged users, which are not specialist, can't view a specialist's orders;
+- A logged owner cannot view others specialist`s orders;
+- Only a logged owner of business can view his specialist orders which belong to this business;
+- Only a logged specialist can get his own orders;
+- Check count specialist orders for specialist;
+- Check response data for specialist orders.
 """
 
 import pytz
@@ -45,14 +55,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.reverse import reverse
 from rest_framework.test import (APIClient, APIRequestFactory)
 from django.conf import settings
+from api.models import Order
 from api.serializers.order_serializers import OrderSerializer
 from api.views.order_views import (OrderApprovingTokenGenerator, OrderRetrieveCancelView)
 from .factories import (GroupFactory,
+                        BusinessFactory,
                         CustomUserFactory,
                         PositionFactory,
                         ServiceFactory,
                         OrderFactory)
-from api.models import Order
 
 CET = pytz.timezone("Europe/Kiev")
 
@@ -342,6 +353,96 @@ class TestCustomerOrdersViews(TestCase):
         request = factory.get("/")
         response = self.client.get(
             path=reverse("api:customer-orders-list", args=[self.customer.id]),
+        )
+        serializer = self.Serializer(self.orders, many=True, context={"request": request})
+        self.assertEqual(response.data.get("results"), serializer.data)
+
+
+class TestSpecialistOrdersViews(TestCase):
+    """This class represents a Test case and has all the tests for SpecialistOrdersViews."""
+
+    def setUp(self) -> None:
+        """This method adds needed info for tests."""
+        self.Serializer = OrderSerializer
+        self.client = APIClient()
+        self.order_status = Order.StatusChoices
+
+        self.specialist = CustomUserFactory(first_name="UserSpecialist")
+        self.customer = CustomUserFactory(first_name="UserCustomer")
+        self.owner1 = CustomUserFactory(first_name="UserOwner_1")
+        self.owner2 = CustomUserFactory(first_name="UserOwner_2")
+
+        self.business1 = BusinessFactory.create(name="Business_1", owner=self.owner1)
+        self.position1 = PositionFactory.create(name="Position_1",
+                                                business=self.business1,
+                                                specialist=[self.specialist])
+        self.service1 = ServiceFactory.create(name="Service_1", position=self.position1)
+
+        self.client.force_authenticate(user=self.specialist)
+
+        self.orders = [OrderFactory(specialist=self.specialist,
+                                    customer=self.customer,
+                                    service=self.service1,
+                                    status=status) for status in self.order_status]
+
+        self.groups = GroupFactory.groups_for_test()
+        self.groups.specialist.user_set.add(self.specialist)
+        self.groups.customer.user_set.add(self.customer)
+        self.groups.owner.user_set.add(self.owner1)
+        self.groups.owner.user_set.add(self.owner2)
+
+    def test_get_method_get_specialist_orders_not_logged_user(self):
+        """Not logged users can not view a specialist's orders."""
+        self.client.force_authenticate(user=None)
+        response = self.client.get(
+            path=reverse("api:specialist-orders-list", args=[self.specialist.id]),
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_method_get_specialist_orders_logged_as_not_specialist(self):
+        """Logged users can't view a specialist's orders."""
+        self.client.force_authenticate(user=self.customer)
+        response = self.client.get(
+            path=reverse("api:specialist-orders-list", args=[self.specialist.id]),
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_method_get_specialist_orders_logged_as_owner_of_not_own_specialist(self):
+        """Logged owner cannot view other specialist's orders if this specialist is not his/her."""
+        self.client.force_authenticate(user=self.owner2)
+        response = self.client.get(
+            path=reverse("api:specialist-orders-list", args=[self.specialist.id]),
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_get_method_get_specialist_orders_logged_as_owner_of_own_specialist(self):
+        """Logged owner can view an own specialist's orders."""
+        self.client.force_authenticate(user=self.owner1)
+        response = self.client.get(
+            path=reverse("api:specialist-orders-list", args=[self.specialist.id]),
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_method_get_specialist_orders_logged_as_specialist(self):
+        """Only a logged specialist can view his own orders."""
+        response = self.client.get(
+            path=reverse("api:specialist-orders-list", args=[self.specialist.id]),
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_method_check_specialist_orders_data_count(self):
+        """Check count specialist orders."""
+        response = self.client.get(
+            path=reverse("api:specialist-orders-list", args=[self.specialist.id]),
+        )
+        self.assertEqual(response.data.get("count"), len(self.orders))
+
+    def test_get_method_check_specialist_orders_data(self):
+        """Check response data for specialist orders."""
+        factory = APIRequestFactory()
+        request = factory.get("/")
+        response = self.client.get(
+            path=reverse("api:specialist-orders-list", args=[self.specialist.id]),
         )
         serializer = self.Serializer(self.orders, many=True, context={"request": request})
         self.assertEqual(response.data.get("results"), serializer.data)
