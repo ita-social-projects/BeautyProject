@@ -1,0 +1,17 @@
+{% block subject %}
+You have been invited to apply for {{invite.position}}.
+{% endblock subject %}
+
+{% block html_body %}
+<p>You're receiving this email because you have been invited to apply for the following position:</p>
+<br>
+<p>Position: {{invite.position}}</p>
+<p>Business: {{invite.position.business}}</p>
+<br>
+
+<p>In order to apply for the job, you need to create a new account in our system. </p>
+<p>For that, please follow the <a href="{{ protocol }}://{{ domain }}{{ register_link }}">link</a>. </p>
+
+<br>
+
+{% endblock html_body %}

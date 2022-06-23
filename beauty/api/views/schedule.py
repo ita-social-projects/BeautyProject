@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from datetime import timedelta, datetime, date
+from api.serializers.order_serializers import OrderSerializer
 
 
 def get_orders_for_specific_date(specialist, order_date):
@@ -33,7 +34,8 @@ def get_free_time(position, specialist, order_date):
 
     order_day = order_date.weekday()
     free_time = position.working_time[weekdays[order_day]]
-    free_time = [datetime.strptime(time, "%H:%M").time() for time in free_time]
+    free_time = [datetime.strptime(time, "%H:%M").time()
+                 for time in free_time]
 
     if free_time:
         orders = get_orders_for_specific_date(specialist, order_date)
@@ -62,7 +64,8 @@ def get_time_intervals(start_time, end_time):
     start_time = datetime.combine(date.today(), start_time)
     end_time = datetime.combine(date.today(), end_time)
 
-    if end_time > start_time:
+    # If only one aviable block
+    if end_time >= start_time:
         time_range = end_time - start_time
     else:
         time_range = (end_time + timedelta(hours=24)) - start_time
@@ -86,7 +89,10 @@ def get_free_time_for_customer(position, specialist, service, order_date):
         for start, end in zip(free_time[::2], free_time[1::2]):
             end = datetime.combine(datetime.today(), end)
 
-            if end - datetime.combine(datetime.today(), start) >= service.duration:
+            if end - datetime.combine(
+                datetime.today(),
+                start,
+            ) >= service.duration:
                 new_free_time.extend((start, (end - service.duration).time()))
 
         # First value is start of free time block, and second is end of block.
@@ -99,7 +105,8 @@ def get_free_time_for_customer(position, specialist, service, order_date):
         return free_time_blocks
 
 
-def get_free_time_specialist_for_owner(position, specialist, order_date):
+def get_free_time_specialist_for_owner(position, specialist,
+                                       order_date, request):
     """Return list of free time blocks and orders."""
     specialist_schedule = get_free_time(position, specialist, order_date)
 
@@ -117,7 +124,7 @@ def get_free_time_specialist_for_owner(position, specialist, order_date):
 
         for time in specialist_schedule:
             current_order = [
-                order.id
+                OrderSerializer(order, context={"request": request}).data["url"]
                 for order in orders
                 if order.start_time.time() == time[1]
             ]
@@ -129,7 +136,7 @@ def get_free_time_specialist_for_owner(position, specialist, order_date):
                 )
 
         start_order = [
-            order
+            OrderSerializer(order, context={"request": request}).data["url"]
             for order in orders
             if order.end_time.time() == specialist_schedule[0][0]
         ]
@@ -195,7 +202,10 @@ class OwnerSpecialistScheduleView(APIView):
             )
 
         schedule = get_free_time_specialist_for_owner(
-            position, specialist, order_date,
+            position,
+            specialist,
+            order_date,
+            request,
         )
 
         if schedule:

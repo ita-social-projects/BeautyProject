@@ -34,7 +34,6 @@ class TestPositionListCreateView(TestCase):
 
         self.serializer = PositionSerializer
         self.queryset = Position.objects.all()
-        self.serializer = PositionSerializer
         self.view = PositionListCreateView.as_view()
 
         self.owner = CustomUserFactory(first_name="OwnerUser")
@@ -129,7 +128,7 @@ class TestPositionListCreateView(TestCase):
         self.client.force_authenticate(user=self.owner)
 
         # Business max time defined in factory is 20:59
-        self.valid_data["Mon"] = [self.valid_data["Mon"][0], "21:00"]
+        self.valid_data["Mon"] = ["10:00", "21:00"]
         response = self.client.post(
             path=self.url,
             data=self.valid_data,
