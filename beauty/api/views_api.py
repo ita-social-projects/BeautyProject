@@ -2,16 +2,20 @@
 
 import logging
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 from rest_framework import status
 
 from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      RetrieveAPIView,
-                                     get_object_or_404)
+                                     get_object_or_404, DestroyAPIView)
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
@@ -19,6 +23,8 @@ from rest_framework.reverse import reverse
 from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
+
+from .filters import ServiceFilter
 
 from .models import (Business, CustomUser, Position, Service)
 
@@ -177,8 +183,30 @@ class PositionRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
 
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
-    permission_classes = (IsAuthenticated,
-                          IsPositionOwner)
+    permission_classes = (IsAuthenticated, IsPositionOwner)
+
+
+class RemoveSpecialistFromPosition(DestroyAPIView):
+    """Generic API for position DELETE specialist methods."""
+
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = (IsAuthenticated, IsPositionOwner)
+
+    def delete(self, request, pk, specialist_id, *args, **kwargs):
+        """Reimplementation of the DESTROY (DELETE) method."""
+        instance = self.get_object()
+        try:
+            if instance.specialist.all().get(id=specialist_id):
+                instance.specialist.set(())
+                instance.save()
+                logger.info(f"Specialist was removed from position {instance}.")
+                return Response(status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            logger.info(f"Specialist (id={instance.id}) is already removed from "
+                        f"position {instance}, but tried doing it again.")
+
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class BusinessesListCreateAPIView(ListCreateAPIView):
@@ -270,6 +298,11 @@ class AllServicesListCreateView(ListCreateAPIView):
 
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_class = ServiceFilter
+    search_fields = ["name", "price", "description", "duration"]
+    ordering_fields = ["price", "name", "duration"]
 
     logger.debug("View to display all services that can be provided.")
 
