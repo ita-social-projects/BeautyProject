@@ -11,6 +11,12 @@ from datetime import timedelta
 from pathlib import Path
 from decouple import config, Csv
 
+import sys
+import logging
+
+if len(sys.argv) > 1 and sys.argv[1] == "test":
+    logging.disable(logging.CRITICAL)
+
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True

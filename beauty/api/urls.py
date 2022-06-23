@@ -2,6 +2,8 @@
 
 from datetime import datetime
 
+import pytz
+
 from django.urls import path, register_converter
 
 from api.views.order_views import (CustomerOrdersViews, SpecialistOrdersViews, OrderApprovingView,
@@ -38,7 +40,7 @@ class DateConverter:
 
     def to_python(self, value):
         """Converts date from url to python datetime object."""
-        return datetime.strptime(value, "%Y-%m-%d")
+        return pytz.utc.localize(datetime.strptime(value, "%Y-%m-%d"))
 
     def to_url(self, value):
         """Return date value from url."""

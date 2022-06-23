@@ -154,7 +154,7 @@ class PositionFactory(factory.django.DjangoModelFactory):
         start_hour = f"{random.randint(start_hour[0] + 1, 12)}:"\
                      + f"{choice(RoundedTime.minutes)}"
         end_hour = f"{random.randint(12, end_hour[0] - 1)}:"\
-                   + f"{choice(RoundedTime.minutes)}"
+                   + f"{choice(RoundedTime.minutes[:-2])}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
         start_hour = time_to_string(start_hour)

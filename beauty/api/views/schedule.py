@@ -44,8 +44,6 @@ def get_free_time(specialist, order_date, working_day):
     ]
     orders = get_orders_for_specific_date(specialist, order_date)
 
-    print(orders)
-
     # Adds all time moments from orders (start and end) to free_time list.
     orders_time = [
         order_time
@@ -55,14 +53,10 @@ def get_free_time(specialist, order_date, working_day):
 
     free_time.extend(orders_time)
 
-    print(free_time)
-
     # Remove values that are dublicated, including origin of dublicated value.
     # [1, 1, 2, 3, 4] then remove elements at 0 and 1 index.
     free_time = [time for time in free_time if free_time.count(time) == 1]
     free_time.sort()
-
-    print(free_time)
 
     return free_time
 
@@ -74,7 +68,8 @@ def get_time_intervals(start_time, end_time):
     start_time = datetime.combine(date.today(), start_time)
     end_time = datetime.combine(date.today(), end_time)
 
-    if end_time > start_time:
+    # If only one aviable block
+    if end_time >= start_time:
         time_range = end_time - start_time
     else:
         time_range = (end_time + timedelta(hours=24)) - start_time
