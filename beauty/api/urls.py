@@ -2,8 +2,8 @@
 
 from django.urls import path
 
-from api.views.order_views import (CustomerOrdersViews, SpecialistOrdersViews, OrderApprovingView,
-                                   OrderListCreateView, OrderRetrieveCancelView)
+from api.views.order_views import (CustomerOrdersViews, OrderApprovingView,
+                                   OrderCreateView, OrderRetrieveCancelView)
 
 from api.views.review_views import (ReviewDisplayView,
                                     ReviewRUDView,
@@ -17,8 +17,7 @@ from api.views.customuser_views import InviteRegisterView
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
-                        ServiceUpdateView, PositionRetrieveUpdateDestroyView,
-                        RemoveSpecialistFromPosition)
+                        ServiceUpdateView, PositionRetrieveUpdateDestroyView)
 
 app_name = "api"
 
@@ -49,14 +48,9 @@ urlpatterns = [
         name="customer-orders-list",
     ),
     path(
-        "specialist/<int:pk>/orders/",
-        SpecialistOrdersViews.as_view(),
-        name="specialist-orders-list",
-    ),
-    path(
         "orders/",
-        OrderListCreateView.as_view(),
-        name="order-list-create",
+        OrderCreateView.as_view(),
+        name="order-create",
     ),
     path(
         "order/<int:pk>/",
@@ -87,11 +81,6 @@ urlpatterns = [
         "position/<int:pk>",
         PositionRetrieveUpdateDestroyView.as_view(),
         name="position-detail-list",
-    ),
-    path(
-        "position/<int:pk>/specialist/<int:specialist_id>",
-        RemoveSpecialistFromPosition.as_view(),
-        name="position-delete-specialist",
     ),
     path(
         "position/<int:pk>/add/",

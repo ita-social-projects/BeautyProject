@@ -1,7 +1,6 @@
 """This module provides you with all needed utility functions."""
 
 import os
-
 from datetime import timedelta, datetime
 from typing import Tuple
 import pytz
@@ -186,3 +185,27 @@ class SpecialistAnswerEmail(BaseEmailMessage):
     """This email is sent to notify owner on the Specialist's decision."""
 
     template_name = "email/specialist_decision.html"
+
+
+def custom_exception_handler(exc, context):
+    """Custom exceptions handler.
+
+    Args:
+        exc: exceptions list or dict
+        context: context data includes information about view and request
+
+    Returns: response data
+    """
+    from rest_framework.views import exception_handler
+
+    response = exception_handler(exc, context)
+    if response is not None:
+        if isinstance(response.data, list):
+            data_list = [o for o in response.data if o]
+            for data in data_list:
+                data["status_code"] = response.status_code
+                data["count_num"] = response.data.index(data)
+            response.data = data_list
+        else:
+            response.data["status_code"] = response.status_code
+    return response
