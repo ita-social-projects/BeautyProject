@@ -19,9 +19,8 @@ from django.test import TestCase
 from rest_framework.exceptions import ErrorDetail, ValidationError
 
 from api.serializers.order_serializers import OrderSerializer
-from api.tests.factories import (GroupFactory,
-                                 CustomUserFactory,
-                                 PositionFactory,
+from api.tests.factories import (GroupFactory, CustomUserFactory, ServiceFactory, PositionFactory)
+from rest_framework.test import APIRequestFactory
 
 
 CET = pytz.timezone("Europe/Kiev")
@@ -92,7 +91,7 @@ class TestOrderSerializer(TestCase):
         self.assertEqual(serializer.validated_data, {})
         self.assertEqual(serializer.data, invalid_data)
         self.assertEqual(serializer.errors, {
-            "start_time": [ErrorDetail(string="The start time should be more as now.",
+            "start_time": [ErrorDetail(string="The start time should be later than now.",
                                        code="invalid")],
         })
 
