@@ -5,7 +5,6 @@ import logging
 from rest_framework import permissions
 from api.models import Position
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -149,8 +148,8 @@ class IsCustomerOrders(permissions.BasePermission):
     def has_permission(self, request, view):
         """Object permission check."""
         logger.debug(f"User {request.user.id} permission check.")
-
-        return request.user.id == view.kwargs["pk"] or request.user.is_admin
+        user = request.user
+        return user.is_admin or (user.id == view.kwargs["pk"] and user.is_customer)
 
 
 class IsOwnerOfSpecialist(permissions.BasePermission):
