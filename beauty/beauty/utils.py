@@ -1,13 +1,17 @@
 """This module provides you with all needed utility functions."""
 
 import os
+
 from datetime import timedelta, datetime, time
+
 from typing import Tuple
 from django.forms import ValidationError
 import pytz
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
 from faker import Faker
+from django.utils import timezone
+from random import choice, randint
 
 faker = Faker()
 
@@ -224,3 +228,52 @@ def generate_working_time(start_time: str, end_time: str):
     """Generates working time."""
     weekdays = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"]
     return {day: [start_time, end_time] for day in weekdays}
+
+
+def custom_exception_handler(exc, context):
+    """Custom exceptions handler.
+
+    Args:
+        exc: exceptions list or dict
+        context: context data includes information about view and request
+
+    Returns: response data
+    """
+    from rest_framework.views import exception_handler
+
+    response = exception_handler(exc, context)
+    if response is not None:
+        if isinstance(response.data, list):
+            data_list = [o for o in response.data if o]
+            for data in data_list:
+                data["status_code"] = response.status_code
+                data["count_num"] = response.data.index(data)
+            response.data = data_list
+        else:
+            response.data["status_code"] = response.status_code
+    return response
+
+
+class RoundedTime:
+    """Class with rounded time.
+
+    Provide time with zero seconds and minutes multiplied by 5
+    """
+
+    minutes = (5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
+
+    @classmethod
+    def calculate_rounded_time_minutes_seconds(cls):
+        """Datetime rigth now with rounded time.
+
+        Returns datetime.now() with edited minutes and seconds
+        """
+        return timezone.now().replace(
+            hour=randint(1, 23), minute=choice(cls.minutes),
+            second=0, microsecond=0,
+        )
+
+    @classmethod
+    def get_rounded_duration(cls):
+        """Return timedelta with minutes multiplied by 5."""
+        return timedelta(minutes=choice(cls.minutes))

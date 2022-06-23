@@ -7,39 +7,12 @@ Todo:
 from collections import namedtuple
 import calendar
 import random
-from django.utils import timezone
-from datetime import timedelta
 from random import choice
 import factory
 from factory import fuzzy
 from api.models import (CustomUser, Order, Service, Position, Business, Review)
 from django.contrib.auth.models import Group
-from beauty.utils import string_to_time, time_to_string
-
-
-class RoundedTime:
-    """Class with rounded time.
-
-    Provide time with zero seconds and minutes multiplied by 5
-    """
-
-    minutes = (5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
-
-    @classmethod
-    def calculate_rounded_time_minutes_seconds(cls):
-        """Datetime rigth now with rounded time.
-
-        Returns datetime.now() with edited minutes and seconds
-        """
-        return timezone.now().replace(
-            hour=random.randint(1, 23), minute=choice(cls.minutes),
-            second=0, microsecond=0,
-        )
-
-    @classmethod
-    def get_rounded_duration(cls):
-        """Return timedelta with minutes multiplied by 5."""
-        return timedelta(minutes=choice(cls.minutes))
+from beauty.utils import string_to_time, time_to_string, RoundedTime
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -106,8 +79,8 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def working_time(self):
         """Generates business working time."""
-        start_hour = f"{random.randint(6, 10)}:{choice(RoundedTime.minutes)}"
-        end_hour = f"{random.randint(13, 20)}:{choice(RoundedTime.minutes)}"
+        start_hour = f"{random.randint(6, 10)}:{choice(RoundedTime.minutes[:2])}"
+        end_hour = f"{random.randint(13, 20)}:{choice(RoundedTime.minutes[:-2])}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
         start_hour = time_to_string(start_hour)
@@ -152,9 +125,9 @@ class PositionFactory(factory.django.DjangoModelFactory):
                     for time in working_time[work_day][1].split(":")]
 
         start_hour = f"{random.randint(start_hour[0] + 1, 12)}:"\
-                     + f"{choice(RoundedTime.minutes)}"
+                     + f"{choice(RoundedTime.minutes[2:])}"
         end_hour = f"{random.randint(12, end_hour[0] - 1)}:"\
-                   + f"{choice(RoundedTime.minutes)}"
+                   + f"{choice(RoundedTime.minutes[:-2])}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
         start_hour = time_to_string(start_hour)

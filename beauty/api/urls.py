@@ -2,10 +2,12 @@
 
 from datetime import datetime
 
+import pytz
+
 from django.urls import path, register_converter
 
-from api.views.order_views import (CustomerOrdersViews, OrderApprovingView,
-                                   OrderListCreateView, OrderRetrieveCancelView)
+from api.views.order_views import (CustomerOrdersViews, OrderApprovingView, SpecialistOrdersViews,
+                                   OrderCreateView, OrderRetrieveCancelView)
 
 from api.views.schedule import OwnerSpecialistScheduleView, SpecialistScheduleView
 
@@ -22,7 +24,8 @@ from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
                         ServiceUpdateView, PositionRetrieveUpdateDestroyView,
-                        RemoveSpecialistFromPosition)
+                        RemoveSpecialistFromPosition, BusinessServicesView, SpecialistsServicesView)
+
 
 app_name = "api"
 
@@ -37,7 +40,7 @@ class DateConverter:
 
     def to_python(self, value):
         """Converts date from url to python datetime object."""
-        return datetime.strptime(value, "%Y-%m-%d")
+        return pytz.utc.localize(datetime.strptime(value, "%Y-%m-%d"))
 
     def to_url(self, value):
         """Return date value from url."""
@@ -73,9 +76,14 @@ urlpatterns = [
         name="customer-orders-list",
     ),
     path(
+        "specialist/<int:pk>/orders/",
+        SpecialistOrdersViews.as_view(),
+        name="specialist-orders-list",
+    ),
+    path(
         "orders/",
-        OrderListCreateView.as_view(),
-        name="order-list-create",
+        OrderCreateView.as_view(),
+        name="order-create",
     ),
     path(
         "order/<int:pk>/",
@@ -160,4 +168,15 @@ urlpatterns = [
         OwnerSpecialistScheduleView.as_view(),
         name="owner-specialist-schedule",
     ),
+
+
+    path(
+        "business/<int:pk>/services/",
+        BusinessServicesView.as_view(),
+        name="service-by-business"),
+
+    path(
+        "specialist/<int:pk>/services/",
+        SpecialistsServicesView.as_view(),
+        name="service-by-specialist"),
 ]

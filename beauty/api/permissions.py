@@ -3,6 +3,8 @@
 import logging
 
 from rest_framework import permissions
+from api.models import Position
+
 
 logger = logging.getLogger(__name__)
 
@@ -149,3 +151,38 @@ class IsCustomerOrders(permissions.BasePermission):
         logger.debug(f"User {request.user.id} permission check.")
 
         return request.user.id == view.kwargs["pk"] or request.user.is_admin
+
+
+class IsOwnerOfSpecialist(permissions.BasePermission):
+    """Object-level permission to only allow users of an object to edit it."""
+
+    def has_permission(self, request, view):
+        """Object permission check."""
+        logger.debug(f"User {request.user.id} permission check.")
+
+        if not request.user.is_owner:
+            return False
+
+        positions = Position.objects.filter(specialist__id=view.kwargs["pk"])
+
+        for position in positions:
+            if request.user == position.business.owner:
+                return True
+
+
+class IsServiceOwner(permissions.BasePermission):
+    """IsServiceOwner permission class.
+
+    Allows only service owners to work with it.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        """Object permission check."""
+        logger.debug(f"Object {obj.id} permission check. Is service owner")
+
+        if request.method == "GET" or request.user.is_admin:
+            return True
+        elif request.user.is_owner:
+            return obj.position.business.owner == request.user
+        else:
+            return False
