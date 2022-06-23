@@ -311,7 +311,7 @@ class SpecialistDetailSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Method for representing an URL for making an order."""
         data = super().to_representation(instance)
-        data["make_order"] = reverse("api:order-list-create", request=self.context.get("request"))
+        data["make_order"] = reverse("api:order-create", request=self.context.get("request"))
 
         logger.info(f"Data to display for specialist {instance} was updated")
 

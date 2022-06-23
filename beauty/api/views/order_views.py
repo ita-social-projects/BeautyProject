@@ -9,7 +9,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 
 from rest_framework import (filters, status)
-from rest_framework.generics import (ListCreateAPIView,
+from rest_framework.generics import (CreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      get_object_or_404, ListAPIView, RetrieveAPIView)
 from rest_framework.permissions import (IsAuthenticated)
@@ -42,7 +42,7 @@ class TokenLoginRequiredMixin(LoginRequiredMixin):
             request, *args, **kwargs)
 
 
-class OrderListCreateView(ListCreateAPIView):
+class OrderCreateView(CreateAPIView):
     """Generic API for orders custom POST method."""
 
     queryset = Order.objects.all()
@@ -51,18 +51,18 @@ class OrderListCreateView(ListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         """Create an order and add an authenticated customer to it."""
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
-        order = serializer.save(customer=request.user)
+        orders = serializer.save(customer=request.user)
+        for order in orders:
+            logger.info(f"{order} with {order.service.name} was created")
 
-        logger.info(f"{order} with {order.service.name} was created")
+            context = {"order": order}
+            to = [order.specialist.email]
+            ApprovingOrderEmail(request, context).send(to)
 
-        context = {"order": order}
-        to = [order.specialist.email]
-        ApprovingOrderEmail(request, context).send(to)
-
-        logger.info(f"{order}: approving email was sent to the specialist "
-                    f"{order.specialist.get_full_name()}")
+            logger.info(f"{order}: approving email was sent to the specialist "
+                        f"{order.specialist.get_full_name()}")
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
