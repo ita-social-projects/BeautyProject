@@ -1,9 +1,15 @@
 """This module provides all needed api urls."""
 
-from django.urls import path
+from datetime import datetime
+
+import pytz
+
+from django.urls import path, register_converter
 
 from api.views.order_views import (CustomerOrdersViews, OrderApprovingView, SpecialistOrdersViews,
                                    OrderCreateView, OrderRetrieveCancelView)
+
+from api.views.schedule import OwnerSpecialistScheduleView, SpecialistScheduleView
 
 from api.views.review_views import (ReviewDisplayView,
                                     ReviewRUDView,
@@ -21,8 +27,27 @@ from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         RemoveSpecialistFromPosition, BusinessServicesView, SpecialistsServicesView)
 
 
-
 app_name = "api"
+
+
+class DateConverter:
+    """Converter class for passing date in urls.
+
+    Provide to_python and to_url methods.
+    """
+
+    regex = r"\d{4}-\d{2}-\d{2}"
+
+    def to_python(self, value):
+        """Converts date from url to python datetime object."""
+        return pytz.utc.localize(datetime.strptime(value, "%Y-%m-%d"))
+
+    def to_url(self, value):
+        """Return date value from url."""
+        return value
+
+
+register_converter(DateConverter, "date")
 
 urlpatterns = [
     path(
@@ -133,6 +158,17 @@ urlpatterns = [
     path("service/<int:pk>/",
          ServiceUpdateView.as_view(),
          name="service-detail"),
+    path(
+        "schedule/<int:position_id>/<int:specialist_id>/<int:service_id>/<date:order_date>/",
+        SpecialistScheduleView.as_view(),
+        name="specialist-schedule",
+    ),
+    path(
+        "owner_schedule/<int:position_id>/<int:specialist_id>/<date:order_date>/",
+        OwnerSpecialistScheduleView.as_view(),
+        name="owner-specialist-schedule",
+    ),
+
 
     path(
         "business/<int:pk>/services/",

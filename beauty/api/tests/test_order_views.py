@@ -47,8 +47,8 @@ Tests for SpecialistOrdersViews:
 - Check response data for specialist orders.
 """
 
+from datetime import timedelta
 import pytz
-from django.utils import timezone
 from django.test import TestCase
 from djoser.utils import encode_uid
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -64,6 +64,8 @@ from .factories import (GroupFactory,
                         ServiceFactory,
                         OrderFactory)
 from api.models import Order
+
+from beauty.utils import RoundedTime
 
 CET = pytz.timezone("Europe/Kiev")
 
@@ -87,7 +89,8 @@ class TestOrderListCreateView(TestCase):
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.customer)
-        self.start_time = timezone.datetime.now(tz=CET) + timezone.timedelta(days=2)
+        round_time = RoundedTime.calculate_rounded_time_minutes_seconds()
+        self.start_time = round_time + timedelta(days=1)
 
         self.data = [{"start_time": self.start_time,
                       "specialist": self.specialist.id,

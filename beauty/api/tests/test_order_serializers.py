@@ -13,6 +13,7 @@ Tests for OrderSerializer:
 - Check serializer when customer and specialist are the same person.
 """
 
+from datetime import timedelta
 import pytz
 from django.utils import timezone
 from django.test import TestCase
@@ -21,6 +22,7 @@ from rest_framework.exceptions import ErrorDetail, ValidationError
 from api.serializers.order_serializers import OrderSerializer
 from api.tests.factories import (GroupFactory, CustomUserFactory, ServiceFactory, PositionFactory)
 from rest_framework.test import APIRequestFactory
+from beauty.utils import RoundedTime
 
 
 CET = pytz.timezone("Europe/Kiev")
@@ -45,7 +47,8 @@ class TestOrderSerializer(TestCase):
         self.factory = APIRequestFactory()
         self.request = self.factory.get("/")
         self.request.user = self.customer
-        self.start_time = timezone.datetime.now(tz=CET) + timezone.timedelta(days=2)
+        round_time = RoundedTime.calculate_rounded_time_minutes_seconds()
+        self.start_time = round_time + timedelta(days=1)
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
@@ -166,6 +169,7 @@ class TestOrderSerializer(TestCase):
     def test_specialist_is_customer(self):
         """Check serializer when customer and specialist are the same person."""
         valid_data = {"start_time": self.start_time,
+
                       "specialist": self.specialist.id,
                       "service": self.service.id}
         self.request.user = self.specialist

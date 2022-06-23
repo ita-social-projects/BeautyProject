@@ -7,12 +7,12 @@ Todo:
 from collections import namedtuple
 import calendar
 import random
-from django.utils import timezone
+from random import choice
 import factory
 from factory import fuzzy
 from api.models import (CustomUser, Order, Service, Position, Business, Review)
 from django.contrib.auth.models import Group
-from beauty.utils import string_to_time, time_to_string
+from beauty.utils import string_to_time, time_to_string, RoundedTime
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -79,8 +79,8 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def working_time(self):
         """Generates business working time."""
-        start_hour = f"{random.randint(6, 10)}:{random.randint(0, 59)}"
-        end_hour = f"{random.randint(13, 20)}:{random.randint(0, 59)}"
+        start_hour = f"{random.randint(6, 9)}:{choice(RoundedTime.minutes[:2])}"
+        end_hour = f"{random.randint(13, 20)}:{choice(RoundedTime.minutes[:-2])}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
         start_hour = time_to_string(start_hour)
@@ -124,10 +124,10 @@ class PositionFactory(factory.django.DjangoModelFactory):
         end_hour = [int(time)
                     for time in working_time[work_day][1].split(":")]
 
-        start_hour = f"{random.randint(start_hour[0], 11)}:"\
-                     + f"{random.randint(start_hour[1], 59)}"
-        end_hour = f"{random.randint(13, end_hour[0])}:"\
-                   + f"{random.randint(0, end_hour[1])}"
+        start_hour = f"{random.randint(start_hour[0] + 1, 11)}:"\
+                     + f"{choice(RoundedTime.minutes[2:])}"
+        end_hour = f"{random.randint(12, end_hour[0] - 1)}:"\
+                   + f"{choice(RoundedTime.minutes[:-2])}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
         start_hour = time_to_string(start_hour)
@@ -164,7 +164,7 @@ class ServiceFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Service_{n}")
     price = fuzzy.FuzzyDecimal(10.0, 100.0)
     description = factory.Faker("sentence", nb_words=4)
-    duration = fuzzy.FuzzyInteger(15, 60)
+    duration = factory.LazyFunction(RoundedTime.get_rounded_duration)
 
 
 class OrderFactory(factory.django.DjangoModelFactory):
@@ -180,7 +180,7 @@ class OrderFactory(factory.django.DjangoModelFactory):
     customer = factory.SubFactory(CustomUserFactory, is_active=True)
     service = factory.SubFactory(ServiceFactory)
     reason = ""
-    start_time = factory.LazyFunction(timezone.now)
+    start_time = factory.LazyFunction(RoundedTime.calculate_rounded_time_minutes_seconds)
 
 
 class ReviewFactory(factory.django.DjangoModelFactory):

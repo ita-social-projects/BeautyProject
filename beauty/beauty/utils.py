@@ -1,12 +1,17 @@
 """This module provides you with all needed utility functions."""
 
 import os
-from datetime import timedelta, datetime
+
+from datetime import timedelta, datetime, time
+
 from typing import Tuple
+from django.forms import ValidationError
 import pytz
 from rest_framework.reverse import reverse
 from templated_mail.mail import BaseEmailMessage
 from faker import Faker
+from django.utils import timezone
+from random import choice, randint
 
 faker = Faker()
 
@@ -115,6 +120,38 @@ def order_approve_decline_urls(order: object, approve_name="url_for_approve",
     return urls
 
 
+def validate_rounded_minutes_seconds(time_value):
+    """Validate time value.
+
+    Time must have zero seconds and minutes multiples of 5
+    """
+    assert isinstance(time_value, (datetime, time, timedelta)), \
+        "Only datetime, time or timedelta objects"
+
+    if isinstance(time_value, (datetime, time)):
+        if isinstance(time_value, datetime):
+            time_value = time_value.time()
+
+        if time_value.minute % 5 and time_value.second != 0:
+            raise ValidationError(
+                "Time value must have zero seconds and minutes multiples of 5",
+                params={"value": time_value},
+            )
+
+    if isinstance(time_value, timedelta):
+        if (time_value.seconds / 60) % 5:
+            raise ValidationError(
+                "Time value must have minutes multiples of 5",
+                params={"value": time_value},
+            )
+
+
+def validate_working_time_json(json):
+    """Validate json for working time for every day."""
+    for value in json.values():
+        map(validate_rounded_minutes_seconds, value)
+
+
 def time_to_string(time):
     """Cast time to string HH:MM."""
     return time.strftime("%H:%M")
@@ -122,7 +159,7 @@ def time_to_string(time):
 
 def string_to_time(string):
     """Cast string HH:MM to time."""
-    return datetime.strptime(string, "%H:%M")
+    return datetime.strptime(string, "%H:%M").time()
 
 
 class PositionAcceptEmail(BaseEmailMessage):
@@ -187,6 +224,12 @@ class SpecialistAnswerEmail(BaseEmailMessage):
     template_name = "email/specialist_decision.html"
 
 
+def generate_working_time(start_time: str, end_time: str):
+    """Generates working time."""
+    weekdays = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"]
+    return {day: [start_time, end_time] for day in weekdays}
+
+
 def custom_exception_handler(exc, context):
     """Custom exceptions handler.
 
@@ -209,3 +252,28 @@ def custom_exception_handler(exc, context):
         else:
             response.data["status_code"] = response.status_code
     return response
+
+
+class RoundedTime:
+    """Class with rounded time.
+
+    Provide time with zero seconds and minutes multiplied by 5
+    """
+
+    minutes = (5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55)
+
+    @classmethod
+    def calculate_rounded_time_minutes_seconds(cls):
+        """Datetime rigth now with rounded time.
+
+        Returns datetime.now() with edited minutes and seconds
+        """
+        return timezone.now().replace(
+            hour=randint(1, 23), minute=choice(cls.minutes),
+            second=0, microsecond=0,
+        )
+
+    @classmethod
+    def get_rounded_duration(cls):
+        """Return timedelta with minutes multiplied by 5."""
+        return timedelta(minutes=choice(cls.minutes))
