@@ -20,6 +20,8 @@ from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         ServiceUpdateView, PositionRetrieveUpdateDestroyView,
                         RemoveSpecialistFromPosition, BusinessServicesView, SpecialistsServicesView)
 
+
+
 app_name = "api"
 
 urlpatterns = [
@@ -82,6 +84,11 @@ urlpatterns = [
         "position/<int:pk>",
         PositionRetrieveUpdateDestroyView.as_view(),
         name="position-detail-list",
+    ),
+    path(
+        "position/<int:pk>/specialist/<int:specialist_id>",
+        RemoveSpecialistFromPosition.as_view(),
+        name="position-delete-specialist",
     ),
     path(
         "position/<int:pk>/add/",
