@@ -9,7 +9,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
 from dbview.models import DbView
-from beauty.utils import ModelsUtils, validate_rounded_minutes_seconds
+from beauty.utils import (ModelsUtils, validate_rounded_minutes_seconds,
+                          validate_working_time_json)
 
 
 logger = logging.getLogger(__name__)
@@ -238,6 +239,7 @@ class Business(models.Model):
         default=dict,
         blank=True,
         null=True,
+        validators=(validate_working_time_json,),
     )
 
     is_active = models.BooleanField(
@@ -355,6 +357,7 @@ class Position(models.Model):
         default=dict,
         blank=True,
         null=True,
+        validators=(validate_working_time_json,),
     )
 
     def __str__(self):

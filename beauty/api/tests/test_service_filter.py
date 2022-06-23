@@ -17,6 +17,8 @@ from rest_framework.test import APIClient
 
 from .factories import PositionFactory
 
+from datetime import timedelta
+
 
 class ServiceFilterTest(TestCase):
     """Tests for Service filtering, searching and ordering algorithms."""
@@ -28,11 +30,14 @@ class ServiceFilterTest(TestCase):
         self.position = PositionFactory.create()
 
         self.service1 = Service.objects.create(name="service_1", price=10,
-                                               duration=30.0, position=self.position)
+                                               duration=timedelta(minutes=30),
+                                               position=self.position)
         self.service2 = Service.objects.create(name="service_2", price=20,
-                                               duration=40.0, position=self.position)
+                                               duration=timedelta(minutes=40),
+                                               position=self.position)
         self.service3 = Service.objects.create(name="service_3", price=50,
-                                               duration=45.0, position=self.position)
+                                               duration=timedelta(minutes=45),
+                                               position=self.position)
 
     def test_get_search(self):
         """Searching by name of service."""

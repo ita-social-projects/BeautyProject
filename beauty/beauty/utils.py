@@ -142,6 +142,12 @@ def validate_rounded_minutes_seconds(time_value):
             )
 
 
+def validate_working_time_json(json):
+    """Validate json for working time for every day."""
+    for value in json.values():
+        map(validate_rounded_minutes_seconds, value)
+
+
 def time_to_string(time):
     """Cast time to string HH:MM."""
     return time.strftime("%H:%M")
