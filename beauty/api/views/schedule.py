@@ -1,7 +1,5 @@
 """Module with SpecialistScheduleView."""
 
-import pytz
-from django.utils.timezone import make_aware
 from api.models import Order, Position, CustomUser, Service
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -207,10 +205,6 @@ class OwnerSpecialistScheduleView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        order_date = make_aware(
-            order_date,
-            timezone=pytz.timezone("Europe/Helsinki"),
-        )
         position = get_object_or_404(Position, id=position_id)
         specialist = get_object_or_404(CustomUser, id=specialist_id)
         working_day = get_working_day(position, order_date)

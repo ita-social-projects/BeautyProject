@@ -79,7 +79,7 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     @factory.lazy_attribute
     def working_time(self):
         """Generates business working time."""
-        start_hour = f"{random.randint(6, 10)}:{choice(RoundedTime.minutes[:2])}"
+        start_hour = f"{random.randint(6, 9)}:{choice(RoundedTime.minutes[:2])}"
         end_hour = f"{random.randint(13, 20)}:{choice(RoundedTime.minutes[:-2])}"
         start_hour = string_to_time(start_hour)
         end_hour = string_to_time(end_hour)
@@ -124,7 +124,7 @@ class PositionFactory(factory.django.DjangoModelFactory):
         end_hour = [int(time)
                     for time in working_time[work_day][1].split(":")]
 
-        start_hour = f"{random.randint(start_hour[0] + 1, 12)}:"\
+        start_hour = f"{random.randint(start_hour[0] + 1, 11)}:"\
                      + f"{choice(RoundedTime.minutes[2:])}"
         end_hour = f"{random.randint(12, end_hour[0] - 1)}:"\
                    + f"{choice(RoundedTime.minutes[:-2])}"
