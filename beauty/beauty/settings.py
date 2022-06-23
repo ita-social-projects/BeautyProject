@@ -161,7 +161,6 @@ DJOSER = {
     },
 }
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -251,8 +250,8 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    "EXCEPTION_HANDLER": "beauty.utils.custom_exception_handler",
 }
-
 
 SWAGGER_SETTINGS = {
     "exclude_namespaces": [],  # List URL namespaces to ignore
@@ -266,7 +265,6 @@ SWAGGER_SETTINGS = {
     "SUPPORTED_SUBMIT_METHODS": ["get", "put", "post", "delete", "patch"],
     "SHOW_REQUEST_HEADERS": True,
 }
-
 
 REDOC_SETTINGS = {
     "LAZY_RENDERING": False,
