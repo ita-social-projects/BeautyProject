@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from django.utils import timezone
 from rest_framework import (filters, status)
 from rest_framework.generics import (CreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
@@ -17,6 +18,7 @@ from rest_framework.reverse import reverse
 from api.models import (CustomUser, Order)
 from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin, IsOwnerOfSpecialist)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
+from api.tasks import change_order_status_to_decline
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail)
@@ -60,6 +62,11 @@ class OrderCreateView(CreateAPIView):
             context = {"order": order}
             to = [order.specialist.email]
             ApprovingOrderEmail(request, context).send(to)
+
+            change_order_status_to_decline.apply_async(
+                (order.id, request.META["HTTP_HOST"]),
+                eta=order.created_at + timezone.timedelta(seconds=3),
+            )
 
             logger.info(f"{order}: approving email was sent to the specialist "
                         f"{order.specialist.get_full_name()}")
