@@ -1,4 +1,5 @@
 """Module with a celery tasks."""
+
 from beauty.celery import app
 from api.models import Order
 from celery.utils.log import get_task_logger
