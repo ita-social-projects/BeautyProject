@@ -65,7 +65,7 @@ class OrderCreateView(CreateAPIView):
 
             change_order_status_to_decline.apply_async(
                 (order.id, request.META["HTTP_HOST"]),
-                eta=order.created_at + timezone.timedelta(seconds=3),
+                eta=order.created_at + timezone.timedelta(hours=3),
             )
 
             logger.info(f"{order}: approving email was sent to the specialist "
