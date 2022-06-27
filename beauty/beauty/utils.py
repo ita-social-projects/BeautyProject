@@ -242,15 +242,12 @@ def custom_exception_handler(exc, context):
     from rest_framework.views import exception_handler
 
     response = exception_handler(exc, context)
-    if response is not None:
-        if isinstance(response.data, list):
-            data_list = [o for o in response.data if o]
-            error_list = []
-            for data in data_list:
-                error_list.append({response.data.index(data): data})
-            response.data = error_list
-        else:
-            response.data["status_code"] = response.status_code
+    if response is not None and isinstance(response.data, list):
+        data_list = [o for o in response.data if o]
+        error_list = []
+        for data in data_list:
+            error_list.append({response.data.index(data): data})
+        response.data = error_list
     return response
 
 
