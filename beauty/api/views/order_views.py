@@ -15,8 +15,7 @@ from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from api.models import (CustomUser, Order)
-from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin,
-                             IsOwnerOfSpecialist, IsSpecialistOrIsAdmin)
+from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin, IsOwnerOfSpecialist)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
@@ -203,7 +202,7 @@ class SpecialistOrdersViews(ListAPIView):
     """Show all orders of concrete specialist."""
 
     serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticated, IsSpecialistOrIsAdmin | IsOwnerOfSpecialist)
+    permission_classes = (IsAuthenticated, IsCustomerOrIsAdmin | IsOwnerOfSpecialist)
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["status", "specialist", "service", "start_time", "end_time"]
 

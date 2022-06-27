@@ -150,17 +150,7 @@ class IsCustomerOrIsAdmin(permissions.BasePermission):
         """Object permission check."""
         logger.debug(f"User {request.user.id} permission check.")
         user = request.user
-        return user.is_admin or (user.id == view.kwargs["pk"] and user.is_customer)
-
-
-class IsSpecialistOrIsAdmin(permissions.BasePermission):
-    """Object-level permission to only allow users of an object to edit it."""
-
-    def has_permission(self, request, view):
-        """Object permission check."""
-        logger.debug(f"User {request.user.id} permission check.")
-        user = request.user
-        return user.is_admin or (user.id == view.kwargs["pk"] and user.is_specialist)
+        return user.is_admin or request.user.id == view.kwargs["pk"]
 
 
 class IsOwnerOfSpecialist(permissions.BasePermission):
