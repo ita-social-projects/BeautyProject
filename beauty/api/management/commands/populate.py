@@ -1,5 +1,6 @@
 """This module provides a custom command 'populate'."""
 
+import random
 from random import choices
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -8,7 +9,6 @@ from api.tests.factories import (CustomUserFactory,
                                  OrderFactory,
                                  ReviewFactory, GroupFactory)
 from api.models import CustomUser, Position
-import random
 
 
 class Command(BaseCommand):
