@@ -1,13 +1,14 @@
 """This module provides a custom command 'populate'."""
 
+import random
 from random import choices
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.core.management import call_command
 from api.tests.factories import (CustomUserFactory,
                                  OrderFactory,
-                                 ReviewFactory)
-from api.models import CustomUser
+                                 ReviewFactory, GroupFactory)
+from api.models import CustomUser, Position
 
 
 class Command(BaseCommand):
@@ -43,6 +44,16 @@ class Command(BaseCommand):
                 call_command("createsuperuser")
             CustomUserFactory.create_batch(15, is_active=True)
             OrderFactory.create_batch(15)
+            groups = GroupFactory.groups_for_test()
+            users = CustomUser.objects.all()
+            for user in users:
+                random.choice(groups).user_set.add(user)
+            specialists = users.filter(groups__name="Specialist")
+            positions = Position.objects.all()
+            for specialist in specialists:
+                position = random.choice(positions)
+                position.specialist.add(specialist)
+
             for _ in range(15):
                 reviewer_id, reviewee_id = choices(self.user_ids, k=2)
                 ReviewFactory.create(

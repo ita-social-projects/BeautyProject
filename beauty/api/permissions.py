@@ -5,7 +5,6 @@ import logging
 from rest_framework import permissions
 from api.models import Position
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -64,6 +63,7 @@ class IsOwner(permissions.BasePermission):
         """Checks if user belongs to owner group."""
         if request.user.is_authenticated:
             return request.user.is_owner
+        return False
 
 
 class ReadOnly(permissions.BasePermission):
@@ -143,14 +143,14 @@ class IsAdminOrCurrentBusinessOwner(permissions.IsAuthenticated):
         return has_access
 
 
-class IsCustomerOrders(permissions.BasePermission):
+class IsCustomerOrIsAdmin(permissions.BasePermission):
     """Object-level permission to only allow users of an object to edit it."""
 
     def has_permission(self, request, view):
         """Object permission check."""
         logger.debug(f"User {request.user.id} permission check.")
-
-        return request.user.id == view.kwargs["pk"] or request.user.is_admin
+        user = request.user
+        return user.is_admin or user.id == view.kwargs["pk"]
 
 
 class IsOwnerOfSpecialist(permissions.BasePermission):
@@ -168,6 +168,7 @@ class IsOwnerOfSpecialist(permissions.BasePermission):
         for position in positions:
             if request.user == position.business.owner:
                 return True
+        return False
 
 
 class IsServiceOwner(permissions.BasePermission):

@@ -161,6 +161,11 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return self.groups.filter(name="Specialist").exists()
 
     @property
+    def is_customer(self):
+        """Determines whether user is customer."""
+        return self.groups.filter(name="Customer").exists()
+
+    @property
     def is_owner(self):
         """Determines whether user is an owner."""
         return self.groups.filter(name="Owner").exists()

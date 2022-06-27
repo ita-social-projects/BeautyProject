@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-
 from rest_framework import (filters, status)
 from rest_framework.generics import (CreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
@@ -15,12 +14,13 @@ from rest_framework.generics import (CreateAPIView,
 from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from api.models import (CustomUser, Order)
+from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin, IsOwnerOfSpecialist)
+from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail)
-from api.models import (CustomUser, Order)
-from api.permissions import (IsOrderUser, IsCustomerOrders, IsOwnerOfSpecialist)
-from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
+
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +185,7 @@ class CustomerOrdersViews(ListAPIView):
     """Show all orders concrete customer."""
 
     serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticated, IsCustomerOrders)
+    permission_classes = (IsAuthenticated, IsCustomerOrIsAdmin)
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["status", "specialist", "service", "start_time", "end_time"]
 
@@ -202,7 +202,7 @@ class SpecialistOrdersViews(ListAPIView):
     """Show all orders of concrete specialist."""
 
     serializer_class = OrderSerializer
-    permission_classes = (IsAuthenticated, IsCustomerOrders | IsOwnerOfSpecialist)
+    permission_classes = (IsAuthenticated, IsCustomerOrIsAdmin | IsOwnerOfSpecialist)
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ["status", "specialist", "service", "start_time", "end_time"]
 
