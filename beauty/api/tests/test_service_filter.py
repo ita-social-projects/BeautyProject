@@ -61,7 +61,7 @@ class ServiceFilterTest(TestCase):
         response = self.client.get(url, data={"ordering": "-price"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["results"][0]["id"], 3)
+        self.assertEqual(response.data["results"][0]["id"], self.service3.id)
 
     def test_get_ordering_asc(self):
         """Ordering by service price ascending."""
@@ -69,4 +69,4 @@ class ServiceFilterTest(TestCase):
         response = self.client.get(url, data={"ordering": "price"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["results"][0]["id"], 1)
+        self.assertEqual(response.data["results"][0]["id"], self.service1.id)
