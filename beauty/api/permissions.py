@@ -150,7 +150,7 @@ class IsCustomerOrIsAdmin(permissions.BasePermission):
         """Object permission check."""
         logger.debug(f"User {request.user.id} permission check.")
         user = request.user
-        return user.is_admin or request.user.id == view.kwargs["pk"]
+        return user.is_admin or user.id == view.kwargs["pk"]
 
 
 class IsOwnerOfSpecialist(permissions.BasePermission):
