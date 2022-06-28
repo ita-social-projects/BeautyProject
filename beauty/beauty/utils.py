@@ -307,3 +307,9 @@ def get_order_expiration_time(order, date_time, time_delta_hours=3):
 
     next_day = (date_time + timedelta(days=1)).replace(hour=0, minute=0, second=0)
     return get_order_expiration_time(order, next_day)
+
+
+class AutoDeclineOrderEmail(BaseEmailMessage):
+    """Class for sending an email message which renders HTML for it."""
+
+    template_name = "email/order_auto_decline_email.html"
