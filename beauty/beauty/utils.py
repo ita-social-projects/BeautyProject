@@ -3,7 +3,8 @@
 import os
 
 from datetime import timedelta, datetime, time
-
+from functools import partial
+from geopy.geocoders import Nominatim
 from typing import Tuple
 from django.forms import ValidationError
 import pytz
@@ -274,3 +275,46 @@ class RoundedTime:
     def get_rounded_duration(cls):
         """Return timedelta with minutes multiplied by 5."""
         return timedelta(minutes=choice(cls.minutes))
+
+
+class Geolocator:
+    """Class for address-coordinates translation."""
+
+    geolocator = Nominatim(user_agent="BeautyProject")
+
+    @classmethod
+    def get_coordinates_by_address(cls, address: str) -> (str, str):
+        """Translate address into coordinates.
+
+        Args:
+            address: Location address
+
+        Returns:
+            latitude: geographical latitude
+            longitude: geographical longitude
+            or
+            None (if address can not be found)
+        """
+        location = cls.geolocator.geocode(address)
+
+        if location:
+            return location.latitude, location.longitude
+
+    @classmethod
+    def get_address_by_coordinates(cls, latitude: str, longitude: str) -> str:
+        """Translate coordinates into address.
+
+        Args:
+            latitude: geographical latitude
+            longitude: geographical longitude
+
+        Returns:
+            address: Nearest address to given coordinates
+            or
+            None (if address can not be found)
+        """
+        coordinates = partial(cls.geolocator.reverse, language="en")
+        location = coordinates(f"{latitude}, {longitude}")
+
+        if location:
+            return location.address
