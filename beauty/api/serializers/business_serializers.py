@@ -5,8 +5,8 @@ import logging
 
 from rest_framework import serializers
 
-from beauty.utils import string_to_time, time_to_string
-from api.models import (Business, CustomUser)
+from beauty.utils import string_to_time, time_to_string, Geolocator
+from api.models import (Business, CustomUser, Location)
 from api.serializers.location_serializer import LocationSerializer
 
 
@@ -19,6 +19,43 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
     Provides to_representation which display owner with his full_name
     """
     location = LocationSerializer()
+
+    def create(self, validated_data):
+        """Overridden to create the nested Location model.
+
+        In case when only address of location is provided, or one of coordinates is missed
+        location coordinates are calculated by address field.
+        """
+        location_data = self.initial_data["location"]
+
+        location_model = Location.objects.create(**location_data)
+        validated_data["location"] = location_model
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        """Overridden to update the nested Location model.
+
+        In case when only address of location is provided, or one of coordinates is missed
+        location coordinates are calculated by address field.
+        """
+        location_serializer = self.fields["location"]
+        location_instance = instance.location
+        location_data = validated_data.pop("location")
+        try:
+            location_data["latitude"]
+            location_data["longitude"]
+        except KeyError:
+            coordinates = Geolocator().get_coordinates_by_address(location_data["address"])
+
+            try:
+                location_data["latitude"], location_data["longitude"] = coordinates
+            except TypeError:
+                logger.warning(f"Cannot find addres: {location_data['address']}")
+
+        location_serializer.update(location_instance, location_data)
+
+        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         """Display owner full name."""
