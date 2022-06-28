@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-from django.utils import timezone
 from rest_framework import (filters, status)
 from rest_framework.generics import (CreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
@@ -21,7 +20,7 @@ from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSeria
 from api.tasks import change_order_status_to_decline
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
-from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail)
+from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail, get_order_expiration_time)
 
 
 logger = logging.getLogger(__name__)
@@ -59,13 +58,15 @@ class OrderCreateView(CreateAPIView):
         for order in orders:
             logger.info(f"{order} with {order.service.name} was created")
 
+            expiration_time = get_order_expiration_time(order, order.created_at)
+
             context = {"order": order}
             to = [order.specialist.email]
             ApprovingOrderEmail(request, context).send(to)
 
             change_order_status_to_decline.apply_async(
                 (order.id, request.META["HTTP_HOST"]),
-                eta=order.created_at + timezone.timedelta(hours=3),
+                eta=expiration_time,
             )
 
             logger.info(f"{order}: approving email was sent to the specialist "
