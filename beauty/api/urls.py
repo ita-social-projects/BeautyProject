@@ -6,6 +6,8 @@ import pytz
 
 from django.urls import path, register_converter
 
+from api.views.location_views import LocationRUDView, LocationCreateView
+
 from api.views.order_views import (CustomerOrdersViews, OrderApprovingView, SpecialistOrdersViews,
                                    OrderCreateView, OrderRetrieveCancelView)
 
@@ -104,6 +106,16 @@ urlpatterns = [
         "business/<int:pk>/",
         BusinessDetailRUDView.as_view(),
         name="business-detail",
+    ),
+    path(
+        "location/",
+        LocationCreateView.as_view(),
+        name="location-create",
+    ),
+    path(
+        "location/<int:pk>/",
+        LocationRUDView.as_view(),
+        name="location-detail",
     ),
     path(
         "position/",
