@@ -13,6 +13,7 @@ from faker import Faker
 from django.utils import timezone
 from random import choice, randint
 
+
 faker = Faker()
 
 
@@ -290,31 +291,19 @@ def get_order_expiration_time(order, date_time, time_delta_hours=3):
     from api.views.schedule import get_working_day
 
     working_day = get_working_day(order.service.position, date_time)
-    # working_schedule = order.service.position.working_time
-    # day_of_week = date_time.strftime("%a")
-    # working_day = working_schedule.get(day_of_week)
-    print(working_day, date_time)
-    # date_time = timezone.
     eta = date_time + timedelta(hours=time_delta_hours)
-    print(eta)
-    # eta = datetime.combine(date_time.date(), datetime.strptime("15:07", "%H:%M").time())
     last_week_day = (order.created_at + timedelta(days=7)).date()
-    # print(last_week_day)
     if last_week_day == date_time.date():
         return None
     if working_day:
         start_working_datetime, end_working_datetime = [datetime.strptime(t, "%H:%M")
                                                         for t in working_day]
         if start_working_datetime.time() < eta.time() < end_working_datetime.time():
-            print("-1-", eta)
             return eta
         elif start_working_datetime.time() > eta.time():
             naive_datetime = timezone.datetime.combine(
                 eta.date(), (start_working_datetime + timedelta(hours=time_delta_hours)).time())
-            eta = timezone.make_aware(naive_datetime)
-            print("-2-", eta)
-            return eta
+            return timezone.make_aware(naive_datetime)
 
     next_day = (date_time + timedelta(days=1)).replace(hour=0, minute=0, second=0)
-    print("-4-", next_day)
-    get_order_expiration_time(order, next_day)
+    return get_order_expiration_time(order, next_day)
