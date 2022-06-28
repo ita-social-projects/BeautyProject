@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from beauty.utils import string_to_time, time_to_string
 from api.models import (Business, CustomUser)
+from api.serializers.location_serializer import LocationSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
 
     Provides to_representation which display owner with his full_name
     """
+    location = LocationSerializer()
 
     def to_representation(self, instance):
         """Display owner full name."""
@@ -164,34 +166,29 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     business_url = serializers.HyperlinkedIdentityField(
         view_name="api:business-detail", lookup_field="pk",
     )
-    address = serializers.CharField(max_length=500)
+    location = LocationSerializer()
 
     class Meta:
         """Display main field & urls for businesses."""
 
         model = Business
         fields = (
-            "business_url", "name", "business_type", "address",
-            "working_time",
+            "business_url", "name", "business_type", "working_time", "location",
         )
 
 
 class BusinessDetailSerializer(BaseBusinessSerializer):
     """Serializer for specific business."""
 
-    address = serializers.CharField(max_length=500)
-
     class Meta:
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        exclude = ("created_at", "id", "owner", "working_time")
+        exclude = ("created_at", "id", "owner", "is_active")
 
 
 class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
     """Serializer for getting all info about business."""
-
-    address = serializers.CharField(max_length=500)
 
     class Meta:
         """Meta for BusinessGetAllInfoSerializers class."""
