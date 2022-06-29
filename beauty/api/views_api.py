@@ -48,7 +48,8 @@ from .serializers.position_serializer import PositionGetSerializer, PositionSeri
 from .serializers.service_serializers import ServiceSerializer
 from beauty.utils import (is_working_time_reduced,
                           is_order_fit_working_time,
-                          get_working_time_from_dict)
+                          get_working_time_from_dict,
+                          update_position_time_by_business)
 
 
 logger = logging.getLogger(__name__)
@@ -303,7 +304,10 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
 
         positions = Position.objects.filter(business=business)
         for position in positions:
-            position.working_time = business.working_time
+            position.working_time = update_position_time_by_business(
+                position.working_time,
+                business.working_time,
+            )
 
         if not is_working_time_reduced(
             business.working_time,
@@ -338,7 +342,10 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
         if request_working_time:
             positions = Position.objects.filter(business=business)
             for position in positions:
-                position.working_time = business.working_time
+                position.working_time = update_position_time_by_business(
+                    position.working_time,
+                    business.working_time,
+                )
 
         if not is_working_time_reduced(
             business.working_time,

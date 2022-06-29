@@ -187,7 +187,7 @@ class BusinessListCreateViewTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_create_business_missing_working_day(self) -> None:
-        """Owner can not create business without any working day."""
+        """Owner can create business without any working day."""
         self.client.force_authenticate(user=self.owner)
 
         self.valid_create_data.pop("Mon")
@@ -198,4 +198,4 @@ class BusinessListCreateViewTest(TestCase):
             data=self.valid_create_data,
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 201)

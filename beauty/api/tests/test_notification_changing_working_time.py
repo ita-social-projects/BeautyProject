@@ -15,7 +15,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.models import Business
-from beauty.settings import EMAIL_HOST_USER
+from beauty.settings import EMAIL_HOST_USER, TIME_ZONE
 from beauty.utils import string_to_time, time_to_string
 from .factories import (BusinessFactory,
                         CustomUserFactory,
@@ -51,7 +51,7 @@ class TestUpdateWorkingTime(TestCase):
         self.order = OrderFactory.create(
             specialist=self.specialist,
             service=self.service,
-            start_time=datetime.combine(self.date, self.time, tzinfo=pytz.UTC),
+            start_time=datetime.combine(self.date, self.time, tzinfo=pytz.timezone(TIME_ZONE)),
         )
 
         self.pk = self.business.id

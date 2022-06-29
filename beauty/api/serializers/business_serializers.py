@@ -22,30 +22,37 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
     Sun = serializers.ListField(
         write_only=True,
         max_length=2,
+        default=[],
     )
     Mon = serializers.ListField(
         write_only=True,
         max_length=2,
+        default=[],
     )
     Tue = serializers.ListField(
         write_only=True,
         max_length=2,
+        default=[],
     )
     Wed = serializers.ListField(
         write_only=True,
         max_length=2,
+        default=[],
     )
     Thu = serializers.ListField(
         write_only=True,
         max_length=2,
+        default=[],
     )
     Fri = serializers.ListField(
         write_only=True,
         max_length=2,
+        default=[],
     )
     Sat = serializers.ListField(
         write_only=True,
         max_length=2,
+        default=[],
     )
 
     def validate(self, data: dict):
