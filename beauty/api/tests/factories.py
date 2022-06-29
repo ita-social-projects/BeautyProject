@@ -90,9 +90,8 @@ class BusinessFactory(factory.django.DjangoModelFactory):
                      for day in calendar.HTMLCalendar.cssclasses]
 
         working_time = {day: [start_hour, end_hour]
-                        if random.random() > 0.25
-                        else []
-                        for day in week_days}
+                        for day in week_days[:-2]}
+        working_time.update({day: [] for day in week_days[-2:]})
 
         return working_time
 

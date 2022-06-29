@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from django.core.mail import send_mail
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -24,9 +25,11 @@ from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
+from beauty.settings import EMAIL_HOST_USER
+
 from .filters import ServiceFilter
 
-from .models import (Business, CustomUser, Position, Service)
+from .models import (Business, CustomUser, Position, Service, Order)
 
 from .permissions import (IsAdminOrThisBusinessOwner, IsOwner, IsServiceOwner,
                           IsPositionOwner, IsProfileOwner, ReadOnly, IsAdminOrCurrentBusinessOwner)
@@ -43,6 +46,9 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  SpecialistDetailSerializer)
 from .serializers.position_serializer import PositionGetSerializer, PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
+from beauty.utils import (is_working_time_reduced,
+                          is_order_fit_working_time,
+                          get_working_time_from_dict)
 
 
 logger = logging.getLogger(__name__)
@@ -289,6 +295,82 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
         logger.info(f"Business {instance} (id={instance.id}) is already "
                     f"deactivated, but tried doing it again.")
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, *args, **kwargs):
+        """Sends message to customer and specialist if working time was reduced."""
+        business = self.get_object()
+        request_working_time = get_working_time_from_dict(request.data)
+
+        positions = Position.objects.filter(business=business)
+        for position in positions:
+            position.working_time = business.working_time
+
+        if not is_working_time_reduced(
+            business.working_time,
+            request_working_time,
+        ):
+            return super().put(request, *args, **kwargs)
+
+        orders = Order.objects.filter(service__position__business=business)
+        for order in orders:
+            if is_order_fit_working_time(order, request_working_time):
+                continue
+            specialist = order.specialist.email
+            customer = order.customer.email
+
+            order.status = Order.StatusChoices.CANCELLED
+            print(order.status)
+            order.save()
+            send_mail(
+                f"Order #{order.id} has been cancelled",
+                f"Order #{order.id} hass been cancelled due to reduced working time",
+                EMAIL_HOST_USER,
+                [customer, specialist],
+            )
+
+        return super().put(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """Sends message to customer and specialist if working time was reduced."""
+        business = self.get_object()
+        request_working_time = get_working_time_from_dict(request.data)
+
+        if request_working_time:
+            positions = Position.objects.filter(business=business)
+            for position in positions:
+                position.working_time = business.working_time
+
+        if not is_working_time_reduced(
+            business.working_time,
+            request_working_time,
+        ):
+            return super().patch(request, *args, **kwargs)
+
+        valid_order_statuses = [
+            Order.StatusChoices.ACTIVE,
+            Order.StatusChoices.APPROVED,
+        ]
+        orders = Order.objects.filter(
+            service__position__business=business,
+            status__in=valid_order_statuses,
+        )
+
+        for order in orders:
+            if is_order_fit_working_time(order, request_working_time):
+                continue
+
+            order.status = Order.StatusChoices.CANCELLED
+            order.save()
+
+            specialist = order.specialist.email
+            customer = order.customer.email
+            send_mail(
+                f"Order #{order.id} has been cancelled",
+                f"Order #{order.id} hass been cancelled due to reduced working time",
+                EMAIL_HOST_USER,
+                [customer, specialist],
+            )
+        return super().patch(request, *args, **kwargs)
 
 
 class AllServicesListCreateView(ListCreateAPIView):
