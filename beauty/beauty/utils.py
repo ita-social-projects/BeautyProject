@@ -310,6 +310,12 @@ def get_order_expiration_time(order, date_time, time_delta_hours=3):
 
 
 class AutoDeclineOrderEmail(BaseEmailMessage):
-    """Class for sending an email message which renders HTML for it."""
+    """Class for sending an email message with an order auto decline info."""
 
     template_name = "email/order_auto_decline_email.html"
+
+
+class RemindAboutOrderEmail(BaseEmailMessage):
+    """Class for sending an email message reminding a customer about an order."""
+
+    template_name = "email/customer_order_reminding_email.html"
