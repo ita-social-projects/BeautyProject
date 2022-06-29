@@ -29,8 +29,8 @@ def change_order_status_to_decline(self, order_id, site_name):
             order.save()
             context = {"order": order, "site_name": site_name}
 
-            AutoDeclineOrderEmail(context=context).send([order.customer.email])
-            AutoDeclineOrderEmail(context=context).send([order.specialist.email])
+            AutoDeclineOrderEmail(context=context).send([order.customer.email,
+                                                         order.specialist.email])
 
             logger.info(f"{order} was declined")
     except Order.DoesNotExist:
