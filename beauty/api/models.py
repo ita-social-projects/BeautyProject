@@ -197,8 +197,8 @@ class Location(models.Model):
 
     Attributes:
         address (str): Address of business
-        latitude (str): Latitude coordinate of business
-        longitude (str): Longitude coordinate of business
+        latitude (float): Latitude coordinate of business
+        longitude (float): Longitude coordinate of business
     """
 
     address = models.CharField(
@@ -206,14 +206,16 @@ class Location(models.Model):
         max_length=100,
         blank=True,
     )
-    latitude = models.CharField(
+    latitude = models.DecimalField(
         verbose_name=_("Latitude"),
-        max_length=10,
+        max_digits=9,
+        decimal_places=6,
         blank=True,
     )
-    longitude = models.CharField(
+    longitude = models.DecimalField(
         verbose_name=_("Longitude"),
-        max_length=10,
+        max_digits=9,
+        decimal_places=6,
         blank=True,
     )
 

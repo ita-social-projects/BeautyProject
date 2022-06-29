@@ -1,7 +1,6 @@
 """This module provides you with all needed utility functions."""
 
 import os
-import re
 
 from datetime import timedelta, datetime, time
 from functools import partial
@@ -299,10 +298,10 @@ class Geolocator:
         location = cls.geolocator.geocode(address)
 
         if location:
-            return location.latitude, location.longitude
+            return float(location.latitude), float(location.longitude)
 
     @classmethod
-    def get_address_by_coordinates(cls, latitude: str, longitude: str) -> str:
+    def get_address_by_coordinates(cls, latitude: float, longitude: float) -> str:
         """Translate coordinates into address.
 
         Args:
@@ -315,30 +314,7 @@ class Geolocator:
             None (if address can not be found)
         """
         coordinates = partial(cls.geolocator.reverse, language="en")
-        location = coordinates(f"{latitude}, {longitude}")
+        location = coordinates(f"{str(latitude)}, {str(longitude)}")
 
         if location:
             return location.address
-
-
-class GeographicCoordinate:
-    """Class for location coordinates validating."""
-
-    coordinate_filter = re.compile(r"\d+.\d+")
-
-    @classmethod
-    def is_correct(cls, coordinate: str) -> bool:
-        """Check coordinate for correct format.
-
-        Args:
-            coordinate: coordinate in string format
-
-        Returns:
-            True (if coordinate pass chek)
-            or
-            None (if coordinate is incorrect)
-        """
-        head = coordinate.split(".")[0]
-
-        if re.match(cls.coordinate_filter, coordinate) and (0 < int(head) < 180):
-            return True

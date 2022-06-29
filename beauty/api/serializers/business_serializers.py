@@ -5,7 +5,7 @@ import logging
 
 from rest_framework import serializers
 
-from beauty.utils import GeographicCoordinate, Geolocator, string_to_time, time_to_string
+from beauty.utils import Geolocator, string_to_time, time_to_string
 from api.models import (Business, CustomUser, Location)
 from api.serializers.location_serializer import LocationSerializer
 
@@ -20,17 +20,12 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
     """
     location = LocationSerializer()
 
-    def correct_coordinates(self, address, latitude="", longitude=""):
+    def correct_coordinates(self, address: str, latitude=None, longitude=None):
         """Correct invalid coordinates."""
-        latitude_is_correct = GeographicCoordinate.is_correct(coordinate=latitude)
-        longitude_is_correct = GeographicCoordinate.is_correct(coordinate=longitude)
+        if not ((0 < latitude < 180) and (0 < longitude < 180)):
+            return Geolocator().get_coordinates_by_address(address)
 
-        if not (latitude_is_correct and longitude_is_correct):
-            coordinates = Geolocator().get_coordinates_by_address(address)
-            if coordinates:
-                return coordinates
-            return ("", "")
-        return (latitude, longitude)
+        return latitude, longitude
 
     def create(self, validated_data):
         """Overridden to create the nested Location model.
