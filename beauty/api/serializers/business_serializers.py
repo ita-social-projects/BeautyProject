@@ -241,3 +241,18 @@ class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
 
         model = Business
         fields = "__all__"
+
+
+class NearestBusinessesSerializer(BaseBusinessSerializer):
+    """Serializer for getting nearest busineses info."""
+
+    business_url = serializers.HyperlinkedIdentityField(
+        view_name="api:business-detail", lookup_field="pk",
+    )
+    location = LocationSerializer()
+
+    class Meta:
+        """Meta for NearestBusinessesSerializer class."""
+
+        model = Business
+        fields = ("business_url", "location")
