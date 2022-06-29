@@ -5,7 +5,7 @@ import logging
 
 from rest_framework import serializers
 
-from beauty.utils import string_to_time, time_to_string, Geolocator
+from beauty.utils import GeographicCoordinate, Geolocator, string_to_time, time_to_string
 from api.models import (Business, CustomUser, Location)
 from api.serializers.location_serializer import LocationSerializer
 
@@ -20,18 +20,36 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
     """
     location = LocationSerializer()
 
+    def correct_coordinates(self, address, latitude="", longitude=""):
+        """Correct invalid coordinates."""
+        latitude_is_correct = GeographicCoordinate.is_correct(coordinate=latitude)
+        longitude_is_correct = GeographicCoordinate.is_correct(coordinate=longitude)
+
+        if not (latitude_is_correct and longitude_is_correct):
+            coordinates = Geolocator().get_coordinates_by_address(address)
+            if coordinates:
+                return coordinates
+            return ("", "")
+        return (latitude, longitude)
+
     def create(self, validated_data):
         """Overridden to create the nested Location model.
 
         In case when only address of location is provided, or one of coordinates is missed
         location coordinates are calculated by address field.
         """
-        location_data = self.initial_data["location"]
+        location = self.initial_data["location"]
 
-        location_model = Location.objects.create(**location_data)
-        validated_data["location"] = location_model
+        try:
+            location["latitude"], location["longitude"] = self.correct_coordinates(**location)
+            location_model = Location.objects.create(**location)
+            validated_data["location"] = location_model
 
-        return super().create(validated_data)
+            return super().create(validated_data)
+
+        except TypeError:
+            logger.warning(f"Cannot update address {location}")
+            raise serializers.ValidationError({"location": "Invalid location details provided"})
 
     def update(self, instance, validated_data):
         """Overridden to update the nested Location model.
@@ -41,21 +59,17 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
         """
         location_serializer = self.fields["location"]
         location_instance = instance.location
-        location_data = validated_data.pop("location")
+        location = validated_data.pop("location")
+        location_data = dict(location)
+
         try:
-            location_data["latitude"]
-            location_data["longitude"]
-        except KeyError:
-            coordinates = Geolocator().get_coordinates_by_address(location_data["address"])
+            location["latitude"], location["longitude"] = self.correct_coordinates(**location_data)
+            location_serializer.update(location_instance, location)
+            return super().update(instance, validated_data)
 
-            try:
-                location_data["latitude"], location_data["longitude"] = coordinates
-            except TypeError:
-                logger.warning(f"Cannot find addres: {location_data['address']}")
-
-        location_serializer.update(location_instance, location_data)
-
-        return super().update(instance, validated_data)
+        except TypeError:
+            logger.warning(f"Cannot update address {location}")
+            raise serializers.ValidationError({"location": "Invalid location details provided"})
 
     def to_representation(self, instance):
         """Display owner full name."""

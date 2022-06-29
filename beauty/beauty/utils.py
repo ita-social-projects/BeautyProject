@@ -1,6 +1,7 @@
 """This module provides you with all needed utility functions."""
 
 import os
+import re
 
 from datetime import timedelta, datetime, time
 from functools import partial
@@ -318,3 +319,26 @@ class Geolocator:
 
         if location:
             return location.address
+
+
+class GeographicCoordinate:
+    """Class for location coordinates validating."""
+
+    coordinate_filter = re.compile(r"\d+.\d+")
+
+    @classmethod
+    def is_correct(cls, coordinate: str) -> bool:
+        """Check coordinate for correct format.
+
+        Args:
+            coordinate: coordinate in string format
+
+        Returns:
+            True (if coordinate pass chek)
+            or
+            None (if coordinate is incorrect)
+        """
+        head = coordinate.split(".")[0]
+
+        if re.match(cls.coordinate_filter, coordinate) and (0 < int(head) < 180):
+            return True
