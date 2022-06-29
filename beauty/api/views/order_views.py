@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import (filters, status)
@@ -146,7 +147,7 @@ class OrderApprovingView(RetrieveAPIView):
 
                 reminder_for_customer.apply_async(
                     (order.id, request.get_host()),
-                    eta=order.start_time - datetime.timedelta(hours=3),
+                    eta=timezone.localtime(order.start_time - datetime.timedelta(hours=3)),
                 )
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
