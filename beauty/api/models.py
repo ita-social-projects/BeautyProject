@@ -8,7 +8,6 @@ from django.core.validators import (validate_email, MinValueValidator, MaxValueV
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
-from dbview.models import DbView
 from beauty.utils import (ModelsUtils, validate_rounded_minutes_seconds,
                           validate_working_time_json)
 
@@ -281,54 +280,13 @@ class Business(models.Model):
 
         return specialists
 
+    def get_orders_by_date(self, date):
+        """Get orders of current business by month."""
+        specialists = self.get_all_specialists().values_list("id", flat=True)
 
-class WorkingTime(DbView):
-    """This class represents Working time entity.
-
-    Attributes:
-        block (bool): is free or not
-        date (datetime): working day
-        specialist (CustomUser): specialist id
-        order (Order): order id
-
-    """
-
-    block = models.BooleanField(
-        default=False,
-        verbose_name=_("Is block"),
-    )
-    date = models.DateTimeField(
-        verbose_name=_("Working day"),
-    )
-
-    specialist = models.ForeignKey(
-        "CustomUser",
-        on_delete=models.DO_NOTHING,
-        verbose_name=_("Specialist"),
-    )
-    order = models.ForeignKey(
-        "Order",
-        on_delete=models.DO_NOTHING,
-        verbose_name=_("Order"),
-    )
-
-    @classmethod
-    def view(cls):
-        """Return string of our request."""
-        # TODO: add request when all class will be realized
-        req = ()
-        return str(req.query)
-
-    def __str__(self):
-        """Magic method is redefined to show is this time blocked or no."""
-        return self.block
-
-    class Meta:
-        """This meta class stores verbose names and permissions."""
-
-        managed = False
-        verbose_name = _("WorkingTime")
-        verbose_name_plural = _("WorkingTimes")
+        return Order.objects.filter(
+            start_time__gte=date, specialist__in=specialists,
+        )
 
 
 class Position(models.Model):

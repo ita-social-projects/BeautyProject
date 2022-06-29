@@ -20,6 +20,8 @@ from api.views.position_views import (InviteSpecialistToPosition,
 
 from api.views.customuser_views import InviteRegisterView
 
+from api.views.statistic import StatisticView
+
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
@@ -179,4 +181,10 @@ urlpatterns = [
         "specialist/<int:pk>/services/",
         SpecialistsServicesView.as_view(),
         name="service-by-specialist"),
+
+    path(
+        "statistic/<int:business_id>/",
+        StatisticView.as_view(),
+        name="statistic-of-business",
+    ),
 ]
