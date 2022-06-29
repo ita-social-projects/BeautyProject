@@ -11,6 +11,7 @@ from datetime import date, timedelta, datetime
 from beauty.settings import TIME_ZONE
 import pytz
 from dateutil.relativedelta import relativedelta
+from api.permissions import IsOwner
 
 
 CET = pytz.timezone(TIME_ZONE)
@@ -19,9 +20,18 @@ CET = pytz.timezone(TIME_ZONE)
 class StatisticView(APIView):
     """."""
 
+    permission_classes = (IsOwner,)
+
     def get(self, request, business_id):
         """."""
         business = get_object_or_404(Business, id=business_id)
+
+        if business.owner != request.user:
+            return Response(
+                {"detail": "You don't have permission to perform this action"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         specialists = business.get_all_specialists()
 
         time_interval = request.GET.get("timeInterval")
@@ -119,11 +129,11 @@ class StatisticView(APIView):
             least_pop_service = min(
                 count_services, key=lambda x: x["total"])["service__name"]
 
-        elif not count_services:
+        else:
             message = "No orders"
             most_pop_service, least_pop_service = (message,) * 2
 
-        elif most_pop_service == least_pop_service:
+        if most_pop_service == least_pop_service:
             message = "Not enought data"
             most_pop_service, least_pop_service = (message,) * 2
 

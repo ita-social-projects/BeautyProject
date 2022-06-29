@@ -17,9 +17,10 @@ from rest_framework.reverse import reverse
 from api.models import (CustomUser, Order)
 from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin, IsOwnerOfSpecialist)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
+from api.tasks import change_order_status_to_decline
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
-from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail)
+from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail, get_order_expiration_time)
 
 
 logger = logging.getLogger(__name__)
@@ -57,9 +58,15 @@ class OrderCreateView(CreateAPIView):
         for order in orders:
             logger.info(f"{order} with {order.service.name} was created")
 
+            expiration_time = get_order_expiration_time(order, order.created_at)
+
             context = {"order": order}
             to = [order.specialist.email]
             ApprovingOrderEmail(request, context).send(to)
+
+            change_order_status_to_decline.apply_async(
+                (order.id, request.get_host()), eta=expiration_time,
+            )
 
             logger.info(f"{order}: approving email was sent to the specialist "
                         f"{order.specialist.get_full_name()}")
