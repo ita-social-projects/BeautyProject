@@ -14,6 +14,7 @@ from faker import Faker
 from django.utils import timezone
 from random import choice, randint
 
+
 faker = Faker()
 
 
@@ -227,7 +228,7 @@ class SpecialistAnswerEmail(BaseEmailMessage):
 
 def generate_working_time(start_time: str, end_time: str):
     """Generates working time."""
-    weekdays = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"]
+    weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     return {day: [start_time, end_time] for day in weekdays}
 
 
@@ -275,6 +276,44 @@ class RoundedTime:
     def get_rounded_duration(cls):
         """Return timedelta with minutes multiplied by 5."""
         return timedelta(minutes=choice(cls.minutes))
+
+
+def get_order_expiration_time(order, date_time, time_delta_hours=3):
+    """Get expiration time for order.
+
+    Args:
+        order: Order instance
+        date_time: datetime data
+        time_delta_hours: time delta hours from creating an order or starting a working day
+
+    Returns: date time expired order
+
+    """
+    from api.views.schedule import get_working_day
+
+    working_day = get_working_day(order.service.position, date_time)
+    eta = date_time + timedelta(hours=time_delta_hours)
+    last_week_day = (order.created_at + timedelta(days=7)).date()
+    if last_week_day == date_time.date():
+        return None
+    if working_day:
+        start_working_datetime, end_working_datetime = [datetime.strptime(t, "%H:%M")
+                                                        for t in working_day]
+        if start_working_datetime.time() < eta.time() < end_working_datetime.time():
+            return eta
+        elif start_working_datetime.time() > eta.time():
+            naive_datetime = timezone.datetime.combine(
+                eta.date(), (start_working_datetime + timedelta(hours=time_delta_hours)).time())
+            return timezone.make_aware(naive_datetime)
+
+    next_day = (date_time + timedelta(days=1)).replace(hour=0, minute=0, second=0)
+    return get_order_expiration_time(order, next_day)
+
+
+class AutoDeclineOrderEmail(BaseEmailMessage):
+    """Class for sending an email message which renders HTML for it."""
+
+    template_name = "email/order_auto_decline_email.html"
 
 
 class Geolocator:

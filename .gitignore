@@ -136,3 +136,4 @@ dmypy.json
 /beauty/docs/
 migrations/
 sonar-project.properties
+dump.rdb

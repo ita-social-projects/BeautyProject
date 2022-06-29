@@ -7,7 +7,6 @@ from django.core.validators import (validate_email, MinValueValidator, MaxValueV
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db import models
 from django.utils.translation import gettext as _
-from dbview.models import DbView
 from beauty.utils import (ModelsUtils, validate_rounded_minutes_seconds,
                           validate_working_time_json)
 
@@ -313,55 +312,6 @@ class Business(models.Model):
         logger.info("Got all specialists from business positions")
 
         return specialists
-
-
-class WorkingTime(DbView):
-    """This class represents Working time entity.
-
-    Attributes:
-        block (bool): is free or not
-        date (datetime): working day
-        specialist (CustomUser): specialist id
-        order (Order): order id
-
-    """
-
-    block = models.BooleanField(
-        default=False,
-        verbose_name=_("Is block"),
-    )
-    date = models.DateTimeField(
-        verbose_name=_("Working day"),
-    )
-
-    specialist = models.ForeignKey(
-        "CustomUser",
-        on_delete=models.DO_NOTHING,
-        verbose_name=_("Specialist"),
-    )
-    order = models.ForeignKey(
-        "Order",
-        on_delete=models.DO_NOTHING,
-        verbose_name=_("Order"),
-    )
-
-    @classmethod
-    def view(cls):
-        """Return string of our request."""
-        # TODO: add request when all class will be realized
-        req = ()
-        return str(req.query)
-
-    def __str__(self):
-        """Magic method is redefined to show is this time blocked or no."""
-        return self.block
-
-    class Meta:
-        """This meta class stores verbose names and permissions."""
-
-        managed = False
-        verbose_name = _("WorkingTime")
-        verbose_name_plural = _("WorkingTimes")
 
 
 class Position(models.Model):
