@@ -227,7 +227,7 @@ class SpecialistAnswerEmail(BaseEmailMessage):
 
 def generate_working_time(start_time: str, end_time: str):
     """Generates working time."""
-    weekdays = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"]
+    weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     return {day: [start_time, end_time] for day in weekdays}
 
 
