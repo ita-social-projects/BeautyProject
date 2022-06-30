@@ -10,7 +10,7 @@ Test includes:
 import calendar
 import pytz
 from django.core import mail
-from datetime import timedelta, date, datetime
+from datetime import (date, datetime, timedelta)
 from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
@@ -20,7 +20,9 @@ from beauty.utils import string_to_time, time_to_string
 from .factories import (BusinessFactory,
                         CustomUserFactory,
                         GroupFactory,
-                        PositionFactory, OrderFactory, ServiceFactory)
+                        OrderFactory,
+                        PositionFactory,
+                        ServiceFactory)
 
 
 class TestUpdateWorkingTime(TestCase):

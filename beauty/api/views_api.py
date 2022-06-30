@@ -29,7 +29,7 @@ from beauty.settings import EMAIL_HOST_USER
 
 from .filters import ServiceFilter
 
-from .models import (Business, CustomUser, Position, Service, Order)
+from .models import (Business, CustomUser, Order, Position, Service)
 
 from .permissions import (IsAdminOrThisBusinessOwner, IsOwner, IsServiceOwner,
                           IsPositionOwner, IsProfileOwner, ReadOnly, IsAdminOrCurrentBusinessOwner)
@@ -46,9 +46,9 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  SpecialistDetailSerializer)
 from .serializers.position_serializer import PositionGetSerializer, PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
-from beauty.utils import (is_working_time_reduced,
+from beauty.utils import (get_working_time_from_dict,
                           is_order_fit_working_time,
-                          get_working_time_from_dict,
+                          is_working_time_reduced,
                           update_position_time_by_business)
 
 

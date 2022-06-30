@@ -4,7 +4,7 @@ import logging
 import calendar
 
 from rest_framework import serializers
-from beauty.utils import string_to_time, is_inside_interval
+from beauty.utils import (is_inside_interval, string_to_time)
 from api.serializers.business_serializers import WorkingTimeSerializer
 from api.models import Position
 
