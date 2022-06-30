@@ -21,7 +21,7 @@ from api.views.position_views import (InviteSpecialistToPosition,
 from api.views.customuser_views import InviteRegisterView
 
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
-                        BusinessDetailRUDView, CustomUserDetailRUDView,
+                        BusinessDetailRUDView, BusinessesListAPIView, CustomUserDetailRUDView,
                         CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
                         ServiceUpdateView, PositionRetrieveUpdateDestroyView,
                         RemoveSpecialistFromPosition, BusinessServicesView, SpecialistsServicesView)
@@ -99,6 +99,11 @@ urlpatterns = [
         "businesses/",
         BusinessesListCreateAPIView.as_view(),
         name="businesses-list-create",
+    ),
+    path(
+        "active_businesses/",
+        BusinessesListAPIView.as_view(),
+        name="businesses-list",
     ),
     path(
         "business/<int:pk>/",

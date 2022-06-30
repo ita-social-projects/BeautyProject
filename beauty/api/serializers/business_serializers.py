@@ -198,3 +198,15 @@ class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
 
         model = Business
         fields = "__all__"
+
+
+class BusinessInfoSerializer(serializers.ModelSerializer):
+    """Serializer for business base fields."""
+
+    address = serializers.CharField(max_length=500)
+
+    class Meta:
+        """Display neccesary field of businesses."""
+
+        model = Business
+        fields = ("name", "business_type", "logo", "address", "description", "working_time")
