@@ -21,7 +21,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
@@ -55,12 +54,6 @@ class CustomUserListCreateView(ListCreateAPIView):
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
-
-
-class CustomBusinessPagination(PageNumberPagination):
-    """Custom pagination for businesses."""
-
-    page_size = 12
 
 
 class UserActivationView(GenericAPIView):
@@ -258,10 +251,9 @@ class BusinessesListAPIView(ListAPIView):
 
     queryset = Business.objects.filter(is_active=True)
     serializer_class = BusinessInfoSerializer
-    pagination_class = CustomBusinessPagination
 
     filter_backends = (SearchFilter, OrderingFilter)
-    search_fields = ["name", "business_type", "$address__formatted", "description", "working_time"]
+    search_fields = ["name", "business_type", "$address__raw", "description", "working_time"]
     ordering_fields = ["name", "business_type", "address", "working_time"]
 
 
