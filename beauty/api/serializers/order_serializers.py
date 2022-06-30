@@ -68,9 +68,9 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
 
             errors.update({"users": "Customer and specialist are the same person!"})
 
-        working_hours = service.position.business.working_time[start_time.strftime("%a")]
+        working_hours = service.position.working_time[start_time.strftime("%a")]
 
-        if not working_hours:
+        if not working_hours and start_time < timezone.now():
             logger.info(f"{specialist} does not work {start_time.date()}")
 
             errors.update({"start_date": f"{specialist} does not work {start_time.date()}."})

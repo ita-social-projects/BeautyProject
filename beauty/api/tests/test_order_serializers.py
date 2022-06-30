@@ -22,14 +22,19 @@ from rest_framework.exceptions import ErrorDetail, ValidationError
 from api.serializers.order_serializers import OrderSerializer
 from api.tests.factories import (GroupFactory, CustomUserFactory, ServiceFactory, PositionFactory)
 from rest_framework.test import APIRequestFactory
-from beauty.utils import RoundedTime
 
+from api.views.schedule import get_working_day
+from beauty.utils import string_to_time
 
 CET = pytz.timezone("Europe/Kiev")
 
 
 class TestOrderSerializer(TestCase):
     """This class represents a Test case and has all the tests for OrderSerializer."""
+
+    working_time = {"Mon": ["08:52", "15:02"], "Tue": ["08:52", "15:02"], "Wed": ["08:52", "15:02"],
+                    "Thu": ["08:52", "15:02"], "Fri": ["08:52", "15:02"], "Sat": ["08:52", "15:02"],
+                    "Sun": ["08:52", "15:02"]}
 
     def setUp(self):
         """This method adds needed info for tests."""
@@ -38,7 +43,7 @@ class TestOrderSerializer(TestCase):
         self.groups = GroupFactory.groups_for_test()
         self.specialist = CustomUserFactory(first_name="UserSpecialist")
         self.customer = CustomUserFactory(first_name="UserCustomer")
-        self.position = PositionFactory(name="Position_1")
+        self.position = PositionFactory(name="Position_1", working_time=self.working_time)
         self.service = ServiceFactory(name="Service_1", position=self.position)
 
         self.groups.specialist.user_set.add(self.specialist)
@@ -47,8 +52,10 @@ class TestOrderSerializer(TestCase):
         self.factory = APIRequestFactory()
         self.request = self.factory.get("/")
         self.request.user = self.customer
-        round_time = RoundedTime.calculate_rounded_time_minutes_seconds()
-        self.start_time = round_time + timedelta(days=1)
+        working_day = timezone.now() + timedelta(days=1)
+        working_hours = get_working_day(self.position, working_day)
+        self.start_time = timezone.datetime.combine(working_day.date(),
+                                                    string_to_time(working_hours[0]))
 
     def test_valid_serializer(self):
         """Check serializer with valid data."""
@@ -56,7 +63,7 @@ class TestOrderSerializer(TestCase):
                       "specialist": self.specialist.id,
                       "service": self.service.id}
 
-        ecxpect_data = {"start_time": self.start_time,
+        ecxpect_data = {"start_time": timezone.make_aware(self.start_time),
                         "specialist": self.specialist,
                         "service": self.service}
 
@@ -118,7 +125,7 @@ class TestOrderSerializer(TestCase):
                         "specialist": self.specialist.id,
                         "service": self.service.id}
 
-        ecxpect_data = {"start_time": self.start_time,
+        ecxpect_data = {"start_time": timezone.make_aware(self.start_time),
                         "specialist": self.specialist,
                         "service": self.service}
 

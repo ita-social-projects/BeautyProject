@@ -49,12 +49,12 @@ Tests for SpecialistOrdersViews:
 
 from datetime import timedelta
 import pytz
+from django.conf import settings
 from django.test import TestCase
 from djoser.utils import encode_uid
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.reverse import reverse
 from rest_framework.test import (APIClient, APIRequestFactory)
-from django.conf import settings
 from api.serializers.order_serializers import OrderSerializer
 from api.views.order_views import (OrderApprovingTokenGenerator, OrderRetrieveCancelView)
 from .factories import (GroupFactory,
@@ -64,8 +64,8 @@ from .factories import (GroupFactory,
                         ServiceFactory,
                         OrderFactory)
 from api.models import Order
-
 from beauty.utils import RoundedTime
+
 
 CET = pytz.timezone("Europe/Kiev")
 
@@ -130,6 +130,13 @@ class TestOrderListCreateView(TestCase):
         self.client.force_authenticate(user=self.specialist)
         response = self.client.post(path=reverse("api:order-create"), data=self.data)
         self.assertEqual(response.status_code, 400)
+
+    def test_celery_config(self):
+        """Check celery config."""
+        self.assertIsNotNone(settings.BROKER_URL)
+        self.assertIsNotNone(settings.CELERY_RESULT_BACKEND)
+        self.assertIsNotNone(settings.CELERY_ACCEPT_CONTENT)
+        self.assertIn("redis", settings.BROKER_URL)
 
 
 class TestOrderApprovingView(TestCase):
