@@ -2,6 +2,7 @@
 
 import logging
 
+from beauty import settings
 from api.serializers.contact_form_serializer import ContactFormSerializer
 
 from django.core.mail import send_mail, BadHeaderError
@@ -27,9 +28,9 @@ class ContactFormView(CreateAPIView):
         req_template = render_to_string("email/support_request.html", request.data)
         resp_template = render_to_string("email/support_request_confirmation.html", request.data)
         try:
-            send_mail(subject, req_template, "beautyproject689@gmail.com",
+            send_mail(subject, req_template, settings.EMAIL_HOST,
                       ["testbeautyproject@gmail.com"], html_message=req_template)
-            send_mail(subject, resp_template, "beautyproject689@gmail.com",
+            send_mail(subject, resp_template, settings.EMAIL_HOST,
                       [request.data["email"]], html_message=resp_template)
 
             logger.info("Email was sent")
