@@ -28,9 +28,9 @@ class ContactFormView(CreateAPIView):
         req_template = render_to_string("email/support_request.html", request.data)
         resp_template = render_to_string("email/support_request_confirmation.html", request.data)
         try:
-            send_mail(subject, req_template, settings.EMAIL_HOST,
+            send_mail(subject, req_template, settings.EMAIL_HOST_USER,
                       ["testbeautyproject@gmail.com"], html_message=req_template)
-            send_mail(subject, resp_template, settings.EMAIL_HOST,
+            send_mail(subject, resp_template, settings.EMAIL_HOST_USER,
                       [request.data["email"]], html_message=resp_template)
 
             logger.info("Email was sent")
