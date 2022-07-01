@@ -16,7 +16,7 @@ from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      RetrieveAPIView, ListAPIView,
                                      get_object_or_404, DestroyAPIView)
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -29,12 +29,13 @@ from .filters import ServiceFilter
 from .models import (Business, CustomUser, Position, Service)
 
 from .permissions import (IsAdminOrThisBusinessOwner, IsOwner, IsServiceOwner,
-                          IsPositionOwner, IsProfileOwner, ReadOnly, IsAdminOrCurrentBusinessOwner)
+                          IsPositionOwner, IsProfileOwner, ReadOnly)
 
 from .serializers.business_serializers import (BusinessCreateSerializer,
                                                BusinessesSerializer,
                                                BusinessGetAllInfoSerializers,
-                                               BusinessDetailSerializer)
+                                               BusinessDetailSerializer,
+                                               NearestBusinessesSerializer)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -251,7 +252,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy.
     """
 
-    permission_classes = (IsAdminOrCurrentBusinessOwner,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
@@ -357,3 +358,31 @@ class UserViewSet(DjoserUserViewSet):
     def me(self, request, *args, **kwargs):
         """Delete is now forbidden for this method."""
         return super().me(request, *args, **kwargs)
+
+
+class BusinessesListAPIView(ListAPIView):
+    """List View for all nearest businesses next to current user or marker."""
+
+    permission_classes = (AllowAny,)
+    serializer_class = NearestBusinessesSerializer
+
+    def get_queryset(self):
+        """Filter businesses for current specialist.
+
+        Request Args:
+            target_latitude (float): user or target global latitude
+            target_longitude (float): user or target global longitude
+            delta (float): indent in coordinates to search
+        """
+        target_latitude = float(self.request.data["target_lat"])
+        target_longitude = float(self.request.data["target_lon"])
+        delta = float(self.request.data["delta"])
+
+        queryset = Business.objects.filter(
+            location__latitude__gt=target_latitude - delta,
+            location__latitude__lt=target_latitude + delta,
+            location__longitude__gt=target_longitude - delta,
+            location__longitude__lt=target_longitude + delta,
+        )
+
+        return queryset

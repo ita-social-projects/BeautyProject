@@ -6,6 +6,8 @@ import pytz
 
 from django.urls import path, register_converter
 
+from api.views.location_views import LocationRUDView, LocationCreateView
+
 from api.views.order_views import (CustomerOrdersViews, OrderApprovingView, SpecialistOrdersViews,
                                    OrderCreateView, OrderRetrieveCancelView)
 
@@ -21,7 +23,7 @@ from api.views.position_views import (InviteSpecialistToPosition,
 from api.views.customuser_views import InviteRegisterView
 
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
-                        BusinessDetailRUDView, CustomUserDetailRUDView,
+                        BusinessDetailRUDView, CustomUserDetailRUDView, BusinessesListAPIView,
                         CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
                         ServiceUpdateView, PositionRetrieveUpdateDestroyView,
                         RemoveSpecialistFromPosition, BusinessServicesView, SpecialistsServicesView)
@@ -101,9 +103,24 @@ urlpatterns = [
         name="businesses-list-create",
     ),
     path(
+        "businesses/nearest/",
+        BusinessesListAPIView.as_view(),
+        name="businesses-list-nearest",
+    ),
+    path(
         "business/<int:pk>/",
         BusinessDetailRUDView.as_view(),
         name="business-detail",
+    ),
+    path(
+        "location/",
+        LocationCreateView.as_view(),
+        name="location-create",
+    ),
+    path(
+        "location/<int:pk>/",
+        LocationRUDView.as_view(),
+        name="location-detail",
     ),
     path(
         "position/",

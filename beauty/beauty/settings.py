@@ -56,7 +56,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework.authtoken",
     "phonenumber_field",
-    "address",
     "drf_yasg",
     "corsheaders",
     "django.contrib.sites",
