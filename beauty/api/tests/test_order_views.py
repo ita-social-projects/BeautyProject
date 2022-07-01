@@ -48,7 +48,7 @@ Tests for SpecialistOrdersViews:
 """
 
 from datetime import timedelta
-import pytz
+from django.utils import timezone
 from django.conf import settings
 from django.test import TestCase
 from djoser.utils import encode_uid
@@ -64,14 +64,16 @@ from .factories import (GroupFactory,
                         ServiceFactory,
                         OrderFactory)
 from api.models import Order
-from beauty.utils import RoundedTime
-
-
-CET = pytz.timezone("Europe/Kiev")
+from beauty.utils import string_to_time
+from api.views.schedule import get_working_day
 
 
 class TestOrderListCreateView(TestCase):
     """This class represents a Test case and has all the tests for OrderListCreateView."""
+
+    working_time = {"Mon": ["08:52", "15:02"], "Tue": ["08:52", "15:02"], "Wed": ["08:52", "15:02"],
+                    "Thu": ["08:52", "15:02"], "Fri": ["08:52", "15:02"], "Sat": ["08:52", "15:02"],
+                    "Sun": ["08:52", "15:02"]}
 
     def setUp(self) -> None:
         """This method adds needed info for tests."""
@@ -80,7 +82,7 @@ class TestOrderListCreateView(TestCase):
         self.groups = GroupFactory.groups_for_test()
         self.specialist = CustomUserFactory(first_name="UserSpecialist")
         self.customer = CustomUserFactory(first_name="UserCustomer")
-        self.position = PositionFactory(name="Position_1")
+        self.position = PositionFactory(name="Position_1", working_time=self.working_time)
         self.service = ServiceFactory(name="Service_1", position=self.position)
 
         self.groups.specialist.user_set.add(self.specialist)
@@ -89,8 +91,10 @@ class TestOrderListCreateView(TestCase):
 
         self.client = APIClient()
         self.client.force_authenticate(user=self.customer)
-        round_time = RoundedTime.calculate_rounded_time_minutes_seconds()
-        self.start_time = round_time + timedelta(days=1)
+        working_day = timezone.now() + timedelta(days=1)
+        working_hours = get_working_day(self.position, working_day)
+        self.start_time = timezone.datetime.combine(working_day.date(),
+                                                    string_to_time(working_hours[0]))
 
         self.data = [{"start_time": self.start_time,
                       "specialist": self.specialist.id,
