@@ -33,18 +33,21 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
         In case when only address of location is provided, or one of coordinates is missed
         location coordinates are calculated by address field.
         """
-        location = self.initial_data["location"]
-
         try:
+            location = self.initial_data["location"]
             location["latitude"], location["longitude"] = self.correct_coordinates(**location)
             location_model = Location.objects.create(**location)
             validated_data["location"] = location_model
 
             return super().create(validated_data)
 
+        except KeyError:
+            logger.warning("Can not update the address. No address provided")
+            raise serializers.ValidationError({"location": "No address provided"})
+
         except TypeError:
-            logger.warning(f"Cannot update address {location}")
-            raise serializers.ValidationError({"location": "Invalid location details provided"})
+            logger.warning("Can not update the address. The address is in the wrong format")
+            raise serializers.ValidationError({"location": "The address is in the wrong format"})
 
     def update(self, instance, validated_data):
         """Overridden to update the nested Location model.
@@ -54,17 +57,21 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
         """
         location_serializer = self.fields["location"]
         location_instance = instance.location
-        location = validated_data.pop("location")
-        location_data = dict(location)
 
         try:
+            location = validated_data.pop("location")
+            location_data = dict(location)
             location["latitude"], location["longitude"] = self.correct_coordinates(**location_data)
             location_serializer.update(location_instance, location)
             return super().update(instance, validated_data)
 
+        except KeyError:
+            logger.warning("Can not update the address. The address is not specified")
+            raise serializers.ValidationError({"location": "The address is not specified"})
+
         except TypeError:
-            logger.warning(f"Cannot update address {location}")
-            raise serializers.ValidationError({"location": "Invalid location details provided"})
+            logger.warning("Can not update the address. The address is in the wrong format")
+            raise serializers.ValidationError({"location": "The address is in the wrong format"})
 
     def to_representation(self, instance):
         """Display owner full name."""
