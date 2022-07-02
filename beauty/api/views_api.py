@@ -248,14 +248,14 @@ class BusinessesListCreateAPIView(ListCreateAPIView):
 
 
 class ActiveBusinessesListAPIView(ListAPIView):
-    """List all businesses for users."""
+    """List all active businesses for users."""
 
     queryset = Business.objects.filter(is_active=True)
     serializer_class = BusinessInfoSerializer
 
     filter_backends = (SearchFilter, OrderingFilter)
-    search_fields = ["name", "business_type", "$address__raw", "description", "working_time"]
-    ordering_fields = ["name", "business_type", "address", "working_time"]
+    search_fields = ["name", "business_type", "location__address", "description", "working_time"]
+    ordering_fields = ["name", "business_type", "location__address", "working_time"]
 
 
 class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):

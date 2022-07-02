@@ -105,9 +105,9 @@ urlpatterns = [
         name="businesses-list-create",
     ),
     path(
-        "active_businesses/",
+        "businesses/active/",
         ActiveBusinessesListAPIView.as_view(),
-        name="businesses-list",
+        name="businesses-list-active",
     ),
     path(
         "businesses/nearest/",

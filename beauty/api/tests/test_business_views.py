@@ -6,7 +6,7 @@ BusinessesListCreateAPIView tests:
     *   Test that Unauthenticated user can not view list of his/her all businesses.
     *   Test that Authenticated user(owner) can view list of all his/her businesses.
 
-BusinessesListAPIView tests:
+ActiveBusinessesListAPIView tests:
     *   Test that Unauthenticated user can view list of all active businesses.
     *   Test that Authenticated user can view list of all businesses.
     *   Test Searching by all fields of businesses.
@@ -68,18 +68,18 @@ class BusinessesListCreateAPIView(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class BusinessesListAPIView(TestCase):
-    """Class for testing BusinessesListAPIView."""
+class ActiveBusinessesListAPIView(TestCase):
+    """Class for testing ActiveBusinessesListAPIView."""
 
     def setUp(self):
         """Create all necessary data for tests."""
         self.client = APIClient()
         self.customuser = CustomUserFactory()
         self.business1 = BusinessFactory.create(name="kumalala")
-        self.business2 = BusinessFactory.create(business_type="lokomotywa", address="kumalala")
+        self.business2 = BusinessFactory.create(business_type="lokom", location__address="kumalala")
         self.business3 = BusinessFactory.create(business_type="wek", description="kumala savesta")
 
-        self.url = reverse("api:businesses-list")
+        self.url = reverse("api:businesses-list-active")
 
     def test_get_method_for_displaying_businesses_for_unauthenticated_user(self):
         """Unauthenticated user can view list of all active businesses."""

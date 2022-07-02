@@ -253,13 +253,13 @@ class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
 class BusinessInfoSerializer(serializers.ModelSerializer):
     """Serializer for business base fields."""
 
-    address = serializers.CharField(max_length=500)
+    location = LocationSerializer()
 
     class Meta:
         """Display neccesary field of businesses."""
 
         model = Business
-        fields = ("name", "business_type", "logo", "address", "description", "working_time")
+        fields = ("name", "business_type", "logo", "location", "description", "working_time")
 
 
 class NearestBusinessesSerializer(BaseBusinessSerializer):
