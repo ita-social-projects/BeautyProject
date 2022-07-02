@@ -22,6 +22,8 @@ from api.views.position_views import (InviteSpecialistToPosition,
 
 from api.views.customuser_views import InviteRegisterView
 
+from api.views.contact_views import ContactFormView
+
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
                         BusinessDetailRUDView, CustomUserDetailRUDView, BusinessesListAPIView,
                         CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
@@ -196,4 +198,9 @@ urlpatterns = [
         "specialist/<int:pk>/services/",
         SpecialistsServicesView.as_view(),
         name="service-by-specialist"),
+
+    path(
+        "contact/",
+        ContactFormView.as_view(),
+        name="contact-form"),
 ]
