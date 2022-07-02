@@ -6,6 +6,8 @@ import pytz
 
 from django.urls import path, register_converter
 
+from api.views.location_views import LocationRUDView, LocationCreateView
+
 from api.views.order_views import (CustomerOrdersViews, OrderApprovingView, SpecialistOrdersViews,
                                    OrderCreateView, OrderRetrieveCancelView)
 
@@ -20,10 +22,12 @@ from api.views.position_views import (InviteSpecialistToPosition,
 
 from api.views.customuser_views import InviteRegisterView
 
+from api.views.contact_views import ContactFormView
+
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
-                        BusinessDetailRUDView, BusinessesListAPIView, CustomUserDetailRUDView,
-                        CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
-                        ServiceUpdateView, PositionRetrieveUpdateDestroyView,
+                        BusinessDetailRUDView, BusinessesListAPIView, ActiveBusinessesListAPIView,
+                        CustomUserListCreateView, PositionListCreateView, CustomUserDetailRUDView,
+                        ServiceUpdateView, PositionRetrieveUpdateDestroyView, SpecialistDetailView,
                         RemoveSpecialistFromPosition, BusinessServicesView, SpecialistsServicesView)
 
 
@@ -102,13 +106,28 @@ urlpatterns = [
     ),
     path(
         "active_businesses/",
-        BusinessesListAPIView.as_view(),
+        ActiveBusinessesListAPIView.as_view(),
         name="businesses-list",
+    ),
+    path(
+        "businesses/nearest/",
+        BusinessesListAPIView.as_view(),
+        name="businesses-list-nearest",
     ),
     path(
         "business/<int:pk>/",
         BusinessDetailRUDView.as_view(),
         name="business-detail",
+    ),
+    path(
+        "location/",
+        LocationCreateView.as_view(),
+        name="location-create",
+    ),
+    path(
+        "location/<int:pk>/",
+        LocationRUDView.as_view(),
+        name="location-detail",
     ),
     path(
         "position/",
@@ -184,4 +203,9 @@ urlpatterns = [
         "specialist/<int:pk>/services/",
         SpecialistsServicesView.as_view(),
         name="service-by-specialist"),
+
+    path(
+        "contact/",
+        ContactFormView.as_view(),
+        name="contact-form"),
 ]

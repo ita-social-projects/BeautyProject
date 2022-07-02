@@ -1,7 +1,6 @@
 """This module provides all needed models."""
 
 import logging
-from address.models import AddressField
 from django.contrib.auth.base_user import (AbstractBaseUser, BaseUserManager)
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import (validate_email, MinValueValidator, MaxValueValidator)
@@ -192,6 +191,38 @@ class CustomUser(PermissionsMixin, AbstractBaseUser):
         return f"{self.__class__.__name__}(id={self.id})"
 
 
+class Location(models.Model):
+    """This class represents a Location model.
+
+    Attributes:
+        address (str): Address of business
+        latitude (float): Latitude coordinate of business
+        longitude (float): Longitude coordinate of business
+    """
+
+    address = models.CharField(
+        verbose_name=_("Address"),
+        max_length=100,
+        blank=True,
+    )
+    latitude = models.DecimalField(
+        verbose_name=_("Latitude"),
+        max_digits=9,
+        decimal_places=6,
+        blank=True,
+    )
+    longitude = models.DecimalField(
+        verbose_name=_("Longitude"),
+        max_digits=9,
+        decimal_places=6,
+        blank=True,
+    )
+
+    def __str__(self):
+        """str: Returns a verbose address of the business."""
+        return self.address
+
+
 class Business(models.Model):
     """This class represents a Business model.
 
@@ -200,7 +231,7 @@ class Business(models.Model):
         type (str): Type of business
         logo (image): Photo of business
         owner (CustomUser): Owner of business
-        address (AddressField): Location of business
+        location (Location): Address and/or coordinates of business
         description (str): Description of business
         created_at (datetime): Time when business was created
         is_active (bool): Determines whether business is active
@@ -225,9 +256,11 @@ class Business(models.Model):
         on_delete=models.PROTECT,
         related_name="businesses",
     )
-    address = AddressField(
+    location = models.OneToOneField(
+        "Location",
         verbose_name=_("Location"),
-        max_length=500,
+        on_delete=models.CASCADE,
+        related_name="businesses",
         blank=True,
         null=True,
     )

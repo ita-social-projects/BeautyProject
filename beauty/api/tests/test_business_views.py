@@ -137,14 +137,22 @@ class BusinessDetailRUDView(TestCase):
         self.valid_business_info = {
             "name": "New name",
             "business_type": "New type",
-            "address": "New address",
+            "location": {
+                "address": "New address",
+                "latitude": 50,
+                "longitude": 50,
+            },
             "description": "New description",
         }
         self.full_business_info = {
             "owner": self.another_user.id,
             "name": "New name",
             "business_type": "New type",
-            "address": "New address",
+            "location": {
+                "address": "New address",
+                "latitude": 50,
+                "longitude": 50,
+            },
             "description": "New description",
         }
         self.invalid_business_owner = {
@@ -160,7 +168,11 @@ class BusinessDetailRUDView(TestCase):
             "business_type": "New info" * 500,
         }
         self.invalid_business_address = {
-            "address": "New info" * 500,
+            "location": {
+                "address": "New address" * 500,
+                "latitude": 50,
+                "longitude": 50,
+            },
         }
         self.invalid_business_description = {
             "description": "New info" * 500,
@@ -177,7 +189,7 @@ class BusinessDetailRUDView(TestCase):
                 },
             ),
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
         self.assertIs(response.data.get("id"), None)
 
     def test_get_method_for_edit_view_by_someone_else(self):

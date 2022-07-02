@@ -1,0 +1,44 @@
+{% load i18n %}
+
+{% block subject %}
+{% blocktrans %}{{order}} reminder from the site {{ site_name }}{% endblocktrans %}
+{% endblock subject %}
+
+{% block text_body %}
+{% blocktrans %}
+We are reminding you about the {{ order }} that was made in {{ order.created_at }},
+it is starting in {{ order.start_time }}.
+You're receiving this email because you made order on {{ site_name }}.
+{% endblocktrans %}
+
+{% trans "Thanks for using our site!" %}
+
+{% blocktrans %}
+The {{ site_name }} team
+{% endblocktrans %}
+
+{% endblock text_body %}
+
+{% block html_body %}
+<h3>
+    We are reminding you about the {{ order }} that was made in {{ order.created_at }},
+    <b style="color: green;"> it is starting in {{ order.start_time }}.</b>
+    You're receiving this email because you made order on {{ site_name }}.
+</h3>
+
+<h3>{% trans "Order details:" %}</h3>
+<hr>
+<p><b>Start time:</b> {{order.start_time}}</p>
+<p><b>End time:</b> {{order.end_time}}</p>
+<p><b>Specialist:</b> {{order.specialist.get_full_name}}</p>
+<p><b>Customer:</b> {{order.customer.get_full_name}}</p>
+<p><b>Service:</b> {{order.service.name}}</p>
+<p><b>Business:</b> {{order.service.position.business}}</p>
+<hr>
+
+<p>{% trans "Thanks for using our site!" %}</p>
+
+<p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>
+
+{% endblock html_body %}
+

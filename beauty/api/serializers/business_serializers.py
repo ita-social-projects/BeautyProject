@@ -5,8 +5,9 @@ import logging
 
 from rest_framework import serializers
 
-from beauty.utils import string_to_time, time_to_string
-from api.models import (Business, CustomUser)
+from beauty.utils import Geolocator, string_to_time, time_to_string
+from api.models import (Business, CustomUser, Location)
+from api.serializers.location_serializer import LocationSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,60 @@ class BaseBusinessSerializer(serializers.ModelSerializer):
 
     Provides to_representation which display owner with his full_name
     """
+    location = LocationSerializer()
+
+    def correct_coordinates(self, address: str, latitude=None, longitude=None):
+        """Correct invalid coordinates."""
+        if not ((0 < latitude < 180) and (0 < longitude < 180)):
+            return Geolocator().get_coordinates_by_address(address)
+
+        return latitude, longitude
+
+    def create(self, validated_data):
+        """Overridden to create the nested Location model.
+
+        In case when only address of location is provided, or one of coordinates is missed
+        location coordinates are calculated by address field.
+        """
+        try:
+            location = self.initial_data["location"]
+            location["latitude"], location["longitude"] = self.correct_coordinates(**location)
+            location_model = Location.objects.create(**location)
+            validated_data["location"] = location_model
+
+            return super().create(validated_data)
+
+        except KeyError:
+            logger.warning("Can not update the address. No address provided")
+            raise serializers.ValidationError({"location": "No address provided"})
+
+        except TypeError:
+            logger.warning("Can not update the address. The address is in the wrong format")
+            raise serializers.ValidationError({"location": "The address is in the wrong format"})
+
+    def update(self, instance, validated_data):
+        """Overridden to update the nested Location model.
+
+        In case when only address of location is provided, or one of coordinates is missed
+        location coordinates are calculated by address field.
+        """
+        location_serializer = self.fields["location"]
+        location_instance = instance.location
+
+        try:
+            location = validated_data.pop("location")
+            location_data = dict(location)
+            location["latitude"], location["longitude"] = self.correct_coordinates(**location_data)
+            location_serializer.update(location_instance, location)
+            return super().update(instance, validated_data)
+
+        except KeyError:
+            logger.warning("Can not update the address. The address is not specified")
+            raise serializers.ValidationError({"location": "The address is not specified"})
+
+        except TypeError:
+            logger.warning("Can not update the address. The address is in the wrong format")
+            raise serializers.ValidationError({"location": "The address is in the wrong format"})
 
     def to_representation(self, instance):
         """Display owner full name."""
@@ -164,34 +219,29 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     business_url = serializers.HyperlinkedIdentityField(
         view_name="api:business-detail", lookup_field="pk",
     )
-    address = serializers.CharField(max_length=500)
+    location = LocationSerializer()
 
     class Meta:
         """Display main field & urls for businesses."""
 
         model = Business
         fields = (
-            "business_url", "name", "business_type", "address",
-            "working_time",
+            "business_url", "name", "business_type", "working_time", "location",
         )
 
 
 class BusinessDetailSerializer(BaseBusinessSerializer):
     """Serializer for specific business."""
 
-    address = serializers.CharField(max_length=500)
-
     class Meta:
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        exclude = ("created_at", "id", "owner", "working_time")
+        exclude = ("created_at", "id", "owner", "is_active")
 
 
 class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
     """Serializer for getting all info about business."""
-
-    address = serializers.CharField(max_length=500)
 
     class Meta:
         """Meta for BusinessGetAllInfoSerializers class."""
@@ -210,3 +260,18 @@ class BusinessInfoSerializer(serializers.ModelSerializer):
 
         model = Business
         fields = ("name", "business_type", "logo", "address", "description", "working_time")
+
+
+class NearestBusinessesSerializer(BaseBusinessSerializer):
+    """Serializer for getting nearest busineses info."""
+
+    business_url = serializers.HyperlinkedIdentityField(
+        view_name="api:business-detail", lookup_field="pk",
+    )
+    location = LocationSerializer()
+
+    class Meta:
+        """Meta for NearestBusinessesSerializer class."""
+
+        model = Business
+        fields = ("business_url", "location")
