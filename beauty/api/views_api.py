@@ -16,7 +16,7 @@ from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      RetrieveAPIView, ListAPIView,
                                      get_object_or_404, DestroyAPIView)
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -252,7 +252,7 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     RUD - Retrieve, Update, Destroy.
     """
 
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (AllowAny,)
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
@@ -276,20 +276,48 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
         """Reimplementation of the DESTROY (DELETE) method.
 
         Instead of deleting a Business, it makes Business inactive by modifing
-        its 'is_active' field. Only an authentificated Business can change
-        themselves.
+        its 'is_active' field. Only an authenticated Business owner can deactivate
+        his/her Business.
         """
         instance = self.get_object()
+        try:
+            is_owner = self.request.user.is_owner
+        except AttributeError:
+            logger.info(f"Business {instance} (id={instance.id}) can not be deactivated "
+                        f"by unauthorized user.")
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        if instance.is_active:
-            instance.is_active = False
-            instance.save()
-            logger.info(f"Business {instance} was deactivated.")
-            return Response(status=status.HTTP_200_OK)
+        if is_owner and (self.get_object().owner == self.request.user):
 
-        logger.info(f"Business {instance} (id={instance.id}) is already "
-                    f"deactivated, but tried doing it again.")
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            if instance.is_active:
+                instance.is_active = False
+                instance.save()
+                logger.info(f"Business {instance} was deactivated.")
+
+                return Response(status=status.HTTP_200_OK)
+
+            logger.info(f"Business {instance} (id={instance.id}) is already deactivated")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        logger.info(f"Business {instance} (id={instance.id}) can not be deactivated "
+                    f"by current user.")
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
+    def update(self, request, *args, **kwargs):
+        """Reimplementation of the UPDATE method.
+
+        Only an authenticated Business owner can deactivate his/her Business.
+        """
+        try:
+            is_owner = self.request.user.is_owner
+            if is_owner and (self.get_object().owner == self.request.user):
+
+                return super().update(request, *args, **kwargs)
+
+        except AttributeError:
+            logger.warning(f"{self.request.user} is not authorised to edit this content")
+
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class AllServicesListCreateView(ListCreateAPIView):
