@@ -276,10 +276,8 @@ class SpecialistInformationSerializer(CustomUserDetailSerializer):
     """Class for serializing specialist's information for specialist."""
 
     specialist_exist_orders = OrderUserHyperlink(many=True, read_only=True)
-    specialist_reviews = serializers.HyperlinkedRelatedField(
-        many=True,
-        view_name="api:review-detail",
-        read_only=True,
+    specialist_reviews = serializers.URLField(
+        default="",
     )
 
     class Meta(CustomUserDetailSerializer.Meta):
@@ -288,14 +286,26 @@ class SpecialistInformationSerializer(CustomUserDetailSerializer):
         fields = CustomUserDetailSerializer.Meta.fields + ["specialist_exist_orders",
                                                            "specialist_reviews"]
 
+    def to_representation(self, instance):
+        """Method for representing an URL for displaying reviews."""
+        data = super().to_representation(instance)
+
+        data["specialist_reviews"] = reverse(
+            "api:review-get",
+            kwargs={"to_user": self.instance.id},
+            request=self.context.get("request"),
+        )
+
+        logger.info(f"Data to display for specialist {instance} was updated")
+
+        return data
+
 
 class SpecialistDetailSerializer(serializers.ModelSerializer):
     """Class for serializing specialist's information for customer."""
 
-    specialist_reviews = serializers.HyperlinkedRelatedField(
-        many=True,
-        view_name="api:review-detail",
-        read_only=True,
+    specialist_reviews = serializers.URLField(
+        default="",
     )
     make_order = serializers.URLField(
         default="",
@@ -309,9 +319,18 @@ class SpecialistDetailSerializer(serializers.ModelSerializer):
                   "rating", "avatar", "specialist_reviews", "make_order"]
 
     def to_representation(self, instance):
-        """Method for representing an URL for making an order."""
+        """Method for representing an URL for making an order and for displaying reviews."""
         data = super().to_representation(instance)
-        data["make_order"] = reverse("api:order-create", request=self.context.get("request"))
+
+        data["specialist_reviews"] = reverse(
+            "api:review-get",
+            kwargs={"to_user": self.instance.id},
+            request=self.context.get("request"),
+        )
+        data["make_order"] = reverse(
+            "api:order-create",
+            request=self.context.get("request"),
+        )
 
         logger.info(f"Data to display for specialist {instance} was updated")
 
