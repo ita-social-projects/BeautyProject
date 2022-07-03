@@ -1,6 +1,7 @@
 """Configuration for admin."""
 
-from api.models import (CustomUser, Order, Service, Position, Business, Review, Invitation)
+from api.models import (CustomUser, Order, Service, Position,
+                        Business, Review, Invitation, Location)
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import (UserAdmin as BaseUserAdmin,
@@ -56,3 +57,4 @@ admin.site.register(Position)
 admin.site.register(Business)
 admin.site.register(Review)
 admin.site.register(Invitation)
+admin.site.register(Location)

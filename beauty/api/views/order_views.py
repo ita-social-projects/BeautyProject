@@ -1,10 +1,11 @@
 """This module provides all order's views."""
-
+import datetime
 import logging
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import (filters, status)
@@ -17,11 +18,10 @@ from rest_framework.reverse import reverse
 from api.models import (CustomUser, Order)
 from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin, IsOwnerOfSpecialist)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
-from api.tasks import change_order_status_to_decline
+from api.tasks import (change_order_status_to_decline, reminder_for_customer)
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail, get_order_expiration_time)
-
 
 logger = logging.getLogger(__name__)
 
@@ -144,6 +144,11 @@ class OrderApprovingView(RetrieveAPIView):
                             f"{order.specialist.get_full_name()}")
 
                 self.send_signal(order, request)
+
+                reminder_for_customer.apply_async(
+                    (order.id, request.get_host()),
+                    eta=timezone.localtime(order.start_time - datetime.timedelta(hours=3)),
+                )
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
                                                 "pk": order.id}))
@@ -216,7 +221,7 @@ class SpecialistOrdersViews(ListAPIView):
     def get_queryset(self):
         """Get orders of specialist for specialist and owner."""
         specialist = get_object_or_404(CustomUser.objects.filter(
-                                       groups__name__icontains="specialist"), id=self.kwargs["pk"])
+            groups__name__icontains="specialist"), id=self.kwargs["pk"])
 
         logger.info(f"Get orders for the specialist {specialist}")
 

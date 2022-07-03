@@ -10,7 +10,7 @@ import random
 from random import choice
 import factory
 from factory import fuzzy
-from api.models import (CustomUser, Order, Service, Position, Business, Review)
+from api.models import (Business, CustomUser, Location, Order, Position, Review, Service)
 from django.contrib.auth.models import Group
 from beauty.utils import string_to_time, time_to_string, RoundedTime
 
@@ -62,6 +62,28 @@ class CustomUserFactory(factory.django.DjangoModelFactory):
                 self.groups.add(group)
 
 
+def get_coordinates():
+    """Random coordinates creator."""
+    target = (49.842957, 24.031111)  # "Lviv"
+    delta = 2
+
+    rand_lat = random.randint(target[0] * 1000000 - delta, target[0] * 1000000 + delta) / 1000000
+    rand_lon = random.randint(target[1] * 1000000 - delta, target[1] * 1000000 + delta) / 1000000
+    return rand_lat, rand_lon
+
+
+class LocationFactory(factory.django.DjangoModelFactory):
+    """Factory class for testing Location model."""
+
+    class Meta:
+        """Class Meta for the definition of the Location model."""
+
+        model = Location
+
+    address = factory.Faker("address")
+    latitude, longitude = get_coordinates()
+
+
 class BusinessFactory(factory.django.DjangoModelFactory):
     """Factory class for testing Business model."""
 
@@ -73,7 +95,7 @@ class BusinessFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Business_{n}")
     business_type = factory.Sequence(lambda n: f"Business_type_#{n}")
     owner = factory.SubFactory(CustomUserFactory, is_active=True)
-    address = factory.Faker("address")
+    location = factory.SubFactory(LocationFactory)
     description = factory.Faker("sentence", nb_words=4)
 
     @factory.lazy_attribute

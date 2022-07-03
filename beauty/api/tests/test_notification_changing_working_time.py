@@ -33,8 +33,10 @@ class TestUpdateWorkingTime(TestCase):
         self.groups = GroupFactory.groups_for_test()
         self.specialist = CustomUserFactory(first_name="UserSpecialist")
         self.groups.specialist.user_set.add(self.specialist)
+        self.owner = CustomUserFactory(first_name="Owner")
+        self.groups.owner.user_set.add(self.owner)
 
-        self.business = BusinessFactory.create()
+        self.business = BusinessFactory.create(owner=self.owner)
         self.position = PositionFactory.create(
             business=self.business,
             specialist=[self.specialist],
@@ -99,7 +101,7 @@ class TestUpdateWorkingTime(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_patch_reduce_order_day(self):
-        """Patch adn reduce time in order day."""
+        """Patch and reduce time in order day."""
         changed_time = (self.order.start_time + timedelta(seconds=10 * 60)).time()
         data = {
             self.weekday: [

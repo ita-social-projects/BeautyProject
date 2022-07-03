@@ -101,6 +101,11 @@ class BusinessListCreateViewTest(TestCase):
             "name": faker.word(),
             "business_type": faker.word(),
             "description": faker.text(),
+            "location": {
+                "address": "New address",
+                "latitude": 50,
+                "longitude": 50,
+            },
         }
         self.valid_create_data.update(self.business1.working_time)
 

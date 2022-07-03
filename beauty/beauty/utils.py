@@ -3,7 +3,8 @@
 import os
 
 from datetime import timedelta, datetime, time
-
+from functools import partial
+from geopy.geocoders import Nominatim
 from typing import Tuple
 from django.forms import ValidationError
 import pytz
@@ -427,6 +428,55 @@ def get_order_expiration_time(order, date_time, time_delta_hours=3):
 
 
 class AutoDeclineOrderEmail(BaseEmailMessage):
-    """Class for sending an email message which renders HTML for it."""
+    """Class for sending an email message with an order auto decline info."""
 
     template_name = "email/order_auto_decline_email.html"
+
+
+class Geolocator:
+    """Class for address-coordinates translation."""
+
+    geolocator = Nominatim(user_agent="BeautyProject")
+
+    @classmethod
+    def get_coordinates_by_address(cls, address: str) -> (str, str):
+        """Translate address into coordinates.
+
+        Args:
+            address: Location address
+
+        Returns:
+            latitude: geographical latitude
+            longitude: geographical longitude
+            or
+            None (if address can not be found)
+        """
+        location = cls.geolocator.geocode(address)
+
+        if location:
+            return float(location.latitude), float(location.longitude)
+
+    @classmethod
+    def get_address_by_coordinates(cls, latitude: float, longitude: float) -> str:
+        """Translate coordinates into address.
+
+        Args:
+            latitude: geographical latitude
+            longitude: geographical longitude
+
+        Returns:
+            address: Nearest address to given coordinates
+            or
+            None (if address can not be found)
+        """
+        coordinates = partial(cls.geolocator.reverse, language="en")
+        location = coordinates(f"{str(latitude)}, {str(longitude)}")
+
+        if location:
+            return location.address
+
+
+class RemindAboutOrderEmail(BaseEmailMessage):
+    """Class for sending an email message reminding a customer about an order."""
+
+    template_name = "email/customer_order_reminding_email.html"
