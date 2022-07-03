@@ -363,4 +363,3 @@ class RemindAboutOrderEmail(BaseEmailMessage):
     """Class for sending an email message reminding a customer about an order."""
 
     template_name = "email/customer_order_reminding_email.html"
-
