@@ -4,9 +4,10 @@ import logging
 import calendar
 
 from rest_framework import serializers
-from beauty.utils import string_to_time
+from beauty.utils import (is_inside_interval, string_to_time)
 from api.serializers.business_serializers import WorkingTimeSerializer
 from api.models import Position
+
 
 logger = logging.getLogger(__name__)
 
@@ -36,15 +37,6 @@ def is_valid_position_time(business_time, data):
         if not is_inside_interval(main_interval, inner_interval):
             return False
     return True
-
-
-def is_inside_interval(main_interval: tuple, inner_interval: tuple):
-    """Return True if inner interval is inside main_interval."""
-    return (
-        inner_interval[0] >= main_interval[0]
-    ) and (
-        inner_interval[1] <= main_interval[1]
-    )
 
 
 class PositionGetSerializer(serializers.ModelSerializer):

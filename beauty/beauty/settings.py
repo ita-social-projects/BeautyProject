@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     # project apps
     "api",
+    "address",
 ]
 
 MIDDLEWARE = [
