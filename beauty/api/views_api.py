@@ -35,6 +35,7 @@ from .serializers.business_serializers import (BusinessCreateSerializer,
                                                BusinessesSerializer,
                                                BusinessGetAllInfoSerializers,
                                                BusinessDetailSerializer,
+                                               BusinessInfoSerializer,
                                                NearestBusinessesSerializer)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
@@ -244,6 +245,17 @@ class BusinessesListCreateAPIView(ListCreateAPIView):
 
         logger.info(f"{business} was created")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class ActiveBusinessesListAPIView(ListAPIView):
+    """List all active businesses for users."""
+
+    queryset = Business.objects.filter(is_active=True)
+    serializer_class = BusinessInfoSerializer
+
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ["name", "business_type", "location__address", "description", "working_time"]
+    ordering_fields = ["name", "business_type", "location__address", "working_time"]
 
 
 class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
