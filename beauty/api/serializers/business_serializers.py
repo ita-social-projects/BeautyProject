@@ -5,26 +5,14 @@ import logging
 
 from rest_framework import serializers
 
-from beauty.utils import string_to_time, time_to_string
-from api.models import (Business, CustomUser)
+from beauty.utils import (Geolocator,
+                          get_working_time_from_dict)
+
+from api.models import (Business, CustomUser, Location)
+from api.serializers.location_serializer import LocationSerializer
 
 
 logger = logging.getLogger(__name__)
-
-
-class BaseBusinessSerializer(serializers.ModelSerializer):
-    """Base business serilalizer.
-
-    Provides to_representation which display owner with his full_name
-    """
-
-    def to_representation(self, instance):
-        """Display owner full name."""
-        data = super().to_representation(instance)
-        if "owner" in data:
-            owner = CustomUser.objects.get(id=data["owner"])
-            data["owner"] = owner.get_full_name()
-        return data
 
 
 class WorkingTimeSerializer(serializers.ModelSerializer):
@@ -36,38 +24,38 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
 
     Sun = serializers.ListField(
         write_only=True,
-        required=True,
         max_length=2,
+        default=[],
     )
     Mon = serializers.ListField(
         write_only=True,
-        required=True,
         max_length=2,
+        default=[],
     )
     Tue = serializers.ListField(
         write_only=True,
-        required=True,
         max_length=2,
+        default=[],
     )
     Wed = serializers.ListField(
         write_only=True,
-        required=True,
         max_length=2,
+        default=[],
     )
     Thu = serializers.ListField(
         write_only=True,
-        required=True,
         max_length=2,
+        default=[],
     )
     Fri = serializers.ListField(
         write_only=True,
-        required=True,
         max_length=2,
+        default=[],
     )
     Sat = serializers.ListField(
         write_only=True,
-        required=True,
         max_length=2,
+        default=[],
     )
 
     def validate(self, data: dict):
@@ -80,44 +68,25 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
             data (dict): dictionary with validated data for business creation
 
         """
-        working_time = {day: [] for day in self.week_days}
-        for day in self.week_days:
-
-            if day not in data.keys():
+        week_days = [day.capitalize() for day in calendar.HTMLCalendar.cssclasses]
+        days_in_data = set(week_days).intersection(set(data.keys()))
+        if self.context["request"].method in ["POST", "PUT"]:
+            # If missing or invalid name at least in one day in data.keys()
+            if len(days_in_data) != 7:
                 raise serializers.ValidationError(
-                    {day: "Day name not match main structure or missing."},
+                    {"Working_time": "Day name not match main structure or missing."},
                 )
 
-            amount_of_data = len(data[day])
-            if amount_of_data not in [0, 2]:
-                raise serializers.ValidationError(
-                    {day: "Must contain 2 elements or 0."},
-                )
+        if self.context["request"].method == "PATCH":
+            # If no days in PATCH method (empty set)
+            if not days_in_data:
+                return super().validate(data)
 
-            if amount_of_data == 2:
+            for day in set(week_days).difference(days_in_data):
+                data[day] = self.instance.working_time[day]
 
-                try:
-                    opening_time = string_to_time(data[day][0])
-                    closing_time = string_to_time(data[day][1])
-                    working_time[day].append(time_to_string(opening_time))
-                    working_time[day].append(time_to_string(closing_time))
-                except ValueError:
-                    raise serializers.ValidationError(
-                        {day: "Day schedule does not match the template\
-                              ['HH:MM', 'HH:MM']."},
-                    )
-
-                if opening_time > closing_time:
-
-                    raise serializers.ValidationError(
-                        {day:
-                            "working hours must begin before they end."},
-                    )
-
-                if opening_time == closing_time:
-                    working_time[day] = []
-
-        data["working_time"] = working_time
+        # Time validation, raises serializers.ValidationError if something wrong
+        data["working_time"] = get_working_time_from_dict(data)
 
         return super().validate(data)
 
@@ -145,7 +114,79 @@ class WorkingTimeSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class BusinessCreateSerializer(BaseBusinessSerializer, WorkingTimeSerializer):
+class BaseBusinessSerializer(WorkingTimeSerializer):
+    """Base business serilalizer.
+
+    Provides to_representation which display owner with his full_name
+    """
+    location = LocationSerializer()
+
+    def correct_coordinates(self, address: str, latitude=None, longitude=None):
+        """Correct invalid coordinates."""
+        if not ((0 < latitude < 180) and (0 < longitude < 180)):
+            return Geolocator().get_coordinates_by_address(address)
+
+        return latitude, longitude
+
+    def create(self, validated_data):
+        """Overridden to create the nested Location model.
+
+        In case when only address of location is provided, or one of coordinates is missed
+        location coordinates are calculated by address field.
+        """
+        try:
+            location = self.initial_data["location"]
+            location["latitude"], location["longitude"] = self.correct_coordinates(**location)
+            location_model = Location.objects.create(**location)
+            validated_data["location"] = location_model
+
+            return super().create(validated_data)
+
+        except KeyError:
+            logger.warning("Can not update the address. No address provided")
+            raise serializers.ValidationError({"location": "No address provided"})
+
+        except TypeError:
+            logger.warning("Can not update the address. The address is in the wrong format")
+            raise serializers.ValidationError({"location": "The address is in the wrong format"})
+
+    def update(self, instance, validated_data):
+        """Overridden to update the nested Location model.
+
+        In case when only address of location is provided, or one of coordinates is missed
+        location coordinates are calculated by address field.
+        """
+        if self.context["request"].method == "PATCH" and "location" not in validated_data.keys():
+            return super().update(instance, validated_data)
+
+        location_serializer = self.fields["location"]
+        location_instance = instance.location
+
+        try:
+            location = validated_data.pop("location")
+            location_data = dict(location)
+            location["latitude"], location["longitude"] = self.correct_coordinates(**location_data)
+            location_serializer.update(location_instance, location)
+            return super().update(instance, validated_data)
+
+        except KeyError:
+            logger.warning("Can not update the address. The address is not specified")
+            raise serializers.ValidationError({"location": "The address is not specified"})
+
+        except TypeError:
+            logger.warning("Can not update the address. The address is in the wrong format")
+            raise serializers.ValidationError({"location": "The address is in the wrong format"})
+
+    def to_representation(self, instance):
+        """Display owner full name."""
+        data = super().to_representation(instance)
+        if "owner" in data:
+            owner = CustomUser.objects.get(id=data["owner"])
+            data["owner"] = owner.get_full_name()
+        return data
+
+
+class BusinessCreateSerializer(BaseBusinessSerializer):
     """Business serializer for list and create views."""
 
     class Meta:
@@ -164,37 +205,62 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
     business_url = serializers.HyperlinkedIdentityField(
         view_name="api:business-detail", lookup_field="pk",
     )
-    address = serializers.CharField(max_length=500)
+    location = LocationSerializer()
 
     class Meta:
         """Display main field & urls for businesses."""
 
         model = Business
         fields = (
-            "business_url", "name", "business_type", "address",
-            "working_time",
+            "business_url", "name", "business_type", "working_time", "location",
         )
 
 
 class BusinessDetailSerializer(BaseBusinessSerializer):
     """Serializer for specific business."""
 
-    address = serializers.CharField(max_length=500)
-
     class Meta:
         """Meta for BusinessDetailSerializer class."""
 
         model = Business
-        exclude = ("created_at", "id", "owner", "working_time")
+        exclude = ("created_at", "id", "owner", "is_active")
 
 
 class BusinessGetAllInfoSerializers(BaseBusinessSerializer):
     """Serializer for getting all info about business."""
 
-    address = serializers.CharField(max_length=500)
-
     class Meta:
         """Meta for BusinessGetAllInfoSerializers class."""
 
+        week_days = [day.capitalize()
+                     for day in calendar.HTMLCalendar.cssclasses]
         model = Business
+        extra_fields = (*week_days,)
         fields = "__all__"
+
+
+class BusinessInfoSerializer(serializers.ModelSerializer):
+    """Serializer for business base fields."""
+
+    location = LocationSerializer()
+
+    class Meta:
+        """Display neccesary field of businesses."""
+
+        model = Business
+        fields = ("name", "business_type", "logo", "location", "description", "working_time")
+
+
+class NearestBusinessesSerializer(BaseBusinessSerializer):
+    """Serializer for getting nearest busineses info."""
+
+    business_url = serializers.HyperlinkedIdentityField(
+        view_name="api:business-detail", lookup_field="pk",
+    )
+    location = LocationSerializer()
+
+    class Meta:
+        """Meta for NearestBusinessesSerializer class."""
+
+        model = Business
+        fields = ("business_url", "location")

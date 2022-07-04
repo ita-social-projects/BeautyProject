@@ -4,7 +4,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
 from api.models import Business
-from .factories import BusinessFactory, CustomUserFactory
+from .factories import BusinessFactory, CustomUserFactory, GroupFactory
 from api.serializers.business_serializers import BusinessGetAllInfoSerializers
 
 
@@ -18,6 +18,9 @@ class TestDeleteBusiness(TestCase):
         """This method adds needed info for tests."""
         self.owner = CustomUserFactory(first_name="OwnerUser")
         self.user = CustomUserFactory.create()
+
+        self.groups = GroupFactory.groups_for_test()
+        self.groups.owner.user_set.add(self.owner)
 
         self.business1 = BusinessFactory.create(name="Business1", owner=self.owner)
         self.business2 = BusinessFactory.create(name="Business2", owner=self.owner)

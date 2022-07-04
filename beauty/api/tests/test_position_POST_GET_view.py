@@ -112,7 +112,7 @@ class TestPositionListCreateView(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_create_position_missing_working_day(self) -> None:
-        """Owner can not create position without any working day."""
+        """Owner can create position without any working day."""
         self.client.force_authenticate(user=self.owner)
 
         self.valid_data.pop("Mon")
@@ -121,7 +121,7 @@ class TestPositionListCreateView(TestCase):
             data=self.valid_data,
         )
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 201)
 
     def test_create_position_doesnt_fit_business(self) -> None:
         """Owner can not create position if it doesn't fit business working time."""

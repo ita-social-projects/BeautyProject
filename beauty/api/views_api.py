@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from django.core.mail import send_mail
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -16,7 +17,7 @@ from rest_framework.generics import (GenericAPIView, ListCreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      RetrieveAPIView, ListAPIView,
                                      get_object_or_404, DestroyAPIView)
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -24,17 +25,21 @@ from rest_framework.decorators import action
 
 from djoser.views import UserViewSet as DjoserUserViewSet
 
+from beauty.settings import EMAIL_HOST_USER
+
 from .filters import ServiceFilter
 
-from .models import (Business, CustomUser, Position, Service)
+from .models import (Business, CustomUser, Order, Position, Service)
 
 from .permissions import (IsAdminOrThisBusinessOwner, IsOwner, IsServiceOwner,
-                          IsPositionOwner, IsProfileOwner, ReadOnly, IsAdminOrCurrentBusinessOwner)
+                          IsPositionOwner, IsProfileOwner, ReadOnly)
 
 from .serializers.business_serializers import (BusinessCreateSerializer,
                                                BusinessesSerializer,
                                                BusinessGetAllInfoSerializers,
-                                               BusinessDetailSerializer)
+                                               BusinessDetailSerializer,
+                                               BusinessInfoSerializer,
+                                               NearestBusinessesSerializer)
 
 from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  CustomUserSerializer,
@@ -43,6 +48,10 @@ from .serializers.customuser_serializers import (CustomUserDetailSerializer,
                                                  SpecialistDetailSerializer)
 from .serializers.position_serializer import PositionGetSerializer, PositionSerializer
 from .serializers.service_serializers import ServiceSerializer
+from beauty.utils import (get_working_time_from_dict,
+                          is_order_fit_working_time,
+                          is_working_time_reduced,
+                          update_position_time_by_business)
 
 
 logger = logging.getLogger(__name__)
@@ -245,13 +254,24 @@ class BusinessesListCreateAPIView(ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class ActiveBusinessesListAPIView(ListAPIView):
+    """List all active businesses for users."""
+
+    queryset = Business.objects.filter(is_active=True)
+    serializer_class = BusinessInfoSerializer
+
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ["name", "business_type", "location__address", "description", "working_time"]
+    ordering_fields = ["name", "business_type", "location__address", "working_time"]
+
+
 class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
     """RUD View for access business detail information or/and edit it.
 
     RUD - Retrieve, Update, Destroy.
     """
 
-    permission_classes = (IsAdminOrCurrentBusinessOwner,)
+    permission_classes = (AllowAny,)
     queryset = Business.objects.all()
 
     def get_serializer_class(self):
@@ -275,20 +295,156 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
         """Reimplementation of the DESTROY (DELETE) method.
 
         Instead of deleting a Business, it makes Business inactive by modifing
-        its 'is_active' field. Only an authentificated Business can change
-        themselves.
+        its 'is_active' field. Only an authenticated Business owner can deactivate
+        his/her Business.
         """
         instance = self.get_object()
+        try:
+            is_owner = self.request.user.is_owner
+        except AttributeError:
+            logger.info(f"Business {instance} (id={instance.id}) can not be deactivated "
+                        f"by unauthorized user.")
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        if instance.is_active:
-            instance.is_active = False
-            instance.save()
-            logger.info(f"Business {instance} was deactivated.")
-            return Response(status=status.HTTP_200_OK)
+        if is_owner and (self.get_object().owner == self.request.user):
 
-        logger.info(f"Business {instance} (id={instance.id}) is already "
-                    f"deactivated, but tried doing it again.")
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            if instance.is_active:
+                instance.is_active = False
+                instance.save()
+                logger.info(f"Business {instance} was deactivated.")
+
+                return Response(status=status.HTTP_200_OK)
+
+            logger.info(f"Business {instance} (id={instance.id}) is already deactivated")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        logger.info(f"Business {instance} (id={instance.id}) can not be deactivated "
+                    f"by current user.")
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
+    def update(self, request, *args, **kwargs):
+        """Reimplementation of the UPDATE method.
+
+        Only an authenticated Business owner can deactivate his/her Business.
+        """
+        try:
+            is_owner = self.request.user.is_owner
+            if is_owner and (self.get_object().owner == self.request.user):
+
+                return super().update(request, *args, **kwargs)
+
+        except AttributeError:
+            logger.warning(f"{self.request.user} is not authorised to edit this content")
+
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def put(self, request, *args, **kwargs):
+        """Sends message to customer and specialist if working time was reduced."""
+        business = self.get_object()
+        request_working_time = get_working_time_from_dict(request.data)
+
+        try:
+            is_owner = self.request.user.is_owner
+            if not (is_owner and (business.owner == self.request.user)):
+                return Response(
+                    {"Business": "You are not an owner of this business"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+        except AttributeError:
+            return Response(
+                {"Business": "You are not an owner of this business"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        positions = Position.objects.filter(business=business)
+        for position in positions:
+            position.working_time = update_position_time_by_business(
+                position.working_time,
+                business.working_time,
+            )
+
+        if not is_working_time_reduced(
+            business.working_time,
+            request_working_time,
+        ):
+            return super().put(request, *args, **kwargs)
+
+        orders = Order.objects.filter(service__position__business=business)
+        for order in orders:
+            if is_order_fit_working_time(order, request_working_time):
+                continue
+            specialist = order.specialist.email
+            customer = order.customer.email
+
+            order.status = Order.StatusChoices.CANCELLED
+            print(order.status)
+            order.save()
+            send_mail(
+                f"Order #{order.id} has been cancelled",
+                f"Order #{order.id} hass been cancelled due to reduced working time",
+                EMAIL_HOST_USER,
+                [customer, specialist],
+            )
+
+        return super().put(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """Sends message to customer and specialist if working time was reduced."""
+        business = self.get_object()
+        request_working_time = get_working_time_from_dict(request.data)
+
+        try:
+            is_owner = self.request.user.is_owner
+            if not (is_owner and (business.owner == self.request.user)):
+                return Response(
+                    {"Business": "You are not an owner of this business"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+        except AttributeError:
+            return Response(
+                {"Business": "You are not an owner of this business"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if request_working_time:
+            positions = Position.objects.filter(business=business)
+            for position in positions:
+                position.working_time = update_position_time_by_business(
+                    position.working_time,
+                    business.working_time,
+                )
+
+        if not is_working_time_reduced(
+            business.working_time,
+            request_working_time,
+        ):
+            return super().patch(request, *args, **kwargs)
+
+        valid_order_statuses = [
+            Order.StatusChoices.ACTIVE,
+            Order.StatusChoices.APPROVED,
+        ]
+        orders = Order.objects.filter(
+            service__position__business=business,
+            status__in=valid_order_statuses,
+        )
+
+        for order in orders:
+            if is_order_fit_working_time(order, request_working_time):
+                continue
+
+            order.status = Order.StatusChoices.CANCELLED
+            order.save()
+
+            specialist = order.specialist.email
+            customer = order.customer.email
+            send_mail(
+                f"Order #{order.id} has been cancelled",
+                f"Order #{order.id} hass been cancelled due to reduced working time",
+                EMAIL_HOST_USER,
+                [customer, specialist],
+            )
+        return super().patch(request, *args, **kwargs)
 
 
 class AllServicesListCreateView(ListCreateAPIView):
@@ -357,3 +513,31 @@ class UserViewSet(DjoserUserViewSet):
     def me(self, request, *args, **kwargs):
         """Delete is now forbidden for this method."""
         return super().me(request, *args, **kwargs)
+
+
+class BusinessesListAPIView(ListAPIView):
+    """List View for all nearest businesses next to current user or marker."""
+
+    permission_classes = (AllowAny,)
+    serializer_class = NearestBusinessesSerializer
+
+    def get_queryset(self):
+        """Filter businesses for current specialist.
+
+        Request Args:
+            target_latitude (float): user or target global latitude
+            target_longitude (float): user or target global longitude
+            delta (float): indent in coordinates to search
+        """
+        target_latitude = float(self.request.data["target_lat"])
+        target_longitude = float(self.request.data["target_lon"])
+        delta = float(self.request.data["delta"])
+
+        queryset = Business.objects.filter(
+            location__latitude__gt=target_latitude - delta,
+            location__latitude__lt=target_latitude + delta,
+            location__longitude__gt=target_longitude - delta,
+            location__longitude__lt=target_longitude + delta,
+        )
+
+        return queryset

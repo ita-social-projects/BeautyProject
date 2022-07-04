@@ -6,6 +6,8 @@ import pytz
 
 from django.urls import path, register_converter
 
+from api.views.location_views import LocationRUDView, LocationCreateView
+
 from api.views.order_views import (CustomerOrdersViews, OrderApprovingView, SpecialistOrdersViews,
                                    OrderCreateView, OrderRetrieveCancelView)
 
@@ -19,13 +21,13 @@ from api.views.position_views import (InviteSpecialistToPosition,
                                       InviteSpecialistApprove)
 
 from api.views.customuser_views import InviteRegisterView
-
 from api.views.statistic import StatisticView
+from api.views.contact_views import ContactFormView
 
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
-                        BusinessDetailRUDView, CustomUserDetailRUDView,
-                        CustomUserListCreateView, PositionListCreateView, SpecialistDetailView,
-                        ServiceUpdateView, PositionRetrieveUpdateDestroyView,
+                        BusinessDetailRUDView, BusinessesListAPIView, ActiveBusinessesListAPIView,
+                        CustomUserListCreateView, PositionListCreateView, CustomUserDetailRUDView,
+                        ServiceUpdateView, PositionRetrieveUpdateDestroyView, SpecialistDetailView,
                         RemoveSpecialistFromPosition, BusinessServicesView, SpecialistsServicesView)
 
 
@@ -103,9 +105,29 @@ urlpatterns = [
         name="businesses-list-create",
     ),
     path(
+        "businesses/active/",
+        ActiveBusinessesListAPIView.as_view(),
+        name="businesses-list-active",
+    ),
+    path(
+        "businesses/nearest/",
+        BusinessesListAPIView.as_view(),
+        name="businesses-list-nearest",
+    ),
+    path(
         "business/<int:pk>/",
         BusinessDetailRUDView.as_view(),
         name="business-detail",
+    ),
+    path(
+        "location/",
+        LocationCreateView.as_view(),
+        name="location-create",
+    ),
+    path(
+        "location/<int:pk>/",
+        LocationRUDView.as_view(),
+        name="location-detail",
     ),
     path(
         "position/",
@@ -186,5 +208,10 @@ urlpatterns = [
         "statistic/<int:business_id>/",
         StatisticView.as_view(),
         name="statistic-of-business",
+    ),
+    path(
+        "contact/",
+        ContactFormView.as_view(),
+        name="contact-form",
     ),
 ]
