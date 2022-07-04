@@ -177,7 +177,8 @@ class TestOrderApprovingView(TestCase):
                            "token": self.token,
                            "status": self.status_approved}
 
-    def test_get_method_get_status_approved(self):
+    @patch("api.tasks.reminder_for_customer.apply_async")
+    def test_get_method_get_status_approved(self, mock_reminder):
         """The specialist is redirected to the order detail page if he approved the order."""
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
         self.assertEqual(response.status_code, 302)
@@ -201,7 +202,8 @@ class TestOrderApprovingView(TestCase):
         self.assertEqual(response.url, reverse("api:user-detail",
                                                args=[self.order.specialist.id]))
 
-    def test_get_method_not_logged_user_redirect_to_specialist(self):
+    @patch("api.tasks.reminder_for_customer.apply_async")
+    def test_get_method_not_logged_user_redirect_to_specialist(self, mock_reminder):
         """The user is redirected to the order specialist detail page if he is not logged."""
         self.client.force_authenticate(user=None)
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
