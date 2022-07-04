@@ -1,20 +1,22 @@
 """This module is for testing order"s views.
 
-Tests for OrderListCreateView:
+Tests for OrderCreateView:
 - SetUp method adds needed info for tests;
 - Only a logged user can create an order;
 - A logged user should be able to create an order;
 - Service should exist for specialist;
 - Service of the order should not be empty;
 - Specialist of the order should not be empty;
-- Specialist should not be able to create order for himself.
+- Specialist should not be able to create order for himself;
+- Check calling change_order_status_to_decline task when order creates.
 
 Tests for OrderApprovingView:
 - SetUp method adds needed info for tests;
 - The specialist is redirected to the order detail page if he approved the order;
 - The specialist is redirected to the own page if he declined the order;
 - The specialist is redirected to the own page if the order token expired;
-- The user is redirected to the order specialist detail page if he is not logged.
+- The user is redirected to the order specialist detail page if he is not logged;
+- Check calling reminder_for_customer task before start order.
 
 Tests for OrderRetrieveCancelView:
 - SetUp method adds needed info for tests;
@@ -70,7 +72,7 @@ from beauty.utils import string_to_time
 from api.views.schedule import get_working_day
 
 
-class TestOrderListCreateView(TestCase):
+class TestOrderCreateView(TestCase):
     """This class represents a Test case and has all the tests for OrderListCreateView."""
 
     working_time = {"Mon": ["08:52", "15:02"], "Tue": ["08:52", "15:02"], "Wed": ["08:52", "15:02"],
@@ -211,6 +213,12 @@ class TestOrderApprovingView(TestCase):
         self.assertEqual(response.url, reverse("api:user-order-detail",
                                                kwargs={"user": self.order.specialist.id,
                                                        "pk": self.order.id}))
+
+    @patch("api.tasks.reminder_for_customer.apply_async")
+    def test_reminder_for_customer_called(self, mock_reminder):
+        """Check calling reminder_for_customer task before start order."""
+        self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
+        self.assertTrue(mock_reminder.called)
 
 
 class TestOrderRetrieveCancelView(TestCase):
