@@ -48,6 +48,8 @@ Tests for SpecialistOrdersViews:
 """
 
 from datetime import timedelta
+from unittest.mock import patch
+
 from django.utils import timezone
 from django.conf import settings
 from django.test import TestCase
@@ -106,7 +108,8 @@ class TestOrderListCreateView(TestCase):
         response = self.client.post(path=reverse("api:order-create"), data=self.data)
         self.assertEqual(response.status_code, 401)
 
-    def test_post_method_create_order_logged_user(self):
+    @patch("api.tasks.change_order_status_to_decline.apply_async")
+    def test_post_method_create_order_logged_user(self, change_order_status_to_decline):
         """A logged user should be able to create an order."""
         response = self.client.post(path=reverse("api:order-create"), data=self.data)
         self.assertEqual(response.status_code, 201)
@@ -141,6 +144,12 @@ class TestOrderListCreateView(TestCase):
         self.assertIsNotNone(settings.CELERY_RESULT_BACKEND)
         self.assertIsNotNone(settings.CELERY_ACCEPT_CONTENT)
         self.assertIn("redis", settings.BROKER_URL)
+
+    @patch("api.tasks.change_order_status_to_decline.apply_async")
+    def test_change_order_status_to_decline_called(self, mock_task):
+        """Check calling change_order_status_to_decline task when order creates."""
+        self.client.post(path=reverse("api:order-create"), data=self.data)
+        self.assertTrue(mock_task.called)
 
 
 class TestOrderApprovingView(TestCase):
