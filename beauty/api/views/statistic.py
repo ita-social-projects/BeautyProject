@@ -1,4 +1,4 @@
-"""."""
+"""Module with StatisticView and utilities for this view."""
 
 
 from rest_framework.generics import GenericAPIView
@@ -11,34 +11,31 @@ from beauty.settings import TIME_ZONE
 import pytz
 from dateutil.relativedelta import relativedelta
 from api.permissions import IsOwner, IsAdminOrThisBusinessOwner
-from typing import List
-from api.serializers.chart_serializers import LineChartSerializer
+from beauty.utils import Chart
+from api.serializers.chart_serializers import ChartSerializer
+import logging
+from enum import Enum
 
 
 CET = pytz.timezone(TIME_ZONE)
+logger = logging.getLogger(__name__)
 
 
-class LineChart:
-    """Class for storing data, required for making a line chart."""
-
-    def __init__(self, labels: List[str], data: List[int]) -> None:
-        """."""
-        labels_is_str = all(isinstance(label, str) for label in labels)
-        if not labels_is_str:
-            raise ValueError("Labels must be str type")
-
-        print(data)
-
-        data_is_int = all(isinstance(el, int) for el in data)
-        if not data_is_int:
-            raise ValueError("Data elements must be int type")
-
-        self.labels = labels
-        self.data = data
+class TimeIntervals(Enum):
+    """Enum class which provides timeintervals constants."""
+    CURRENT_WEEK = "lastSevenDays"
+    CURRENT_MONTH = "currentMonth"
+    LAST_THREE_MONTHES = "lastThreeMonthes"
 
 
 class StatisticView(GenericAPIView):
-    """."""
+    """Return data with general statistic statistic of each specialist.
+
+    _line_chart: return labels and data for building chart
+    _general_statistic: return general statistic of the business
+    _detailed_statistic: return statistic about each specialist
+    get: return results of all mentioned above methods
+    """
 
     permission_classes = (IsOwner & IsAdminOrThisBusinessOwner,)
     queryset = Business.objects.all()
@@ -46,18 +43,19 @@ class StatisticView(GenericAPIView):
 
     def get(self, request, business_id):
         """."""
+        print(TimeIntervals.CURRENT_MONTH)
         business = self.get_object()
 
         time_interval = request.GET.get("timeInterval")
-        if time_interval == "lastSevenDays":
+        if time_interval == TimeIntervals.CURRENT_WEEK.value:
             orders_date = date.today() - timedelta(days=6)
 
-        elif time_interval == "currentMonth":
-            orders_date = date.today().replace(day=1)
+        elif time_interval == TimeIntervals.CURRENT_MONTH.value:
+            orders_date = date.today() - relativedelta(months=1)
 
-        elif time_interval == "lastThreeMonthes":
+        elif time_interval == TimeIntervals.LAST_THREE_MONTHES.value:
             today = datetime.now()
-            orders_date = today - relativedelta(months=2)
+            orders_date = today - relativedelta(months=3)
 
         else:
             return Response(
@@ -66,7 +64,9 @@ class StatisticView(GenericAPIView):
             )
 
         specialists = business.get_all_specialists()
-        business_orders = business.get_orders_by_date(orders_date)
+        business_orders = business.get_orders_by_date(
+            orders_date,
+        )
 
         orders_count_by_time = count_orders_by_time_interval(
             business_orders, time_interval, orders_date,
@@ -88,11 +88,13 @@ class StatisticView(GenericAPIView):
             "business_specialists": detailed_statistic,
         }
 
+        logger.info(f"Statstic about business {business} was fetched.")
         return Response(statistic, status=status.HTTP_200_OK)
 
     def _line_chart(self, labels, data):
-        line_chart = LineChart(labels, data)
-        return LineChartSerializer(line_chart).data
+        line_chart = Chart(labels, data)
+        logger.info("Got labels and data for chart.")
+        return ChartSerializer(line_chart).data
 
     def _general_statistic(self, business_orders):
         """."""
@@ -114,8 +116,7 @@ class StatisticView(GenericAPIView):
             business_orders,
         )
 
-        return {
-            "detailed_count": detailed_count,
+        result = {
             "business_orders_count": business_orders_count,
             "business_profit": business_profit,
             "business_average_order": business_average_order,
@@ -123,9 +124,14 @@ class StatisticView(GenericAPIView):
             "least_popular_service": least_pop_service,
         }
 
+        result.update(detailed_count)
+
+        logger.info("Got general statistic about business.")
+        return [result]
+
     def _detailed_statistic(self, business_orders, specialists):
         """."""
-        business_specialists = {}
+        business_specialists = []
 
         for specialist in specialists.iterator():
 
@@ -143,20 +149,29 @@ class StatisticView(GenericAPIView):
             )
 
             specialist_stat = {
+                "specialist_name": specialist.get_full_name(),
                 "most_pop_service": most_pop_serv,
                 "least_pop_service": least_pop_serv,
                 "specialist_orders_count": specialist_orders_count,
-                "specialist_orders_statuses": orders_count_status,
                 "specialist_orders_profit": specialist_orders_profit,
             }
 
-            business_specialists[specialist.get_full_name()] = specialist_stat
+            specialist_stat.update(orders_count_status)
+            business_specialists.append(specialist_stat)
 
+        logger.info("Got detailed statistic about each specilalist.")
         return business_specialists
 
 
 def calc_sum_orders_price(orders_queryset):
-    """."""
+    """Return sum of order's prices.
+
+    Args:
+        orders_queryset (QuerySet[Order])
+
+    Returns:
+        int: total of order's prices
+    """
     orders_queryset = orders_queryset.filter(
         status=Order.StatusChoices.COMPLETED,
     )
@@ -166,13 +181,22 @@ def calc_sum_orders_price(orders_queryset):
     if sum_price is None:
         sum_price = 0
 
+    logger.info("Got total price of orders.")
     return round(sum_price, 2)
 
 
 def count_orders_by_status(orders):
-    """."""
+    """Return dict with amount of orders depending on their status.
+
+    Args:
+        orders (QuerySet[Order])
+
+    Returns:
+        dict: dict with orders amount, counted by its statuses
+    """
+    logger.info("Counted orders by statuses")
     return {
-        status_str.capitalize(): orders.filter(status=status_int).count()
+        status_str.lower(): orders.filter(status=status_int).count()
         for status_str, status_int in
         Order.StatusChoices.__members__.items()
     }
@@ -180,16 +204,32 @@ def count_orders_by_status(orders):
 
 def count_orders_by_time_interval(orders, time_interval,
                                   orders_date):
-    """."""
-    date_dict = {}
-    if time_interval == "lastSevenDays" or time_interval == "currentMonth":
+    """Return amount of orders starting from certain date.
 
-        new_date = orders_date
-        while new_date != date.today() + timedelta(days=1):
+    Args:
+        orders (QuerySet[Order])
+        time_interval (str): time from which it is needed to count orders
+        orders_date (date)
+
+    Returns:
+        dict: keys - time stamps and value - count of orders
+    """
+    date_dict = {}
+    time_with_date = [
+        time_interval == TimeIntervals.CURRENT_WEEK.value,
+        time_interval == TimeIntervals.CURRENT_MONTH.value,
+    ]
+
+    if any(time_with_date):
+        orders_date = datetime.combine(orders_date, datetime.min.time())
+        new_date = CET.localize(orders_date)
+
+        while new_date.date() != date.today() + timedelta(days=1):
             orders_for_date = orders.filter(
                 start_time__range=(new_date, new_date + timedelta(days=1)),
             ).count()
-            date_dict[str(new_date)] = orders_for_date
+            date_str = str(new_date.day) + " " + new_date.strftime("%B")[:3]
+            date_dict[date_str] = orders_for_date
             new_date += timedelta(days=1)
 
     else:
@@ -203,11 +243,19 @@ def count_orders_by_time_interval(orders, time_interval,
             date_dict[new_date.strftime("%B")] = orders_for_date
             new_date += relativedelta(months=1)
 
+    logger.info("Counted orders by time interval")
     return date_dict
 
 
 def get_most_least_pop_service(orders):
-    """."""
+    """Return most and least popular service according to the orders.
+
+    Args:
+        orders (QuerySet[Order])
+
+    Returns:
+        tuple: tuple of two elements: most and least popular service
+    """
     count_services = orders.values("service__name").annotate(
         total=Count("service__name"),
     )
@@ -222,8 +270,9 @@ def get_most_least_pop_service(orders):
         message = "No orders"
         most_pop_service, least_pop_service = (message,) * 2
 
-    if most_pop_service == least_pop_service:
+    if len(orders) < 3:
         message = "Not enought data"
         most_pop_service, least_pop_service = (message,) * 2
 
+    logger.info("Got most and least popular services")
     return most_pop_service, least_pop_service

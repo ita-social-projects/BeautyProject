@@ -4,7 +4,7 @@ import os
 
 from datetime import timedelta, datetime, time
 
-from typing import Tuple
+from typing import Tuple, List
 from django.forms import ValidationError
 import pytz
 from rest_framework.reverse import reverse
@@ -313,3 +313,24 @@ class AutoDeclineOrderEmail(BaseEmailMessage):
     """Class for sending an email message which renders HTML for it."""
 
     template_name = "email/order_auto_decline_email.html"
+
+
+class Chart:
+    """Class for storing data, required for making a chart.
+
+    labels: List[str]
+    data: List[int]
+    """
+
+    def __init__(self, labels: List[str], data: List[int]) -> None:
+        """."""
+        labels_is_str = all(isinstance(label, str) for label in labels)
+        if not labels_is_str:
+            raise ValueError("Labels must be str type")
+
+        data_is_int = all(isinstance(el, int) for el in data)
+        if not data_is_int:
+            raise ValueError("Data elements must be int type")
+
+        self.labels = labels
+        self.data = data
