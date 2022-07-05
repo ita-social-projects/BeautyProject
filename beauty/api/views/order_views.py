@@ -208,7 +208,7 @@ class OrderApprovingView(RetrieveAPIView):
         Args:
             order_id: order id
         """
-        app.control.revoke(task_id=encode_uid(order_id), terminate=True)
+        app.control.revoke(task_id=encode_uid(order_id), terminate=True, signal="SIGKILL")
 
 
 class CustomerOrdersViews(ListAPIView):
