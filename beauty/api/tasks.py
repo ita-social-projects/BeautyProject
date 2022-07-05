@@ -94,7 +94,7 @@ def send_message_for_specialist_consideration(self, order_id, site_name, is_secu
         site_name (str): site URL
         is_secure (bool): check connection protocol
     """
-    order = Order.objects.get(id=1000)
+    order = Order.objects.get(id=order_id)
 
     context = {"order": order,
                "protocol": "https" if is_secure else "http",
