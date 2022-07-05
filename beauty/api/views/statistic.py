@@ -42,8 +42,11 @@ class StatisticView(GenericAPIView):
     lookup_url_kwarg = "business_id"
 
     def get(self, request, business_id):
-        """."""
-        print(TimeIntervals.CURRENT_MONTH)
+        """Return statistic, according to the timeInterval value.
+
+        Check if timeInterval value is provided and correct, return data for
+        chart, business table and specialists table.
+        """
         business = self.get_object()
 
         time_interval = request.GET.get("timeInterval")
@@ -97,7 +100,11 @@ class StatisticView(GenericAPIView):
         return ChartSerializer(line_chart).data
 
     def _general_statistic(self, business_orders):
-        """."""
+        """Return general statistic about business.
+
+        This data is used for building business table on a FrontEnd statistic
+        page.
+        """
         business_profit = calc_sum_orders_price(business_orders)
 
         business_orders_count = business_orders.count()
@@ -130,7 +137,11 @@ class StatisticView(GenericAPIView):
         return [result]
 
     def _detailed_statistic(self, business_orders, specialists):
-        """."""
+        """Return detailed statistic about businesses' specialists.
+
+        This data is used for building specialist table on a FrontEnd statistic
+        page.
+        """
         business_specialists = []
 
         for specialist in specialists.iterator():
@@ -266,12 +277,12 @@ def get_most_least_pop_service(orders):
         least_pop_service = min(
             count_services, key=lambda x: x["total"])["service__name"]
 
+        if len(orders) < 3:
+            message = "Not enought data"
+            most_pop_service, least_pop_service = (message,) * 2
+
     else:
         message = "No orders"
-        most_pop_service, least_pop_service = (message,) * 2
-
-    if len(orders) < 3:
-        message = "Not enought data"
         most_pop_service, least_pop_service = (message,) * 2
 
     logger.info("Got most and least popular services")

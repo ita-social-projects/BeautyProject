@@ -2,7 +2,7 @@
 
 import os
 from datetime import timedelta, datetime, time
-from typing import Tuple, List
+from typing import Tuple, Sequence
 from functools import partial
 from geopy.geocoders import Nominatim
 from django.forms import ValidationError
@@ -439,8 +439,13 @@ class Chart:
     data: List[int]
     """
 
-    def __init__(self, labels: List[str], data: List[int]) -> None:
-        """."""
+    def __init__(self, labels: Sequence[str], data: Sequence[int]) -> None:
+        """Initialize Chart instance.
+
+        Instance is initialized, if labels arg is a sequence of str elements
+        and data is a sequence of int elements, else ValueError will be
+        raised.
+        """
         labels_is_str = all(isinstance(label, str) for label in labels)
         if not labels_is_str:
             raise ValueError("Labels must be str type")
