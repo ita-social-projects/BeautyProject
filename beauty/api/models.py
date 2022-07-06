@@ -310,8 +310,6 @@ class Business(models.Model):
 
     def get_all_positions(self):
         """Get all Positions that belong to this Business."""
-        logger.info("Got all positions from business")
-
         return self.position_set.all()
 
     def get_all_specialists(self):
@@ -319,16 +317,12 @@ class Business(models.Model):
         positions = self.get_all_positions()
         specialists = CustomUser.objects.filter(position__in=positions)
 
-        logger.info("Got all specialists from business positions")
-
         return specialists
 
     def get_all_services(self):
         """Get all Services that belong to this Business."""
         positions = self.get_all_positions()
         services = Service.objects.filter(position__in=positions)
-
-        logger.info("Got all services from business")
 
         return services
 
@@ -344,8 +338,6 @@ class Business(models.Model):
             start_time__gte=date, specialist__in=specialists,
             service__in=services,
         )
-
-        logger.info(f"Got all business' orders starting from {date}")
 
         return orders
 

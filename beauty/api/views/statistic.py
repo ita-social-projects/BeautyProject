@@ -192,7 +192,6 @@ def calc_sum_orders_price(orders_queryset):
     if sum_price is None:
         sum_price = 0
 
-    logger.info("Got total price of orders.")
     return round(sum_price, 2)
 
 
@@ -205,7 +204,6 @@ def count_orders_by_status(orders):
     Returns:
         dict: dict with orders amount, counted by its statuses
     """
-    logger.info("Counted orders by statuses")
     return {
         status_str.lower(): orders.filter(status=status_int).count()
         for status_str, status_int in
@@ -254,7 +252,6 @@ def count_orders_by_time_interval(orders, time_interval,
             date_dict[new_date.strftime("%B")] = orders_for_date
             new_date += relativedelta(months=1)
 
-    logger.info("Counted orders by time interval")
     return date_dict
 
 
@@ -285,5 +282,4 @@ def get_most_least_pop_service(orders):
         message = "No orders"
         most_pop_service, least_pop_service = (message,) * 2
 
-    logger.info("Got most and least popular services")
     return most_pop_service, least_pop_service
