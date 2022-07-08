@@ -28,7 +28,7 @@ def get_orders_for_specific_date(specialist, order_date):
 
 
 def get_working_day(position, order_date):
-    """."""
+    """Return working time of a position, according to the order_date day."""
     weekdays = {
         0: "Mon", 1: "Tue", 2: "Wed", 3: "Thu",
         4: "Fri", 5: "Sat", 6: "Sun",

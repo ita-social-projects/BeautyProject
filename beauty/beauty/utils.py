@@ -1,11 +1,10 @@
 """This module provides you with all needed utility functions."""
 
 import os
-
 from datetime import timedelta, datetime, time
+from typing import Tuple, Sequence
 from functools import partial
 from geopy.geocoders import Nominatim
-from typing import Tuple
 from django.forms import ValidationError
 import pytz
 from rest_framework.reverse import reverse
@@ -433,13 +432,39 @@ class AutoDeclineOrderEmail(BaseEmailMessage):
     template_name = "email/order_auto_decline_email.html"
 
 
+class Chart:
+    """Class for storing data, required for making a chart.
+
+    labels: List[str]
+    data: List[int]
+    """
+
+    def __init__(self, labels: Sequence[str], data: Sequence[int]) -> None:
+        """Initialize Chart instance.
+
+        Instance is initialized, if labels arg is a sequence of str elements
+        and data is a sequence of int elements, else ValueError will be
+        raised.
+        """
+        labels_is_str = all(isinstance(label, str) for label in labels)
+        if not labels_is_str:
+            raise ValueError("Labels must be str type")
+
+        data_is_int = all(isinstance(el, int) for el in data)
+        if not data_is_int:
+            raise ValueError("Data elements must be int type")
+
+        self.labels = labels
+        self.data = data
+
+
 class Geolocator:
     """Class for address-coordinates translation."""
 
     geolocator = Nominatim(user_agent="BeautyProject")
 
     @classmethod
-    def get_coordinates_by_address(cls, address: str) -> (str, str):
+    def get_coordinates_by_address(cls, address: str) -> Tuple[str]:
         """Translate address into coordinates.
 
         Args:

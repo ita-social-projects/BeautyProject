@@ -21,7 +21,7 @@ from api.views.position_views import (InviteSpecialistToPosition,
                                       InviteSpecialistApprove)
 
 from api.views.customuser_views import InviteRegisterView
-
+from api.views.statistic import StatisticView
 from api.views.contact_views import ContactFormView
 
 from .views_api import (AllServicesListCreateView, BusinessesListCreateAPIView,
@@ -205,7 +205,13 @@ urlpatterns = [
         name="service-by-specialist"),
 
     path(
+        "statistic/<int:business_id>/",
+        StatisticView.as_view(),
+        name="statistic-of-business",
+    ),
+    path(
         "contact/",
         ContactFormView.as_view(),
-        name="contact-form"),
+        name="contact-form",
+    ),
 ]
