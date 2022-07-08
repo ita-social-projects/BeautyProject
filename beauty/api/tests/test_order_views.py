@@ -1,20 +1,22 @@
 """This module is for testing order"s views.
 
-Tests for OrderListCreateView:
+Tests for OrderCreateView:
 - SetUp method adds needed info for tests;
 - Only a logged user can create an order;
 - A logged user should be able to create an order;
 - Service should exist for specialist;
 - Service of the order should not be empty;
 - Specialist of the order should not be empty;
-- Specialist should not be able to create order for himself.
+- Specialist should not be able to create order for himself;
+- Check calling change_order_status_to_decline task when order creates.
 
 Tests for OrderApprovingView:
 - SetUp method adds needed info for tests;
 - The specialist is redirected to the order detail page if he approved the order;
 - The specialist is redirected to the own page if he declined the order;
 - The specialist is redirected to the own page if the order token expired;
-- The user is redirected to the order specialist detail page if he is not logged.
+- The user is redirected to the order specialist detail page if he is not logged;
+- Check calling reminder_for_customer task before start order.
 
 Tests for OrderRetrieveCancelView:
 - SetUp method adds needed info for tests;
@@ -48,6 +50,8 @@ Tests for SpecialistOrdersViews:
 """
 
 from datetime import timedelta
+from unittest.mock import patch
+
 from django.utils import timezone
 from django.conf import settings
 from django.test import TestCase
@@ -68,7 +72,7 @@ from beauty.utils import string_to_time
 from api.views.schedule import get_working_day
 
 
-class TestOrderListCreateView(TestCase):
+class TestOrderCreateView(TestCase):
     """This class represents a Test case and has all the tests for OrderListCreateView."""
 
     working_time = {"Mon": ["08:52", "15:02"], "Tue": ["08:52", "15:02"], "Wed": ["08:52", "15:02"],
@@ -106,7 +110,8 @@ class TestOrderListCreateView(TestCase):
         response = self.client.post(path=reverse("api:order-create"), data=self.data)
         self.assertEqual(response.status_code, 401)
 
-    def test_post_method_create_order_logged_user(self):
+    @patch("api.tasks.change_order_status_to_decline.apply_async")
+    def test_post_method_create_order_logged_user(self, change_order_status_to_decline):
         """A logged user should be able to create an order."""
         response = self.client.post(path=reverse("api:order-create"), data=self.data)
         self.assertEqual(response.status_code, 201)
@@ -142,6 +147,12 @@ class TestOrderListCreateView(TestCase):
         self.assertIsNotNone(settings.CELERY_ACCEPT_CONTENT)
         self.assertIn("redis", settings.BROKER_URL)
 
+    @patch("api.tasks.change_order_status_to_decline.apply_async")
+    def test_change_order_status_to_decline_called(self, mock_task):
+        """Check calling change_order_status_to_decline task when order creates."""
+        self.client.post(path=reverse("api:order-create"), data=self.data)
+        self.assertTrue(mock_task.called)
+
 
 class TestOrderApprovingView(TestCase):
     """This class represents a Test case and has all the tests for OrderApprovingView."""
@@ -168,7 +179,8 @@ class TestOrderApprovingView(TestCase):
                            "token": self.token,
                            "status": self.status_approved}
 
-    def test_get_method_get_status_approved(self):
+    @patch("api.tasks.reminder_for_customer.apply_async")
+    def test_get_method_get_status_approved(self, mock_reminder):
         """The specialist is redirected to the order detail page if he approved the order."""
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
         self.assertEqual(response.status_code, 302)
@@ -192,7 +204,8 @@ class TestOrderApprovingView(TestCase):
         self.assertEqual(response.url, reverse("api:user-detail",
                                                args=[self.order.specialist.id]))
 
-    def test_get_method_not_logged_user_redirect_to_specialist(self):
+    @patch("api.tasks.reminder_for_customer.apply_async")
+    def test_get_method_not_logged_user_redirect_to_specialist(self, mock_reminder):
         """The user is redirected to the order specialist detail page if he is not logged."""
         self.client.force_authenticate(user=None)
         response = self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
@@ -200,6 +213,12 @@ class TestOrderApprovingView(TestCase):
         self.assertEqual(response.url, reverse("api:user-order-detail",
                                                kwargs={"user": self.order.specialist.id,
                                                        "pk": self.order.id}))
+
+    @patch("api.tasks.reminder_for_customer.apply_async")
+    def test_reminder_for_customer_called(self, mock_reminder):
+        """Check calling reminder_for_customer task before start order."""
+        self.client.get(path=reverse("api:order-approving", kwargs=self.url_kwargs))
+        self.assertTrue(mock_reminder.called)
 
 
 class TestOrderRetrieveCancelView(TestCase):
