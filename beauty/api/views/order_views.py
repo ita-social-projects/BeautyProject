@@ -20,7 +20,8 @@ from rest_framework.reverse import reverse
 from api.models import (CustomUser, Order)
 from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin, IsOwnerOfSpecialist)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
-from api.tasks import (change_order_status_to_decline, reminder_for_customer)
+from api.tasks import (change_order_status_to_decline, reminder_for_customer,
+                       send_message_for_specialist_consideration)
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail, get_order_expiration_time)
@@ -64,16 +65,12 @@ class OrderCreateView(CreateAPIView):
 
             expiration_time = get_order_expiration_time(order, order.created_at)
 
-            context = {"order": order}
-            to = [order.specialist.email]
-            ApprovingOrderEmail(request, context).send(to)
+            send_message_for_specialist_consideration.delay(order.id, request.get_host(),
+                                                            request.is_secure())
 
             change_order_status_to_decline.apply_async(
                 (order.id, request.get_host()), eta=expiration_time, task_id=encode_uid(order.pk),
             )
-
-            logger.info(f"{order}: approving email was sent to the specialist "
-                        f"{order.specialist.get_full_name()}")
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
