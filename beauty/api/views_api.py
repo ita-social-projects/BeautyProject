@@ -471,6 +471,19 @@ class ServiceUpdateView(RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
 
+    def put(self, request, *args, **kwargs):
+        """Sends message to customer if service of active order was changed."""
+        service = self.get_object()
+        orders = Order.objects.filter(service=self.kwargs["pk"], status=0)
+        if len(orders) != 0:
+            emails = list(map(lambda x: x.customer.email, orders))
+            send_mail(
+                "Your order detail has been changed",
+                f"You got this email because {service} in your order has been changed",
+                EMAIL_HOST_USER,
+                emails,
+            )
+        return self.update(request, *args, **kwargs)
     logger.debug("A view for retrieving, updating or deleting a service instance.")
 
 
