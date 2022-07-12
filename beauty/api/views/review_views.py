@@ -102,6 +102,9 @@ class ReviewAddView(GenericAPIView):
         else:
             logger.info(
                 "Error validating review: "
-                f"Field {serializer.errors.popitem()}",
+                f"{serializer.errors}",
             )
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST, 
+                data=serializer.errors
+            )

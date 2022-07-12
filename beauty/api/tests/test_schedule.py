@@ -19,6 +19,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from beauty.utils import string_to_time
 from beauty.utils import generate_working_time
+from beauty.settings import TIME_ZONE
 from api.serializers.order_serializers import OrderSerializer
 from .factories import (BusinessFactory,
                         CustomUserFactory,
@@ -52,10 +53,10 @@ class TestOwnerSpecialistScheduleView(TestCase):
             self.start_time,
             self.end_time,
         )
-        self.date = timezone.datetime.now(tz=pytz.UTC)
+        self.date = timezone.datetime.now(tz=pytz.timezone(TIME_ZONE))
         # If Sunday
         if self.date.weekday() == 6:
-            self.date += timedelta(days=1, tz=pytz.UTC)
+            self.date += timedelta(days=1)
 
         self.working_time["Sun"] = []
         self.business = BusinessFactory.create(

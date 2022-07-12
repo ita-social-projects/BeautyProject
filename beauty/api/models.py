@@ -9,8 +9,12 @@ from django.db import models
 from django.utils.translation import gettext as _
 from beauty.utils import (ModelsUtils, validate_rounded_minutes_seconds,
                           validate_working_time_json)
+from datetime import datetime
+import pytz
+from beauty.settings import TIME_ZONE
 
 
+CET = pytz.timezone(TIME_ZONE)
 logger = logging.getLogger(__name__)
 
 
@@ -304,14 +308,38 @@ class Business(models.Model):
 
         return position
 
+    def get_all_positions(self):
+        """Get all Positions that belong to this Business."""
+        return self.position_set.all()
+
     def get_all_specialists(self):
         """Gets all Specialists who belong to this Business."""
-        positions = self.position_set.all().values_list("id", flat=True)
+        positions = self.get_all_positions()
         specialists = CustomUser.objects.filter(position__in=positions)
 
-        logger.info("Got all specialists from business positions")
-
         return specialists
+
+    def get_all_services(self):
+        """Get all Services that belong to this Business."""
+        positions = self.get_all_positions()
+        services = Service.objects.filter(position__in=positions)
+
+        return services
+
+    def get_orders_by_date(self, date):
+        """Get orders of current business by month."""
+        specialists = self.get_all_specialists()
+        services = self.get_all_services()
+
+        date = datetime.combine(date, datetime.min.time())
+        date = CET.localize(date)
+
+        orders = Order.objects.filter(
+            start_time__gte=date, specialist__in=specialists,
+            service__in=services,
+        )
+
+        return orders
 
 
 class Position(models.Model):

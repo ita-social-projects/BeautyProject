@@ -1,6 +1,7 @@
 """This module provides all order's views."""
 import datetime
 import logging
+
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
@@ -8,6 +9,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from djoser.utils import encode_uid
 from rest_framework import (filters, status)
 from rest_framework.generics import (CreateAPIView,
                                      RetrieveUpdateDestroyAPIView,
@@ -18,10 +20,13 @@ from rest_framework.reverse import reverse
 from api.models import (CustomUser, Order)
 from api.permissions import (IsOrderUser, IsCustomerOrIsAdmin, IsOwnerOfSpecialist)
 from api.serializers.order_serializers import (OrderDeleteSerializer, OrderSerializer)
-from api.tasks import (change_order_status_to_decline, reminder_for_customer)
+from api.tasks import (change_order_status_to_decline, reminder_for_customer,
+                       send_message_for_specialist_consideration)
 from beauty import signals
 from beauty.tokens import OrderApprovingTokenGenerator
 from beauty.utils import (ApprovingOrderEmail, CancelOrderEmail, get_order_expiration_time)
+from beauty.celery import app
+
 
 logger = logging.getLogger(__name__)
 
@@ -60,16 +65,12 @@ class OrderCreateView(CreateAPIView):
 
             expiration_time = get_order_expiration_time(order, order.created_at)
 
-            context = {"order": order}
-            to = [order.specialist.email]
-            ApprovingOrderEmail(request, context).send(to)
+            send_message_for_specialist_consideration.delay(order.id, request.get_host(),
+                                                            request.is_secure())
 
             change_order_status_to_decline.apply_async(
-                (order.id, request.get_host()), eta=expiration_time,
+                (order.id, request.get_host()), eta=expiration_time, task_id=encode_uid(order.pk),
             )
-
-            logger.info(f"{order}: approving email was sent to the specialist "
-                        f"{order.specialist.get_full_name()}")
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -149,6 +150,9 @@ class OrderApprovingView(RetrieveAPIView):
                     (order.id, request.get_host()),
                     eta=timezone.localtime(order.start_time - datetime.timedelta(hours=3)),
                 )
+
+                self.revoke_decline_task(order_id)
+
                 return redirect(reverse("api:user-order-detail",
                                         kwargs={"user": order.specialist.id,
                                                 "pk": order.id}))
@@ -159,6 +163,9 @@ class OrderApprovingView(RetrieveAPIView):
                             f"{order.specialist.get_full_name()}")
 
                 self.send_signal(order, request)
+
+                self.revoke_decline_task(order_id)
+
         logger.info(f"Token for {order} is not valid")
 
         return redirect(
@@ -191,6 +198,14 @@ class OrderApprovingView(RetrieveAPIView):
         signals.order_status_changed.send(
             sender=self.__class__, order=order, request=request,
         )
+
+    def revoke_decline_task(self, order_id):
+        """Revoke task using task id.
+
+        Args:
+            order_id: order id
+        """
+        app.control.revoke(task_id=encode_uid(order_id), terminate=True, signal="SIGKILL")
 
 
 class CustomerOrdersViews(ListAPIView):

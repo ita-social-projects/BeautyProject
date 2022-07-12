@@ -1,11 +1,10 @@
 """This module provides you with all needed utility functions."""
 
 import os
-
 from datetime import timedelta, datetime, time
+from typing import Tuple, Sequence
 from functools import partial
 from geopy.geocoders import Nominatim
-from typing import Tuple
 from django.forms import ValidationError
 import pytz
 from rest_framework.reverse import reverse
@@ -13,6 +12,7 @@ from templated_mail.mail import BaseEmailMessage
 from faker import Faker
 from django.utils import timezone
 from random import choice, randint
+import calendar
 
 
 faker = Faker()
@@ -228,8 +228,9 @@ class SpecialistAnswerEmail(BaseEmailMessage):
 
 def generate_working_time(start_time: str, end_time: str):
     """Generates working time."""
-    weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    return {day: [start_time, end_time] for day in weekdays}
+    week_days = [day.capitalize()
+                 for day in calendar.HTMLCalendar.cssclasses]
+    return {day: [start_time, end_time] for day in week_days}
 
 
 def custom_exception_handler(exc, context):
@@ -278,6 +279,121 @@ class RoundedTime:
         return timedelta(minutes=choice(cls.minutes))
 
 
+def string_interval_to_time_interval(str_interval: list):
+    """Returns list of time objects."""
+    return (string_to_time(str_interval[0]),
+            string_to_time(str_interval[1]))
+
+
+def is_inside_interval(main_interval: tuple, inner_interval: tuple):
+    """Return True if inner interval is inside main_interval."""
+    return (
+        inner_interval[0] >= main_interval[0]
+    ) and (
+        inner_interval[1] <= main_interval[1]
+    )
+
+
+def is_working_time_reduced(working_time, new_working_time):
+    """Returns true, if any day hours was reduced."""
+    changed_days = set(working_time).intersection(new_working_time)
+    for day in changed_days:
+
+        if working_time[day] == new_working_time[day]:
+            continue
+        if len(working_time[day]) < len(new_working_time[day]):
+            continue
+        if len(working_time[day]) > len(new_working_time[day]):
+            return True
+
+        new_interval = string_interval_to_time_interval(
+            new_working_time[day],
+        )
+
+        old_interval = string_interval_to_time_interval(
+            working_time[day],
+        )
+        if is_inside_interval(old_interval, new_interval):
+            return True
+    return False
+
+
+def is_order_fit_working_time(order, working_time: dict):
+    """Returns True if order fit working_time."""
+    week_days = [day.capitalize()
+                 for day in calendar.HTMLCalendar.cssclasses]
+
+    order_day = order.start_time.weekday()
+    # If day became weekend
+    if working_time[week_days[order_day]] == []:
+        return False
+
+    order_interval = [order.start_time.time(), order.end_time.time()]
+    # If working day not changed (missing field in patch)
+    try:
+        working_interval = string_interval_to_time_interval(
+            working_time[week_days[order_day]],
+        )
+    except KeyError:
+        return True
+    return is_inside_interval(working_interval, order_interval)
+
+
+def get_working_time_from_dict(data) -> dict:
+    """Raises errors if validation fails, returns working_time."""
+    week_days = [day.capitalize() for day in calendar.HTMLCalendar.cssclasses]
+    days_in_data = set(week_days).intersection(set(data.keys()))
+    working_time = {day: [] for day in days_in_data}
+
+    for day in days_in_data:
+
+        amount_of_data = len(data[day])
+        if amount_of_data not in [0, 2]:
+            raise ValidationError(
+                {day: "Must contain 2 elements or 0."},
+            )
+
+        if amount_of_data == 2:
+
+            try:
+                opening_time = string_to_time(data[day][0])
+                closing_time = string_to_time(data[day][1])
+                working_time[day].append(time_to_string(opening_time))
+                working_time[day].append(time_to_string(closing_time))
+            except ValueError:
+                raise ValidationError(
+                    {day: "Day schedule does not match the template\
+                            ['HH:MM', 'HH:MM']."},
+                )
+
+            if opening_time > closing_time:
+
+                raise ValidationError(
+                    {day:
+                        "working hours must begin before they end."},
+                )
+
+            if opening_time == closing_time:
+                working_time[day] = []
+
+    return working_time
+
+
+def update_position_time_by_business(position_time, business_time):
+    """Updates position working time based on business working_time."""
+    for day, value in position_time.items():
+        if business_time[day] == []:
+            position_time[day] = []
+            continue
+
+        if string_to_time(business_time[day][0]) > string_to_time(value[0]):
+            position_time[day][0] = business_time[day][0]
+        if string_to_time(business_time[day][1]) < string_to_time(value[1]):
+            position_time[day][1] = business_time[day][1]
+
+    return position_time
+
+
 def get_order_expiration_time(order, date_time, time_delta_hours=3):
     """Get expiration time for order.
 
@@ -316,13 +432,39 @@ class AutoDeclineOrderEmail(BaseEmailMessage):
     template_name = "email/order_auto_decline_email.html"
 
 
+class Chart:
+    """Class for storing data, required for making a chart.
+
+    labels: List[str]
+    data: List[int]
+    """
+
+    def __init__(self, labels: Sequence[str], data: Sequence[int]) -> None:
+        """Initialize Chart instance.
+
+        Instance is initialized, if labels arg is a sequence of str elements
+        and data is a sequence of int elements, else ValueError will be
+        raised.
+        """
+        labels_is_str = all(isinstance(label, str) for label in labels)
+        if not labels_is_str:
+            raise ValueError("Labels must be str type")
+
+        data_is_int = all(isinstance(el, int) for el in data)
+        if not data_is_int:
+            raise ValueError("Data elements must be int type")
+
+        self.labels = labels
+        self.data = data
+
+
 class Geolocator:
     """Class for address-coordinates translation."""
 
     geolocator = Nominatim(user_agent="BeautyProject")
 
     @classmethod
-    def get_coordinates_by_address(cls, address: str) -> (str, str):
+    def get_coordinates_by_address(cls, address: str) -> Tuple[str]:
         """Translate address into coordinates.
 
         Args:
@@ -363,4 +505,3 @@ class RemindAboutOrderEmail(BaseEmailMessage):
     """Class for sending an email message reminding a customer about an order."""
 
     template_name = "email/customer_order_reminding_email.html"
-

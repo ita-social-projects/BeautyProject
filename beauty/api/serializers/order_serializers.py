@@ -1,11 +1,12 @@
 """The module includes serializers for Order model."""
 
+import logging
 from rest_framework.exceptions import ValidationError
 from django.utils import timezone
 from rest_framework import serializers
 from api.models import (Order, CustomUser, Service, Position)
-import logging
 
+from beauty.utils import string_to_time
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +67,28 @@ class OrderSerializer(serializers.HyperlinkedModelSerializer):
             logger.info("Customer and specialist are the same person!")
 
             errors.update({"users": "Customer and specialist are the same person!"})
+
+        working_hours = service.position.working_time[start_time.strftime("%a")]
+
+        if not working_hours and start_time < timezone.now():
+            logger.info(f"{specialist} does not work {start_time.date()}")
+
+            errors.update({"start_date": f"{specialist} does not work {start_time.date()}."})
+
+        if working_hours:
+            start_hour = string_to_time(working_hours[0])
+            end_hour = string_to_time(working_hours[1])
+            if start_hour > start_time.time() or start_time.time() > end_hour:
+                logger.info(f"Specialist {specialist.get_full_name()} "
+                            f"does not work at {start_time.time()}")
+
+                errors.update(
+                    {"start_time": {
+                        "message": f"Specialist {specialist.get_full_name()} "
+                                   f"does not work at {start_time.time()}.",
+                        "help_text": f"Specialist {specialist.get_full_name()} "
+                                     f"works between {start_hour} - {end_hour}."}},
+                )
         if errors:
             raise ValidationError(errors)
         return super().validate(attrs)
