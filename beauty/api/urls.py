@@ -49,7 +49,25 @@ class DateConverter:
         return value
 
 
+class FloatUrlParameterConverter:
+    """Converter class for passing geo coordinate in urls.
+
+    Provide to_python and to_url methods.
+    """
+
+    regex = "\d{0,3}?.\d{0,6}" # noqa
+
+    def to_python(self, value):
+        """Converts coordinate from url to float."""
+        return float(value)
+
+    def to_url(self, value):
+        """Return coordinate from url."""
+        return str(value)
+
+
 register_converter(DateConverter, "date")
+register_converter(FloatUrlParameterConverter, "float")
 
 urlpatterns = [
     path(
@@ -103,7 +121,7 @@ urlpatterns = [
         name="businesses-list-create",
     ),
     path(
-        "businesses/nearest/",
+        "businesses/nearest/<float:lat>/<float:lon>/<float:delta>",
         BusinessesListAPIView.as_view(),
         name="businesses-list-nearest",
     ),
@@ -185,8 +203,6 @@ urlpatterns = [
         OwnerSpecialistScheduleView.as_view(),
         name="owner-specialist-schedule",
     ),
-
-
     path(
         "business/<int:pk>/services/",
         BusinessServicesView.as_view(),
