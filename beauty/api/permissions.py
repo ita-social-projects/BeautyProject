@@ -181,9 +181,12 @@ class IsServiceOwner(permissions.BasePermission):
         """Object permission check."""
         logger.debug(f"Object {obj.id} permission check. Is service owner")
 
-        if request.method == "GET" or request.user.is_admin:
-            return True
-        elif request.user.is_owner:
-            return obj.position.business.owner == request.user
-        else:
+        try:
+            if request.method == "GET" or request.user.is_admin:
+                return True
+            elif request.user.is_owner:
+                return obj.position.business.owner == request.user
+            else:
+                return False
+        except AttributeError:
             return False
