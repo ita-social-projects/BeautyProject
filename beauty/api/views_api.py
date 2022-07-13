@@ -544,11 +544,12 @@ class BusinessesListAPIView(ListAPIView):
             target_longitude (float): user or target global longitude
             delta (float): indent in coordinates to search
         """
-        target_latitude = float(self.request.data["target_lat"])
-        target_longitude = float(self.request.data["target_lon"])
-        delta = float(self.request.data["delta"])
+        target_latitude = float(self.kwargs["lat"])
+        target_longitude = float(self.kwargs["lon"])
+        delta = float(self.kwargs["delta"])
 
         queryset = Business.objects.filter(
+            is_active=True,
             location__latitude__gt=target_latitude - delta,
             location__latitude__lt=target_latitude + delta,
             location__longitude__gt=target_longitude - delta,

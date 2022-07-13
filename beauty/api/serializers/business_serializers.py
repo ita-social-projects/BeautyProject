@@ -263,4 +263,4 @@ class NearestBusinessesSerializer(BaseBusinessSerializer):
         """Meta for NearestBusinessesSerializer class."""
 
         model = Business
-        fields = ("business_url", "location")
+        fields = ("id", "name", "business_type", "business_url", "location")
