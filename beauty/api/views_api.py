@@ -282,6 +282,8 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
         """
         try:
             is_owner = self.request.user.is_owner
+            if self.request.user.is_admin:
+                return BusinessGetAllInfoSerializers
             if is_owner and (self.get_object().owner == self.request.user):
                 return BusinessGetAllInfoSerializers
         except AttributeError:
