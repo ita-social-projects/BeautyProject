@@ -164,7 +164,9 @@ class TestSpecialistSchedule(TestCase):
             get_next_desired_day(3), time(hour=13, minute=25),
         ))
         self.order1 = OrderFactory.create(
-            start_time=order_time, specialist=self.specialist2,
+            start_time=order_time,
+            specialist=self.specialist2,
+            service=self.service2,
         )
 
         response2 = self.client.get(

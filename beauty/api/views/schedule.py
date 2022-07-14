@@ -11,7 +11,7 @@ from beauty.utils import string_to_time
 from django.utils.timezone import localtime
 
 
-def get_orders_for_specific_date(specialist, order_date):
+def get_orders_for_specific_date(specialist, position, order_date):
     """Return active or approved orders.
 
     Filter them by certain specialist and specific date.
@@ -24,6 +24,7 @@ def get_orders_for_specific_date(specialist, order_date):
     return Order.objects.filter(
         specialist=specialist,
         status__in=valid_order_statuses,
+        service__position=position,
         start_time__range=(order_date, order_date + timedelta(days=1)),
     )
 
@@ -39,12 +40,12 @@ def get_working_day(position, order_date):
     return position.working_time[weekdays[order_day]]
 
 
-def get_free_time(specialist, order_date, working_day):
+def get_free_time(specialist, position, order_date, working_day):
     """Return list of time moments."""
     free_time = [
         string_to_time(time) for time in working_day
     ]
-    orders = get_orders_for_specific_date(specialist, order_date)
+    orders = get_orders_for_specific_date(specialist, position, order_date)
 
     # Adds all time moments from orders (start and end) to free_time list.
     orders_time = [
@@ -90,7 +91,7 @@ def get_time_intervals(start_time, end_time):
 
 def get_free_time_for_customer(specialist, service, order_date, working_day):
     """Returns free time intervals."""
-    free_time = get_free_time(specialist, order_date, working_day)
+    free_time = get_free_time(specialist, service.position, order_date, working_day)
 
     new_free_time = []
 
@@ -113,10 +114,10 @@ def get_free_time_for_customer(specialist, service, order_date, working_day):
     return free_time_blocks
 
 
-def get_free_time_specialist_for_owner(specialist, order_date,
+def get_free_time_specialist_for_owner(specialist, position, order_date,
                                        working_day, request):
     """Return list of free time blocks and orders."""
-    specialist_schedule = get_free_time(specialist, order_date, working_day)
+    specialist_schedule = get_free_time(specialist, position, order_date, working_day)
 
     specialist_schedule = [
         [start, end]
@@ -124,7 +125,7 @@ def get_free_time_specialist_for_owner(specialist, order_date,
         zip(specialist_schedule[::2], specialist_schedule[1::2])
     ]
 
-    orders = get_orders_for_specific_date(specialist, order_date)
+    orders = get_orders_for_specific_date(specialist, position, order_date)
 
     # Needed of use insert method and access to list in same loop
     new_specialist_schedule = specialist_schedule.copy()
@@ -227,6 +228,7 @@ class OwnerSpecialistScheduleView(APIView):
 
         schedule = get_free_time_specialist_for_owner(
             specialist,
+            position,
             order_date,
             working_day,
             request,
