@@ -14,7 +14,7 @@ from datetime import date, timedelta, datetime, time
 import json
 from django.urls import reverse
 from django.test import TestCase
-import pytz
+from django.utils import timezone
 
 from api.tests.factories import (CustomUserFactory, PositionFactory,
                                  ServiceFactory, OrderFactory)
@@ -160,9 +160,9 @@ class TestSpecialistSchedule(TestCase):
 
         self.assertEqual(response1.status_code, 200)
 
-        order_time = datetime.combine(
-            get_next_desired_day(3), time(hour=13, minute=25), tzinfo=pytz.UTC,
-        )
+        order_time = timezone.make_aware(datetime.combine(
+            get_next_desired_day(3), time(hour=13, minute=25),
+        ))
         self.order1 = OrderFactory.create(
             start_time=order_time, specialist=self.specialist2,
         )

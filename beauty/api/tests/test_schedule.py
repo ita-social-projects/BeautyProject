@@ -151,15 +151,13 @@ class TestOwnerSpecialistScheduleView(TestCase):
     def test_get_schedule_order_begining(self):
         """Test if order in the begining of working day."""
         order = OrderFactory.create(
-            start_time=datetime.combine(
+            start_time=timezone.make_aware(datetime.combine(
                 self.date,
                 string_to_time(self.start_time),
-                tzinfo=pytz.UTC,
-            ),
+            )),
             service=self.service,
             specialist=self.specialist,
         )
-
         response = self.client.get(
             path=self.url,
         )
@@ -173,21 +171,20 @@ class TestOwnerSpecialistScheduleView(TestCase):
             [order.end_time.time(),
              string_to_time(self.end_time)],
         ]
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, result)
 
     def test_get_schedule_order_midle(self):
         """Test if order in the midle of working day."""
         order = OrderFactory.create(
-            start_time=datetime.combine(
+            start_time=timezone.make_aware(datetime.combine(
                 self.date,
                 (datetime.combine(
                     self.date,
                     string_to_time(self.start_time),
-                    tzinfo=pytz.UTC,
                 ) + self.duration).time(),
-                tzinfo=pytz.UTC,
-            ),
+            )),
             service=self.service,
             specialist=self.specialist,
         )
@@ -211,15 +208,13 @@ class TestOwnerSpecialistScheduleView(TestCase):
     def test_get_schedule_order_ending(self):
         """Test if order in the ending of working day."""
         order = OrderFactory.create(
-            start_time=datetime.combine(
+            start_time=timezone.make_aware(datetime.combine(
                 self.date,
                 (datetime.combine(
                     self.date,
                     string_to_time(self.end_time),
-                    tzinfo=pytz.UTC,
                 ) - self.duration).time(),
-                tzinfo=pytz.UTC,
-            ),
+            )),
             service=self.service,
             specialist=self.specialist,
         )

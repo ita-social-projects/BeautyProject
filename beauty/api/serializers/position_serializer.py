@@ -46,7 +46,7 @@ class PositionGetSerializer(serializers.ModelSerializer):
         """Class with a model and model fields for serialization."""
 
         model = Position
-        fields = ["name", "specialist", "business", "working_time"]
+        fields = ["id", "name", "specialist", "business", "working_time"]
 
 
 class PositionSerializer(WorkingTimeSerializer):

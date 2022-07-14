@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from datetime import timedelta, datetime, date
 from api.serializers.order_serializers import OrderSerializer
 from beauty.utils import string_to_time
+from django.utils.timezone import localtime
 
 
 def get_orders_for_specific_date(specialist, order_date):
@@ -49,7 +50,10 @@ def get_free_time(specialist, order_date, working_day):
     orders_time = [
         order_time
         for order in orders
-        for order_time in (order.start_time.time(), order.end_time.time())
+        for order_time in (
+            localtime(order.start_time).time(),
+            localtime(order.end_time).time(),
+        )
     ]
 
     free_time.extend(orders_time)
@@ -129,7 +133,7 @@ def get_free_time_specialist_for_owner(specialist, order_date,
         current_order = [
             OrderSerializer(order, context={"request": request}).data["url"]
             for order in orders
-            if order.start_time.time() == time[1]
+            if localtime(order.start_time).time() == time[1]
         ]
 
         if current_order:
@@ -141,7 +145,7 @@ def get_free_time_specialist_for_owner(specialist, order_date,
     start_order = [
         OrderSerializer(order, context={"request": request}).data["url"]
         for order in orders
-        if order.end_time.time() == specialist_schedule[0][0]
+        if localtime(order.end_time).time() == specialist_schedule[0][0]
     ]
 
     if start_order:
