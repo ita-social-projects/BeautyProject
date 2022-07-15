@@ -248,7 +248,7 @@ class BusinessInfoSerializer(serializers.ModelSerializer):
         """Display neccesary field of businesses."""
 
         model = Business
-        fields = ("name", "business_type", "logo", "location", "description", "working_time")
+        fields = ("id", "name", "business_type", "logo", "location", "description", "working_time")
 
 
 class NearestBusinessesSerializer(BaseBusinessSerializer):
@@ -264,3 +264,15 @@ class NearestBusinessesSerializer(BaseBusinessSerializer):
 
         model = Business
         fields = ("id", "name", "business_type", "business_url", "location")
+
+
+class AllBusinessesSpecialOwnerSerializer(BaseBusinessSerializer):
+    """Serializer for getting all businesses for current owner."""
+
+    location = LocationSerializer()
+
+    class Meta:
+        """Display necessary field of businesses."""
+
+        model = Business
+        fields = ("id", "name", "business_type", "logo", "location")
