@@ -212,7 +212,7 @@ class BusinessesSerializer(serializers.HyperlinkedModelSerializer):
 
         model = Business
         fields = (
-            "id", "business_url", "name", "business_type", "working_time", "location",
+            "id", "business_url", "name", "business_type", "working_time", "location", "logo",
         )
 
 
