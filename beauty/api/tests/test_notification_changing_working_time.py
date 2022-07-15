@@ -10,6 +10,7 @@ Test includes:
 import calendar
 import pytz
 from django.core import mail
+from django.utils.timezone import localtime
 from datetime import (date, datetime, timedelta)
 from django.test import TestCase
 from rest_framework.test import APIClient
@@ -102,7 +103,7 @@ class TestUpdateWorkingTime(TestCase):
 
     def test_patch_reduce_order_day(self):
         """Patch and reduce time in order day."""
-        changed_time = (self.order.start_time + timedelta(seconds=10 * 60)).time()
+        changed_time = localtime(self.order.start_time + timedelta(seconds=10 * 60)).time()
         data = {
             self.weekday: [
                 time_to_string(changed_time),

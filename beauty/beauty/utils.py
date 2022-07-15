@@ -323,12 +323,15 @@ def is_order_fit_working_time(order, working_time: dict):
     week_days = [day.capitalize()
                  for day in calendar.HTMLCalendar.cssclasses]
 
-    order_day = order.start_time.weekday()
+    order_day = timezone.localtime(order.start_time).weekday()
     # If day became weekend
     if working_time[week_days[order_day]] == []:
         return False
 
-    order_interval = [order.start_time.time(), order.end_time.time()]
+    order_interval = [
+        timezone.localtime(order.start_time).time(),
+        timezone.localtime(order.end_time).time(),
+    ]
     # If working day not changed (missing field in patch)
     try:
         working_interval = string_interval_to_time_interval(
@@ -384,6 +387,9 @@ def update_position_time_by_business(position_time, business_time):
     for day, value in position_time.items():
         if business_time[day] == []:
             position_time[day] = []
+            continue
+        if value == []:
+            position_time[day] = business_time[day]
             continue
 
         if string_to_time(business_time[day][0]) > string_to_time(value[0]):

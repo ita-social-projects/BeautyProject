@@ -379,7 +379,6 @@ class BusinessDetailRUDView(RetrieveUpdateDestroyAPIView):
             customer = order.customer.email
 
             order.status = Order.StatusChoices.CANCELLED
-            print(order.status)
             order.save()
             send_mail(
                 f"Order #{order.id} has been cancelled",
